@@ -1,0 +1,746 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1" (onInitEvent)="receiveAutoMsgHandler($event)">
+      </app-data-room-left>
+      <div *ngIf="!user?.is_end_user" fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <div class="row m-0">
+          <div class="col-md-9">
+            <h5>Manage End user group</h5>
+          </div>
+
+          <div class="col-md-3 text-right" style="text-align: right;">
+            <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="goBack()">
+              Back</a>
+          </div>
+        </div>
+        <div class="col-md-12" *ngIf="end_user_group_information">
+          <div class="d-flex align-items-center">
+            <h4 class="gp-nm-cdr">
+              <span>Group name:</span>
+              {{ end_user_group_information.dataroom_groups.group_name }}
+            </h4>
+            <div class="d-flex align-items-center">
+              <span style="color: #3352ea; cursor: pointer;" (click)="editGroupName = true"><i class="fa fa-edit"
+                  aria-hidden="true"></i></span>
+            </div>
+          </div>
+          <div class="col-4">
+            <form #f="ngForm">
+              <div id="create-grp" *ngIf="end_user_group_information">
+                <div class="form-group">
+                  <div class="d-flex" *ngIf="editGroupName">
+                    <input type="text" style="width: 100%; margin-bottom: 10px;" placeholder="Enter Group Name"
+                      name="group_name" [(ngModel)]="end_user_group_information.dataroom_groups.group_name"
+                      minlength="3" specialIsAlphaNumeric maxlength="50" #group_name="ngModel" required />
+                    <div class="alert alert-danger" *ngIf="
+                          group_name.errors &&
+                          (group_name.dirty || group_name.touched)">
+                      <p *ngIf="group_name.errors.required">
+                        Group name is required
+                      </p>
+                      <p *ngIf="group_name.errors.minlength">
+                        Group name must contain at least 3 character
+                      </p>
+                    </div>
+                    <div>
+                      <button class="btn btn-default mlb" [disabled]="!f.valid"
+                        (click)="submitEndUserGroup(end_user_group_information.dataroom_groups); editGroupName = false">
+                        save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="yourFn($event)">
+          <mat-tab label="Add New Members">
+            <mat-card>
+              <div>
+                <mat-horizontal-stepper [linear]="true" #stepper>
+                  <mat-step [stepControl]="memberForm">
+                    <ng-template matStepLabel>Add New Member </ng-template>
+                    <div class="row pt-20">
+                      <div class="col-md-4">
+                        <div class="addnew_mbr_frm">
+                          <form [formGroup]="memberForm">
+                            <div class="form-group">
+                              <label>Email</label>
+                              <input class="form-control" type="text" name="email" formControlName="email"
+                                (change)="ChangesByEmail($event.target.value)" />
+                              <small class="alert-danger" [hidden]="memberForm.controls.email.valid">
+                                Please Enter Valid Email Id
+                              </small>
+                            </div>
+
+                            <div class="form-group">
+                              <label>First Name</label>
+                              <input class="form-control" type="text" name="first_name" maxlength="50"
+                                formControlName="first_name" />
+                              <div class="alert-danger"
+                                *ngIf="memberForm.get('first_name').hasError('invalidText') && memberForm.get('first_name').touched">
+                                Please enter only letters and spaces.
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label>Last Name</label>
+                              <input class="form-control" type="text" maxlength="50" name="last_name"
+                                formControlName="last_name" />
+                              <div class="alert-danger"
+                                *ngIf="memberForm.get('last_name').hasError('invalidText') && memberForm.get('last_name').touched">
+                                Please enter only letters and spaces.
+                              </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" style="background-color: #3352ea"
+                              (click)="addNewAdminMember()" [disabled]="!memberForm.valid">
+                              Add Member
+                            </button>
+                          </form>
+                          <div class="or-sap" [class.disabled]="!features?.bulk_users_upload ? true : null">
+                            <hr class="hrOr" />
+                            <span class="spanOr">or</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <span matTooltip="Contact List is disabled" [matTooltipDisabled]="features?.bulk_users_upload">
+                          <div class="pcl" [class.disabled]="!features?.bulk_users_upload ? true : null">
+                            <div class="pcl-list">
+                              <h5 style="margin-left: 30px !important;">Contact List</h5>
+                              <mat-list role="list">
+                                <mat-list-item role="listitem"><a style="color: blue" *ngIf="select">All Contact </a><a
+                                    *ngIf="!select" (click)="ProperSelection(0)">All Contact</a></mat-list-item>
+                                <mat-list-item role="listitem" *ngFor="let group of all_contacts_groups"><a
+                                    *ngIf="!group.select" (click)="ProperSelection(group.id)">{{ group.group_name
+                                    }}</a><a style="color: blue" *ngIf="group.select">{{
+                                    group.group_name
+                                    }}</a></mat-list-item>
+                              </mat-list>
+                            </div>
+                            <div class="select-conatct-list">
+                              <ng-scrollbar visibility="hover" class="scroll-section h-301" style="height: 301px;">
+                                <mat-list role="list">
+                                  <mat-list-item role="listitem" *ngFor="
+                                    let contact of all_contacts;
+                                    let i = index
+                                  ">
+                                    <mat-checkbox (change)="
+                                      checkNewAdminMember(contact, $event)
+                                    " id="{{ contact.id }}" *ngIf="!checkedArray">{{ contact.first_name }}
+                                      {{ contact.last_name
+                                      }}<div class="emailc" style="font-size: 10px !important;"><i
+                                          class="material-icons" style="font-size: 10px !important;">mail_outline</i>
+                                        {{ contact.email }}</div></mat-checkbox>
+                                    <mat-checkbox (change)="
+                                      checkNewAdminMember(contact, $event)
+                                    " id="{{ contact.id }}" *ngIf="checkedArray">{{ contact.first_name }}
+                                      {{ contact.last_name
+                                      }}<div class="emailc" style="font-size: 10px !important;"><i
+                                          class="material-icons" style="font-size: 10px !important;">mail_outline</i>
+                                        {{ contact.email }}</div></mat-checkbox>
+                                  </mat-list-item>
+                                </mat-list>
+                              </ng-scrollbar>
+                            </div>
+                          </div>
+                        </span>
+                      </div>
+                    </div>
+
+                  </mat-step>
+                </mat-horizontal-stepper>
+              </div>
+              <div class="user-per-table">
+                <div class="row">
+                  <div class="col-md-2" style="margin: 5px 0" *ngIf="checkbox_count >= 2">
+                    <button type="button" (click)="deleteAllAddedAdmin()" id="deleteAllAddedAdmin" class="ico-bnt">
+                      <i class="fa fa-trash"></i> Delete all
+                    </button>
+                  </div>
+                </div>
+                <table class="table table-striped">
+                  <thead class="user-per-head">
+                    <tr>
+                      <th>
+                        <mat-checkbox class="user-per-check" [checked]="toggle" (change)="checkboxAllAddedAdmin()"
+                          name="ngAllChecked" [(ngModel)]="ngAllChecked"></mat-checkbox>
+                      </th>
+                      <th>Email id</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let member of all_new_admin; let i = index">
+                      <th>
+                        <mat-checkbox class="user-per-check" value="{{ member.id }}"
+                          (change)="checkboxAddedAdminList(i, $event)" [(ngModel)]="member.state"></mat-checkbox>
+                      </th>
+                      <td>
+                        <span style="word-break: break-all">{{
+                          member.email
+                          }}</span>
+                      </td>
+                      <td>{{ member.first_name }}</td>
+                      <td>
+                        <div *ngIf="editedIndex !== i">
+                          {{ member.last_name }}
+                        </div>
+                        <div *ngIf="editedIndex === i">
+                          <form #f="ngForm">
+                            <input type="text" name="first_name" pattern="^[a-zA-Z ]*$" [(ngModel)]="member.first_name"
+                              required minlength="3" maxlength="50" />
+                            <div *ngIf="
+                                member.first_name.invalid &&
+                                (member.first_name.dirty || member.first_name.touched)
+                              " class="alert alert-danger">
+                              <div *ngIf="member.first_name.errors.required">
+                                First Name is required.
+                              </div>
+                              <div *ngIf="member.first_name.errors.minlength">
+                                First Name must be at least 4 characters
+                                long.
+                              </div>
+                              <div *ngIf="member.first_name.errors.pattern">
+                                First Name only accept alphabetical characters
+                              </div>
+                              <div *ngIf="member.first_name.errors.maxlength">
+                                First Name must be at least 100 characters
+                                long.
+                              </div>
+                            </div>
+
+                            <input type="text" name="last_name" pattern="^[a-zA-Z ]*$" [(ngModel)]="member.last_name"
+                              required minlength="3" maxlength="20" />
+                            <div *ngIf="
+                                      member.last_name.invalid &&
+                                      (member.last_name.dirty || member.last_name.touched)
+                                    " class="alert alert-danger">
+                              <div *ngIf="member.last_name.errors.required">
+                                Last Name is required.
+                              </div>
+                              <div *ngIf="member.last_name.errors.minlength">
+                                Last Name must be at least 4 characters
+                                long.
+                              </div>
+                              <div *ngIf="member.last_name.errors.pattern">
+                                Last Name only accept alphabetical characters
+                              </div>
+                              <div *ngIf="member.last_name.errors.maxlength">
+                                Last Name must be at least 100 characters
+                                long.
+                              </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" (click)="submitEditedMember(member.member)"
+                              [disabled]="!f.valid">
+                              Submit
+                            </button>
+
+                            <button type="button" class="btn btn-default" (click)="is_cancel_editable(i)">
+                              Cancel
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="action-btn">
+                          <button type="button" matTooltip="Edit" class="ico-bnt" (click)="is_edit_member(i)">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                          </button>
+                          <button type="button" matTooltip="Delete" class="ico-bnt" id="deleteNeelyAddedAdmin"
+                            class="ico-bnt" (click)="deleteNeelyAddedAdmin(i)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                          </button>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="row text-center" style="display: flex; justify-content: center" *ngIf="all_new_admin.length">
+                <button type="button" class="btn btn-primary" (click)="addReview()">
+                  Review
+                </button>
+              </div>
+              <div *ngIf="is_review_added">
+                <div class="row">
+                  <div class="col-md-12">
+                    <mat-form-field class="cdr-textfile">
+                      <textarea matInput placeholder="Custom Message" matTextareaAutosize matAutosizeMinRows="5"
+                        matAutosizeMaxRows="9" [(ngModel)]="item"></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row text-center" style="display: flex; justify-content: center">
+                  <button type="button" class="btn btn-primary" (click)="invitation_send_successfully()">
+                    Send Invitation
+                  </button>
+                </div>
+              </div>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Manage Members" id="Manage" (change)="managemerbers()">
+            <mat-card style="height: auto; overflow-y: scroll;padding: 0px!important;">
+              <div class="row">
+                <div class="col-md-12" style="margin: 10px 0px;">
+                  <button type="button" *ngIf="checkbox_count >= 2" style="background-color: #3352ea"
+                    class="btn btn-primary float-right">
+                    Apply
+                  </button>
+                  <button type="button" *ngIf="activeButton== 'first' && selectedAll1.length != 0"
+                    class="btn btn-primary float-right" (click)="SendInvitation()">
+                    Send Invitationss
+                  </button>
+                  <button type="button" *ngIf="activeButton== 'second' && selectedAll1.length != 0"
+                    class="btn btn-danger float-right" data-toggle="modal" data-target="#deleteModel">
+                    Delete Selected
+                  </button>
+                  <button [disabled]="activeButton=='first'" style="margin:0px 20px !important;" class="btn btn-primary"
+                    (click)="setActive('first')">
+                    Invitation
+                  </button>
+
+                  <button [disabled]="activeButton=='second'" class="btn btn-danger" (click)="setActive('second')">
+                    Delete
+                  </button>
+                </div>
+                <div id="deleteModel" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content cdr-delete-files">
+                      <div class="modal-header">
+                        <h4 class="modal-title cdr-delete-title">
+                          Delete Members
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                          &times;
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="alert alert-danger">
+                          Are you sure you wish to delete selected members
+                          ?
+                        </div>
+                      </div>
+                      <div class="modal-footer cdr-delete-footer">
+                        <div>
+                          <form [formGroup]="deleteForm">
+                            Type 'delete' to Confirm
+                            <input type="text" class="cdr-delete-input" [(ngModel)]="deletes" id="3"
+                              formControlName="delete" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteBulk()"
+                              [disabled]="
+                              !(deleteForm.valid && delete.value == 'delete')
+                            ">
+                              Confirm Delete
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <table class="table table-striped">
+                <thead class="user-per-head11">
+                  <tr>
+                    <th *ngIf="activeButton!= null">
+                      <form action="/action_page.php">
+                        <label>
+                          <label>
+                            <!-- <mat-checkbox class="user-per-check"></mat-checkbox> -->
+                            <mat-checkbox *ngIf="activeButton== 'first'" class="user-per-check" type="checkbox"
+                              (change)="checkboxAllAddedManageMember('first')" name="ngAllChecked"
+                              [(ngModel)]="ngAllChecked">
+                            </mat-checkbox>
+                            <mat-checkbox *ngIf="activeButton== 'second'" class="user-per-check" type="checkbox"
+                              (change)="checkboxAllAddedManageMember('second')" name="ngAllChecked"
+                              [(ngModel)]="ngAllChecked">
+                            </mat-checkbox>
+                          </label>
+                        </label>
+                      </form>
+                    </th>
+                    <th>Email Id</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Active / Inactive</th>
+                    <th>Resend Invitation</th>
+                    <th>Added By</th>
+                    <th matTooltip="Please activate QnA module group permission first." *ngIf="!q_flag">
+                      Q&A submitter
+                    </th>
+                    <th *ngIf="q_flag">Q&A submitter</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="all_admin_list.length == 0">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>No User Added</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr *ngFor="let member of all_admin_list; let i = index">
+                    <td *ngIf="activeButton== 'first'">
+                      <mat-checkbox class="user-per-check" value="{{ member.id }}" [(ngModel)]="member.state"
+                        [disabled]="member.memberactivestatus"
+                        (change)="checkboxManageMember($event,member)"></mat-checkbox>
+
+                    </td>
+                    <td *ngIf="activeButton== 'second'">
+                      <mat-checkbox class="user-per-check" value="{{ member.id }}" [(ngModel)]="member.state"
+                        (change)="checkboxManageMember($event,member)"></mat-checkbox>
+
+                    </td>
+
+                    <td>{{ member.member.email }}</td>
+                    <td>{{ member.member.first_name }}</td>
+                    <td>{{ member.member.last_name }}</td>
+                    <td *ngIf="member.member">
+                      <span *ngIf="member.memberactivestatus"> Active </span><span *ngIf="!member.memberactivestatus">
+                        Inactive
+                      </span>
+                    </td>
+                    <td *ngIf="member.member">
+                      <button class="admin-user" *ngIf="!member.memberactivestatus" (click)="resendInvitation(member)">
+                        Resend
+                      </button>
+                      <span *ngIf="member.memberactivestatus">N.A.</span>
+                    </td>
+                    <td *ngIf="member.member_added_by">
+                      {{ member.member_added_by.email }}
+                    </td>
+                    <td *ngIf="q_flag" matTooltip="Q&A submitter control is disabled"
+                      [matTooltipDisabled]="features?.qa_submit">
+                      <mat-checkbox [checked]="true" class="user-per-check" [(ngModel)]="member.is_q_a_submitter_user"
+                        name="is_q_a_submitter_user" (click)="submitUpdatedMember(member)"
+                        [class.disabled]="!features?.qa_submit ? true : null"
+                        *ngIf="member.memberactivestatus"></mat-checkbox>
+                      <mat-checkbox [checked]="true" class="user-per-check"
+                        [(ngModel)]="all_admin_list.is_q_a_submitter_user" name="is_q_a_submitter_user"
+                        [class.disabled]="!features?.qa_submit ? true : null" *ngIf="!member.memberactivestatus"
+                        [disabled]="true"></mat-checkbox>
+                    </td>
+                    <td *ngIf="!q_flag" matTooltip="Q&A submitter control is disabled"
+                      [matTooltipDisabled]="features?.qa_submit">
+
+                      <mat-checkbox [checked]="false" class="user-per-check" [(ngModel)]="member.is_q_a_submitter_user"
+                        name="is_q_a_submitter_user" [disabled]="true"
+                        [class.disabled]="!features?.qa_submit ? true : null"
+                        matTooltip="Please activate QnA module group permission firsts."></mat-checkbox>
+                    </td>
+                    <td>
+                      <span class="action-btn">
+                        <button type="button" matTooltip="Delete" class="ico-btn" id="removeSelectedElement"
+                          mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModel' + i">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </span>
+                      <div id="deleteModel{{ i }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                          <!-- Modal content-->
+                          <div class="modal-content cdr-delete-files">
+                            <div class="modal-header">
+                              <h4 class="modal-title cdr-delete-title">
+                                Delete Member
+                              </h4>
+                              <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Are you sure you wish to delete the member
+                                <strong>{{ member.member.first_name}} {{ member.member.last_name}}
+                                </strong>?
+                              </div>
+                              <form [formGroup]="deleteForm">
+                                Type 'delete' to Confirm
+                                <input type="text" id="1" class="cdr-delete-input form-control" formControlName="delete"
+                                  [(ngModel)]="deletes" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                              </form>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <button type="button" data-dismiss="modal" class="btn btn-primary"
+                                (click)="removeSelectedElement(member, i)" [disabled]="
+                          !(deleteForm.valid && delete.value == 'delete')">
+                                Confirm Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </mat-card>
+          </mat-tab>
+          <mat-tab label="Group Settings">
+            <mat-card class="rounded">
+              <div class="Aligncentre row" style="width: 100% !important; display: flex;">
+                <div class="col-md-4" style="width: 33.3% !important;">
+                  <div class="pb-3 mb-3" style="border-bottom: 1px solid gainsboro; text-align: center;">
+                    <div>Group Status:</div>
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="mr-2">Inactive  &nbsp;</span>
+                      <mat-slide-toggle [(ngModel)]="groupStatus"
+                        (change)="GroupDeactivateactivate()"></mat-slide-toggle>
+                      <span class="ml-2">&nbsp; Active</span>
+                    </div>
+                  </div>
+
+                  <span matTooltip="Auto expire group access is disabled" [matTooltipDisabled]="features?.auto_expire">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                      <div>Auto expire group access</div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-2"
+                      *ngIf="end_user_group_information?.dataroom_groups?.access_revoke == null">
+                      <div class="d-flex align-items-center justify-content-center">
+                        <span style="cursor: pointer; margin-left: 10px;">
+                          <i class="fa fa-calendar" aria-hidden="true"
+                            [class.disabled]="!features?.auto_expire ? true : null"
+                            (click)="end_user_group_information.dataroom_groups.access_revoke = ''"></i></span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center"
+                      *ngIf="end_user_group_information?.dataroom_groups?.access_revoke != null && end_user_group_information?.dataroom_groups?.access_revoke != ''">
+                      <div>Expiry Date: {{end_user_group_information?.dataroom_groups?.access_revoke | date:
+                        'dd-MM-yyyy'}}
+                      </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center">
+                      <input type="date" [min]="currentDate" [disabled]="!features?.auto_expire"
+                        style="width:45% !important;margin-top: 10px; margin-bottom: 10px;"
+                        class="form-control hidden-input-calendar" placeholder="Select Date"
+                        [(ngModel)]="end_user_group_information.dataroom_groups.access_revoke" />
+
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                      <div style="margin-right: 5px;">
+                        <i class="fa fa-save" [class.disabled]="!features?.auto_expire ? true : null"
+                          style="cursor: pointer; color:blue"
+                          (click)="submitEndUserGroup(end_user_group_information.dataroom_groups)"></i>
+                      </div>
+                      <div class="ml-2" style="cursor: pointer;">
+                        <i class="fa fa-times" aria-hidden="true"
+                          [class.disabled]="!features?.auto_expire ? true : null"
+                          (click)="end_user_group_information.dataroom_groups.access_revoke = null; submitEndUserGroup(end_user_group_information.dataroom_groups)"></i>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center "
+                      *ngIf="end_user_group_information?.dataroom_groups?.access_revoke == ''">
+                      <div>
+                        <input type="date" [min]="currentDate"
+                          style="width:70% !important;margin-top: 10px; margin-bottom: 10px;"
+                          class="form-control hidden-input-calendar" placeholder="Select Date"
+                          [disabled]="!features?.auto_expire"
+                          [(ngModel)]="end_user_group_information.dataroom_groups.access_revoke"
+                          [class.disabled]="!features?.auto_expire ? true : null" />
+                      </div>
+                      <div style="cursor: pointer;">
+                        <i class="fa fa-times" aria-hidden="true"
+                          [class.disabled]="!features?.auto_expire ? true : null" [disabled]="!features?.auto_expire"
+                          (click)="end_user_group_information.dataroom_groups.access_revoke = null; submitEndUserGroup(end_user_group_information.dataroom_groups)"></i>
+                      </div>
+                    </div>
+                  </span>
+                  <div style="text-align: center; font-size: 10px;">
+                    <div>
+                      Once a date is selected, users in this group will automatically
+                    </div>
+                    <div>
+                      have their access to the data room
+                    </div>
+                    <div>
+                      revoked at 5 PM GST.
+                    </div>
+                  </div>
+
+
+
+                </div>
+
+                <div style="width:33.3% !important;" class="col-md-4 over-member mt-3 pt-3 pb-3"
+                  style="margin-bottom: 40px; border-left: 1px solid gainsboro;border-right: 1px solid gainsboro;"
+                  *ngIf="end_user_group_information" matTooltip="Manage Modules Permission is disabled."
+                  [matTooltipDisabled]="features.module_perm">
+                  <div class="mb-2" style="text-align: center;">
+                    <img src="assets/images/ICONS_PNG/contract.png" style="width: 15px;margin-right: 5px;">Manage
+                    Modules Permission
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Overview</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_overview" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_overview">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Q&A</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_q_and_a" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_q_and_a">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Documents</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_edit_index" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_edit_index">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Updates</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_updates" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_updates">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Watermarking</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_watermarking" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_watermarking">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Word/PPT as pdf</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_doc_as_pdf" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_doc_as_pdf">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Excel as pdf</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_excel_as_pdf" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_excel_as_pdf">
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">Voting</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_excel_as_pdf" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_voting">
+                    </mat-slide-toggle>
+                  </div>
+                  <!-- <div class="d-flex align-items-center justify-content-between">
+                    <span class="user-texts">DRM</span>
+                    <mat-slide-toggle [disabled]="!features.module_perm" name="is_excel_as_pdf" (change)="changeApply()"
+                      [(ngModel)]="end_user_group_information.is_voting">
+                    </mat-slide-toggle>
+                  </div> -->
+                  <!-- <div class="d-flex align-items-center justify-content-between"
+                    *ngIf="features.file_view_limit == true">
+                    <span class="user-texts">File View limit</span>
+                    <input name="viewer_limit_count" type="number" (input)="onInput($event)" min="0"
+                      (input)="changeApply()" [(ngModel)]="end_user_group_information.viewer_limit_count"
+                      style="width: 80px;height: 20px;margin-top: 5px;" appNoScientificNotation>
+
+                  </div> -->
+                  <div class="pt-3 float-right">
+                    <button type="button" class="btn btn-primary" style="background-color: #3352ea" (click)="
+                          updateUsersAndPermission(end_user_group_information)" [disabled]="defaultApplyStatus==false">
+                      Apply
+                    </button>
+                  </div>
+                </div>
+
+                <div style="width: 33.3% !important;" class="col-md-4"  matTooltip="Upload Restriction is disabled."
+                  [matTooltipDisabled]="features.is_upload_restrict">
+                  <div class="pb-3 mb-3" style=" text-align: center;margin-top: 40px;">
+                    <img src="assets/images/ICONS_PNG/cloud-upload-button.png" style="width: 30px;margin-right: 5px;">
+                    <h5 style="display: inline-block">Upload Restrictions:</h5>
+                    <div class="d-flex align-items-center justify-content-center" style="margin-top: 25px;">
+                      <span class="mr-2">Inactive &nbsp;</span>
+                      <mat-slide-toggle [(ngModel)]="end_user_group_information.upload_ristrict_with_timer"
+                        (change)="updateUsersAndPermission(end_user_group_information)"   [disabled]="!features.is_upload_restrict"></mat-slide-toggle>
+                      <span class="ml-2">&nbsp; Active</span>
+                    </div>
+                    <button class="btn btn-default mlb" style="margin-top: 20px;"
+                      (click)="documentUploadRestriction()"   [disabled]="!features.is_upload_restrict">Manage</button>
+                  </div>
+                  <div style="text-align: center; font-size: 10px;">
+                    <div>
+                      Administrators can enable upload restrictions for
+                    </div>
+                    <div>
+                      users by setting a specific date and time for each primary or subfolder
+                    </div>
+                    <div>
+                       after which upload permissions will be disabled.
+
+                    </div>
+                    <!-- <div>
+                      * GST (Gulf Standard Time)
+                    </div> -->
+                  </div>
+                </div>
+                <!-- <div style="width: 25% !important;" class="col-md-3" style=" border-left: 1px solid gainsboro;">
+                   <span matTooltip="IRM is disabled" [matTooltipDisabled]="features?.is_irm_protected">
+                  <div   style=" text-align: center;margin-top: 40px;">
+                    <h5 style="display: inline-block">IRM</h5>
+                    <p style="font-weight: 500;margin-bottom: 0rem;">Information Rights Management</p>
+                    <div  class="d-flex align-items-center justify-content-center"
+                      style="margin-top: 10px; margin-bottom: 10px;">
+                      <span class="mr-2">Inactive</span>
+                      <mat-slide-toggle [(ngModel)]="irm_protected_files"
+                        (change)="irm_group_protection()" [disabled]="!features?.is_irm_protected" style="margin-left: 10px;margin-right: 10px;"></mat-slide-toggle>
+                      <span class="ml-2">Active</span>
+                    </div>
+                    <p style="font-size: 9px; text-align: justify;margin-bottom: 0px !important;">
+                      Once enabled, IRM protection will be applied
+                      to users within the designated group when
+                      they download files from the selected folders
+                      and subfolders. The documents will open in
+                      their native format, with restrictions enforced
+                      on copy/paste, printing, and saving a copy to
+                      the user's device.<br />
+                      IRM protection supports MS Word, Excel,
+                      PowerPoint, and PDF file formats, and it
+                      requires no additional plugins or installations
+                      for the end users.
+                    </p>
+                    <p style="font-weight: 500;font-size: 9px;text-align: justify;">
+                      Note: Once IRM is applied, the file will get ready for download after 15 minutes.
+                    </p>
+                    <p style="margin-bottom: 5px;margin-top: 5px;">Auto - Expire IRM Protected Files Days</p>
+                    <div class="d-flex align-items-center justify-content-center ">
+                      <div>
+                        <input type="number" min="1" [disabled]="!features?.is_irm_protected"   [(ngModel)]="irm_protected_files_days" style="width:40% !important; margin-left: 25%;padding-left: 10px; border: 1px solid gainsboro;"
+                          class="form-control hidden-input-calendar"   />
+                      </div>
+                    </div>
+                    <p style="font-size: 9px;margin-top: 5px;">
+                      The access to the IRM Protected files will
+                      expire on the date selected above at 5 PM
+                      GST.
+                    </p>
+                  </div>
+                  </span>
+                </div> -->
+              </div>
+            </mat-card>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+
+      <div *ngIf="user?.is_end_user" class="containernew" style="margin-top: 80px;">
+        <mat-card>
+          {{"Your access to this data room is either restricted or not yet defined by the administrator. Please
+          contact the primary contacts of this data room to enable your access. If you need any help please email to
+          support@docullyvdr.com "}}
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

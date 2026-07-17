@@ -1,0 +1,63 @@
+.hideInputTypeFile{
+	    display: none;
+}
+
+
+.pdfviewmain {
+    background: #D2D2D2;
+    border-top: transparent!important;
+    border: 5px solid #d2d2d2;
+}
+
+
+.pdfvie-head,
+.pdfvie-foot {
+    text-align: center;
+    padding: 25px 0
+}
+
+.pdfvie-head h3 {
+    margin: 0
+}
+
+.pdftoolbar {
+    border-bottom: 1px solid #ADADAD;
+    padding: 15px;
+    text-align: center
+}
+
+.h-500 {
+    height: 540px
+}
+
+.pdftoolbar .mat-mini-fab.mat-accent {
+    background-color: #fff;
+    color: #000
+}
+
+.pdftoolbar .mat-form-field {
+    width: 60px
+}
+
+.darkgrey-text-btn{
+    padding: 5px 16px 5px 6px !important;
+    font-size: 14px !important;
+    border-radius: 25px !important;
+    background-color: #3352ea;
+    font-weight: 400 !important;
+    color: #fff;
+}
+
+.mat-mdc-raised-button.mat-primary i {
+    background: #fff;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    line-height: 25px;
+    position: relative;
+    top: -1px;
+}
+
+.mat-mdc-raised-button.mat-primary.darkgrey-text-btn i {
+    color: #3352ea;
+}

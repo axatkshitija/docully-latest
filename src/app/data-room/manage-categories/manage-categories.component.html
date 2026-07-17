@@ -1,0 +1,136 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <h1>Manage Categories</h1>
+            <span fxFlex></span>
+            <div _ngcontent-c35="" class="cdr-buttons">
+              <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="goBack()">
+                Back</a>
+            </div>
+
+            <div class="cdr-buttons">
+            </div>
+          </mat-toolbar>
+
+          <!--kalyani 13-03-2018-->
+          <button (click)="addNewCategories()" style="cursor: pointer" class="add-new" style="width: 20% !important;">
+            Add New Category
+            <i class="fa fa-plus" aria-hidden="true" style="font-size: 22px; display: inline-block"></i>
+          </button>
+
+          <div class="container">
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default">
+                <div id="collapse1" class="">
+                  <div class="panel-body">
+                    <div class="categories catnew" *ngIf="data.length > 0">
+                      <div class="row">
+                        <div class="col">
+                          <h3>Category</h3>
+                        </div>
+                        <div class="col">
+                          <h3>Email</h3>
+                        </div>
+                      </div>
+                      <div *ngIf="!editcategory">
+                        <div class="row cat-9" *ngFor="let da of data">
+                          <div class="col">
+                            <select class="form-control" [(ngModel)]="da.categories" name="categories" required
+                              *ngIf="da.categories">
+                              <option *ngFor="let item of categories_list" [value]="item.id">
+                                {{ item.categories_name }}
+                              </option>
+                            </select>
+                            <input type="text" name="category_name" *ngIf="!da.categories" required
+                              [(ngModel)]="da.category_name" />
+                          </div>
+                          <div class="col" >
+                            <mat-select style="margin-left: 100px;width: 300px;" class="form-control" [(ngModel)]="da.user" selectionChange="test(da.user)"
+                              name="user" required multiple>
+                              <mat-option *ngFor="let item of user_list" [value]="item.member.id">{{ item.member.email
+                                }}</mat-option>
+                            </mat-select>
+                          </div>
+                          <div class="col"  style="display: flex; align-items: flex-start;">
+                            <button mat-button class="ico-bnt" matTooltip="Edit" (click)="Editcategory(da.categories)">
+                              <i style="font-size: 20px;" class="material-icons cdr-bic">&#xE254;</i>
+                            </button>
+                            <button mat-button class="ico-bnt" type="button" matTooltip="Delete"
+                              (click)="deletecategory(da.categories)">
+                              <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="editcategory">
+                        <p>Here the data comes</p>
+                        <div>
+                          <div class="row cat-9" *ngIf="getcategorydata">
+                            <div class="col">
+                              <input type="text" name="category_name" required
+                                [(ngModel)]="getcategorydata.categories_name" />
+                            </div>
+                            <div class="col">
+                              <mat-select class="form-control" name="user" required [(ngModel)]="selectedValue"
+                                multiple>
+                                <mat-option *ngFor="let item of user_list" [value]="item.member.id">{{
+                                  item.member.email }}</mat-option>
+                              </mat-select>
+                            </div>
+                            <a *ngIf="editcategory" (click)="UpdateCategory(getcategorydata.id)">
+                              <button class="add-new-save">Save</button></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <a *ngIf="!editcategory" (click)="submitAssignedCategories()"><button
+                        class="add-new-save">Save</button></a>
+                  </div>
+                </div>
+              </div>
+        
+            </div>
+          </div>
+
+          <!-- Add an tree menu -->
+          <!-- End of tree -->
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <div class="cdr-rt-sidebar">
+          <mat-card class="rounded mb-10 p-0">
+            <div class="data-usages">
+              <div class="box" *ngIf="analytics != '{}'">
+                <h3>
+                  Total Questions<span>{{ analytics.total_questions }}</span>
+                </h3>
+              </div>
+              <div class="box">
+                <h3>
+                  Answered<span>{{ analytics.answered }}</span>
+                </h3>
+              </div>
+              <div class="box">
+                <h3>
+                  Pending<span>{{ analytics.pending }}</span>
+                </h3>
+              </div>
+            
+       
+            </div>
+          </mat-card>
+      
+        </div>
+        <!--rt aside component end-->
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

@@ -1,0 +1,19 @@
+.hideInputTypeFile {
+  display: none;
+}
+
+.dr-logo-size-fixed {
+  width: 250px;
+  margin: 0 auto;
+}
+
+.img-fluid-stage {
+  max-width: 25%;
+  height: auto;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.4;
+}

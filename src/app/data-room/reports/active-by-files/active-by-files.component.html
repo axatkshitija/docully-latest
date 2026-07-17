@@ -1,0 +1,103 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="62" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="fa fa-files-o"></i>
+              <span class="t-text">Activity by Files Report</span>
+            </div>
+            <button class="icon-btn" (click)="downloadStatus()">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text">Export</span>
+            </button>
+          </div>
+
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="slt-pre">
+                <div class="date-select">
+                  <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="Frompicker" placeholder="From Date"
+                    [(ngModel)]="from_date" name="from_date" (dateChange)="changeDateWise($event.value, to_date)" />
+                  <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Frompicker></mat-datepicker>
+                </div>
+                <div class="date-select">
+                  <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="Topicker" placeholder="To Date"
+                    [(ngModel)]="to_date" name="to_date" (dateChange)="changeDateWise(from_date, $event.value)" />
+                  <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Topicker></mat-datepicker>
+                </div>
+              </div>
+              <input type="text" placeholder="Search Files" class="form-control filterSr searchbox full-src"
+                [(ngModel)]="filterQuery" required />
+            </div>
+          </div>
+          <div class="show-delfiles datatime-status">
+            <mat-slide-toggle name="is_dataroom_on_live" [(ngModel)]="deleted_files" name="deleted_files"
+              (change)="RemovedMembers($event.checked)"></mat-slide-toggle>
+            Show Deleted Files
+          </div>
+
+
+          <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+          </mat-progress-spinner>
+          <div *ngIf="!show_spinner" class="table-content">
+            <table class="table dl-table filesh-tbl">
+              <tr>
+                <th>Title</th>
+                <th>Event By</th>
+                <th>Event</th>
+                <th>Created</th>
+              </tr>
+              <tr *ngFor="
+                  let item of data
+                    | eventSearch: filterQuery
+                    | paginate
+                      : { itemsPerPage: 10, currentPage: p, totalItems: size }
+                ">
+                <td [routerLink]="['/reportfiles-view', item.folder__id]">
+                  {{ item.folder__name | limitTo: 30
+                  }}{{ item.folder__name.length > 30 ? "..." : "" }}
+                </td>
+                <td>{{ item.user__first_name !=null || item.user__first_name != undefined ? item.user__first_name : item.folder__deleted_by__first_name }} {{ item.user__last_name !=null || item.user__last_name != undefined ? item.user__last_name : item.folder__deleted_by__last_name }}</td>
+                <td [ngSwitch]="item.event?item.event:item.event1">
+                  <span *ngSwitchCase="'bulk_download'">Bulk Download</span>
+                  <span *ngSwitchCase="'file download'">Download</span>
+                  <span *ngSwitchCase="'file print'">Printed</span>
+                  <span *ngSwitchCase="'file view'">Viewed</span>
+                  <span *ngSwitchDefault>{{item.event?item.event:item.event1}}</span>
+                </td>
+
+                <td>
+                  {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }}
+                  {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                </td>
+              </tr>
+            </table>
+
+            <span *ngIf="dataSize && dataSize == 0">Report data not available.</span>
+
+            <pagination-controls (pageChange)="GetActivityByDate($event)"></pagination-controls>
+          </div>
+        </mat-card>
+      </div>
+
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

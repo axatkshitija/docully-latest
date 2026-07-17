@@ -1,0 +1,93 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1" (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar style="display: flex; justify-content: space-between;">
+            <span>Reports</span>
+            <button mat-raised-button class="cdr-btn big-btn blue-btn" (click)="geBack()">
+              Back
+            </button>
+          </mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE7F2;</i>
+              <span class="t-text">Voting Status</span>
+            </div>
+            <button class="icon-btn">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text" (click)="ExportVoterStatus()">Export</span>
+            </button>
+          </div>
+
+
+
+          <div class="voting-user-info">
+            <h6 *ngIf="voteResultStatus"><i class="material-icons">how_to_vote</i> {{ voteResultStatus.title}}</h6>
+          </div>
+          <div class="datatime-status actus-top" *ngIf="voteResultStatus">
+            <h6>Total User Response</h6>
+            <div class="topbar-af">
+
+
+              <div class="status-us">
+
+                <div class="st-list">
+                  <span>Yes</span>
+                  <strong class="org-clr">{{ voteResultStatus.yes}}</strong>
+                </div>
+
+                <div class="st-list">
+                  <span>No</span>
+                  <strong>{{ voteResultStatus.no}}</strong>
+                </div>
+                <div class="st-list">
+                  <span>Neutral</span>
+                  <strong>{{ voteResultStatus.neutral}}</strong>
+                </div>
+                <div class="st-list">
+                  <span>Did Not Vote</span>
+                  <strong>{{ voteResultStatus.no_response}}</strong>
+                </div>
+
+
+
+              </div>
+            </div>
+          </div>
+
+          <div class="table-content">
+            <table class="table dl-table filesh-tbl">
+              <tr>
+                <th width="5%">Sr. No.</th>
+                <th width="5%">Date & Time</th>
+                <th>Voter Name</th>
+                <th width="5%">Voter Response</th>
+              </tr>
+              <tr *ngFor="let result of voteResultList; let i = index;">
+                <td>{{ i+1 }}</td>
+                <td *ngIf="result.result!='No Response'">{{ result.vote_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }}
+                  {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                </td>
+                <td *ngIf="result.result=='No Response'">-</td>
+                <td>{{ result.name }}</td>
+                <td>{{ result.result }}</td>
+              </tr>
+            </table>
+          </div>
+
+
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

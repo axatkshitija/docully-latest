@@ -1,0 +1,43 @@
+.hideInputTypeFile {
+  display: none;
+}
+#handlePadding {
+  width: 110px;
+}
+.mat-raised-button.mat-primary.is-icon {
+  padding: 0 16px 0 6px;
+}
+.padRight {
+  padding-right: 10px;
+}
+.mat-raised-button.mat-primary.grey-btn {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+}
+.mat-raised-button.mat-primary.grey-btn:hover {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+}
+.mat-raised-buttons {
+  min-width: 30px !important;
+}
+.blue-btn1 {
+  background-color: transparent !important;
+}
+.blue-btn1:hover {
+  background-color: transparent !important;
+}
+
+.containernew {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 50%;
+}
+
+
+.NgxEditor{
+  min-height: 10rem !important;
+}

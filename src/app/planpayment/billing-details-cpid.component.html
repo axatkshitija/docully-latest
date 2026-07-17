@@ -1,0 +1,192 @@
+<div class="topbar mat-toolbar mat-toolbar-single-row" style="height: auto !important;">
+    <div class="cdr_branding" >
+        <img src="assets/img/docully-logo.png"></div>
+    <div class="cdr-topToolbar">
+            <div class="user-name">
+                <button data-target="#userProfileCdr" data-toggle="modal">
+                    <!-- <span id="uName">Welcome, Akshay</span> -->
+                    <i class="fa fa-align-left"></i>
+                </button>
+            </div>
+        </div>
+    
+</div>
+
+<section>
+    <div class="container">
+        <div class="row subscription-plan">
+           
+                <div class="col-md-6">
+                        <div class="choose-plan">
+                            <h6>Billing Details - will be there on the invoice.
+                            </h6>
+                            <table class="table  choose_plan_subscription">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <label>Customer Name</label>
+                                            
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="text" placeholder="Customer Name" >
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <label>Company Name</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="text" placeholder="Company Name" required>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <label>Billing Address</label>
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" name="text" placeholder="Company Name" ></textarea>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <label>Billing City</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="text" placeholder="Billing City" >
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <label>Billing State</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="text" placeholder="Billing state" >
+                                        </td>
+                                    </tr>
+
+                                    
+                                    <tr>
+                                        <td>
+                                            <label>Billing Country</label>
+                                        </td>
+                                        <td>
+                                           <select class="form-control" select placeholder="Select">
+                                                <option value="UAE">UAE</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                            <input class="form-control" name="text" placeholder="Others" >
+                                        </td>
+                                    </tr>
+
+                                     <tr>
+                                        <td>
+                                            <label>PO Box (For UAE)</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="text" placeholder="PO Box (For UAE)" >
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="choose-plan-sectn">
+                        <h6>The amount mentioned here is in USD (United States Dollars)</h6>
+                        <table class="table  choose_plan_subscription">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <label>Selected Plan</label>
+                                        
+                                    </td>
+                                    <td>
+                                       {{custom_details.Selected_plan}}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label>Edition</label>
+                                    </td>
+                                    <td>
+                                      {{custom_details.Edition}}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label>Billing Frequency</label>
+                                    </td>
+                                    <td>
+                                       {{custom_details.Billing_freq}}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label>Effective price</label>
+                                    </td>
+                                    <td>
+                                        ${{custom_details.Effective_price}} per month
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label>Total fee</label>
+                                    </td>
+                                    <td>
+                                       ${{custom_details.Total_fee}}
+                                    </td>
+                                </tr>
+
+                                
+                                <tr>
+                                    <td>
+                                        <label>VAT a5% (For UAE Customers Only)</label>
+                                    </td>
+                                    <td>
+                                        <!-- <label>${{vat_detail}}</label> -->
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label>Grand Total</label>
+                                    </td>
+                                    <td>
+                                       <label>${{grand_total}}</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                     
+                        
+                    </div>
+                </div>
+                <div class="col-md-12">
+                <div class="next text-center">
+                    
+                        <p><mat-checkbox>I agree to Billing terms</mat-checkbox></p>
+                        <p>You will receive the invoice within 24 hours on your email. There will be no refund.</p>
+                            <div class="buttns p-0">
+                            <button class="createPW-submit mat-raised-button" mat-raised-button >
+                            <span class="mat-button-wrapper ">Select Payment Option</span>
+                            </button>
+                        </div>
+                        <div class="mat-button-focus-overlay"></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>

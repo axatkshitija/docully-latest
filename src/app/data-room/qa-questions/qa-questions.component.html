@@ -1,0 +1,224 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid" *ngIf="user">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+      ></app-data-room-left>
+      <div fxFlex="84" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <h1>Q & A</h1>
+            <span fxFlex></span>
+            <div class="cdr-buttons">
+              <a
+                href="javascript:void(0)"
+                mat-raised-button
+                class="cdr-btn big-btn blue-btn"
+                (click)="goBack()"
+              >
+                Back</a
+              >
+            </div>
+            <span>
+              <button
+                *ngIf="user.member.is_dataroom_admin || user.member.is_la_user"
+                mat-raised-button
+                color="primary"
+                class="blue-btn is-icon"
+                type="button"
+                style="float: right"
+                data-toggle="modal"
+                data-target="#add_to_faq"
+              >
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                Add To Faq
+              </button>
+            </span>
+          </mat-toolbar>
+          <div class="question">
+            <div class="qa-comments">
+              <div *ngFor="let item of data">
+                <h3>{{ item.question_details.question }}?</h3>
+                <h4>
+                  Submitted By: {{ item.question_details.user.first_name }} on
+                  {{
+                    item.question_details.updated_date
+                      | date: "dd-MM-yyyy HH:mm":"timezone"
+                  }}
+                </h4>
+                <h5>
+                  Category: {{ item.question_details.category.categories_name
+                  }}<br />
+                  Assigned to: {{ item.question_details.user.first_name }}
+                  {{ item.question_details.user.last_name }}
+                  <h6>
+                    <i
+                      class="fa fa-comments"
+                      style="font-size: 16px; margin: 6px"
+                    ></i
+                    >Replies: {{ item.question_details.replies }}
+
+                    <a
+                    *ngIf="item.question_details.folder!=null"
+                      href="{{ base_url }}/file-view/{{
+                        item.question_details?.folder?.id
+                      }}/{{ user.id }}"
+                      (click)="goToViewerPage(item.question_details.folder)"
+                      style="color: blue"
+                      target="_blank"
+                      ><i
+                        i
+                        class="fa fa-file-pdf-o"
+                        aria-hidden="true"
+                        style="
+                          font-size: 16px;
+                          margin: 6px;
+                          color: #888787;
+                          margin-left: 20px;
+                        "
+                      ></i
+                      >{{ item.question_details.folder.name }}</a
+                    >
+                  </h6>
+                </h5>
+              </div>
+              <mat-divider></mat-divider>
+              <h2>Answers :</h2>
+              <div class="u-comnt">
+                <div *ngFor="let reply of reply_list">
+                  <h3>
+                    {{ reply.question_details.user.first_name | uppercase }}
+                    {{ reply.question_details.user.last_name | uppercase
+                    }}
+                  </h3>
+                  <span
+                    >Updated on:
+                    {{
+                      reply.question_details.updated_date
+                        | date: "dd-MM-yyyy HH:mm":"timezone"
+                    }},</span
+                  >
+                  <p>{{ reply.question_details.answer }}.</p>
+                </div>
+              </div>
+
+              <div *ngIf="showDiv" class="reply-sec">
+                <textarea
+                  class="form-group"
+                  name="reply"
+                  [(ngModel)]="update.reply"
+                  cols="5"
+                  rows="5"
+                ></textarea>
+              </div>
+              <br />
+              <button
+                mat-raised-button
+                class="cdr-btn big-btn blue-btn"
+                type="button"
+                (click)="showHideUploadDiv()"
+                *ngIf="reply"
+              >
+                Reply
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div id="add_to_faq" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content cdr-delete-files">
+            <div class="modal-header">
+              <h4 class="modal-title cdr-delete-title">Add To FAQ</h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-danger">
+                Remove any sensitive information. Conversation will be visible
+                to all dataroom members with access to this file
+              </div>
+
+              <form [formGroup]="faqForm">
+                Question<br />
+                <div>
+                  <textarea
+                    class="form-group"
+                    name="reply"
+                    [(ngModel)]="question_data.question"
+                    cols="5"
+                    rows="5"
+                    placeholder="Enter your Question"
+                    formControlName="question"
+                    name="question"
+                    style="width: 100%"
+                  ></textarea>
+                </div>
+                Answer<br />
+
+                <div>
+                  <textarea
+                    class="form-group"
+                    name="reply"
+                    [(ngModel)]="question_data.answer"
+                    formControlName="answer"
+                    placeholder="Enter your answer"
+                    name="answer"
+                    cols="5"
+                    rows="5"
+                    style="width: 100%"
+                  ></textarea>
+                </div>
+                <div
+                  class="checkbox"
+                  *ngIf="item.question_details?.folder?.name !== null"
+                >
+                  <label>
+                    <mat-checkbox
+                      class="cdr-checkbt"
+                      type="checkbox"
+                      name="selectAll"
+                      [checked]="toggle"
+                      (change)="test(item.question_details)"
+                    >
+                    </mat-checkbox>
+
+                    <span class="check">
+                      &nbsp;
+                      {{ item.question_details.folder.name }}
+                    </span></label
+                  >
+                </div>
+
+                <button
+                  type="button"
+                  data-dismiss="modal"
+                  class="btn btn-primary"
+                  (click)="AddToFaq(question_data)"
+                  style="float: right"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+            <div class="modal-footer cdr-delete-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

@@ -1,0 +1,146 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+      </app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <div class="title">
+              <h2>My Downloads</h2>
+            </div>
+            <span fxFlex></span>
+            <button href="javascript:void(0)" mat-raised-button *ngIf="tab" class="cdr-btn big-btn blue-btn"
+              (click)="BackTab()" style="color: white; font-size: 14px">
+              Back
+            </button>
+            <button href="javascript:void(0)" mat-raised-button *ngIf="tab1" class="cdr-btn big-btn blue-btn"
+              (click)="BackTab()" style="color: white; font-size: 14px">
+              Back
+            </button>
+          </mat-toolbar>
+          <div>
+            <div class="cdr-breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a routerLink="/documents">All Documents</a>
+                </li>
+                <li class="breadcrumb-item active">Download Status Documents</li>
+              </ol>
+              <span fxFlex></span>
+            </div>
+            <div class="tab-content document-table" id="pills-tabContent">
+              <mat-card *ngIf="!setNoteOnDownload">
+                <strong style="color: orange;">Note : The download batch will be automatically deleted at 11:59 PM
+                  {{usertimezone['time_zone__abbreviation']}}
+                  <span *ngIf="namezone!=null">{{'(' +namezone +')'}}</span> .</strong>
+              </mat-card>
+              <div class="forDownloadStatus" *ngFor="let item of downloadList">
+                <div class="p-4 d-flex align-items-center justify-content-between">
+                  <div style="width: 85%;">
+                    <div><span>{{item?.filename}}</span> <span class="float-right"> {{item.created_date | date:
+                        'dd-MM-yyyy, hh:mm' : usertimezone['time_zone__offset'] }} {{'('
+                        +usertimezone['time_zone__abbreviation'] +')'}}</span></div>
+                    <mat-progress-bar mode="determinate" style="margin-right: 10px ;"
+                      [value]="item.readytodownload==true ? 100 : item.successfilescount/item.failfilecount*95 ">
+                    </mat-progress-bar>
+                    <div class="d-flex align-items-center" *ngIf="(item.successfilescount/item.failfilecount*100)<=20"
+                      [hidden]="item.readytodownload==true">
+                      <div style="width: 100%;" [hidden]="item.readytodownload==true"><span
+                          *ngIf="item.is_index_report!=true && item.is_index_report_2!=true">Validating Permissions
+                        </span> <span class="float-right" *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                          !=true">{{item.successfilescount}} of {{item.failfilecount}}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center"
+                      *ngIf="(item.successfilescount/item.failfilecount*100)>20&&(item.successfilescount/item.failfilecount*100)<=40"
+                      [hidden]="item.readytodownload==true">
+                      <div style="width: 100%;" [hidden]="item.readytodownload==true"><span *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                          !=true"> Applying Watermarks
+                        </span> <span class="float-right" *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                          !=true ">{{item.successfilescount}} of {{item.failfilecount}}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center"
+                      *ngIf="(item.successfilescount/item.failfilecount*100)>40&&(item.successfilescount/item.failfilecount*100)<=70"
+                      [hidden]="item.readytodownload==true">
+                      <div style="width: 100%;" [hidden]="item.readytodownload==true"><span
+                          *ngIf="item.is_index_report!=true && item.is_index_report_2==true">Preparing Zip File </span>
+                        <span class="float-right ml-auto" *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                          !=true">{{item.successfilescount}} of {{item.failfilecount}}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center"
+                      *ngIf="(item.successfilescount/item.failfilecount*100)>70&&(item.successfilescount/item.failfilecount*100)<=99.9&&item.is_index_report!=true"
+                      [hidden]="item.readytodownload==true">
+                      <div style="width: 100%;" [hidden]="item.readytodownload==true"><span>Finishing Process </span>
+                        <span class="float-right ml-auto" *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                        !=true ">{{item.successfilescount}}
+                          of {{item.failfilecount}} </span>
+                      </div>
+                    </div>
+
+                    <div class="d-flex align-items-center"
+                      *ngIf="(item.successfilescount/item.failfilecount*95)>=95&&item.readytodownload==false&&item.is_index_report!=true">
+                      <div style="width: 100%;"><span>Finishing Process </span> <span
+                          class="float-right ml-auto">Loading... </span> </div>
+                    </div>
+                    <div class="d-flex align-items-center"
+                      *ngIf="(item.successfilescount/item.failfilecount*95)<=95&&item.readytodownload==false&&item.is_index_report==true">
+                      <div style="width: 100%;"><span>In Process... </span> </div>
+                    </div>
+
+                    <div class="d-flex align-items-center" *ngIf="item.readytodownload">
+                      <div style="width: 100%;"><span>Ready to Download </span>
+                        <span class="float-right ml-auto" *ngIf="item.is_index_report!=true && item.is_index_report_2!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                          !=true ">{{item.successfilescount}} of {{item.failfilecount}} <span *ngIf="item.readytodownload && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                            !=true && item.is_index_report_2
+                            !=true" (click)="getDownloadLog(item.id,item.filename)"
+                            style="color:#008cff;cursor:pointer;"><span style="color: black;">&nbsp; |</span> &nbsp;
+                            Download Log </span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <button mat-raised-button *ngIf="item.is_index_report == true" class="cdr-btn big-btn blue-btn ml-4"
+                    [disabled]="!item.readytodownload" (click)="downloadindex(item)"
+                    style="color: white; font-size: 14px">
+                    Download
+                  </button>
+                  <button mat-raised-button *ngIf="item.is_overview_report!=true && item.is_index_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true  && item.is_download_report!=true &&item.is_user_and_status_report!=true && item.is_voting_report
+                    !=true && item.is_index_report_2!=true" class="cdr-btn big-btn blue-btn ml-4"
+                    [disabled]="!item.readytodownload" (click)="download(item)" style="color: white; font-size: 14px">
+                    Download
+                  </button>
+                  <button mat-raised-button *ngIf="item.is_overview_report==true || item.is_activity_by_files_report==true || item.is_q_and_a_report==true || item.is_activity_by_date_report==true || item.is_user_and_grp_report==true || item.is_download_report==true || item.is_user_and_status_report==true || item.is_voting_report
+                    ==true || item.is_index_report_2==true" class="cdr-btn big-btn blue-btn ml-4"
+                    [disabled]="!item.readytodownload" (click)="downloadOverview(item.filename)"
+                    style="color: white; font-size: 14px">
+                    Download
+                  </button>
+                </div>
+                <mat-card [hidden]="!item.readytodownload" *ngIf="item.is_index_report!=true && item.is_overview_report!=true && item.is_activity_by_files_report!=true && item.is_q_and_a_report!=true && item.is_activity_by_date_report!=true && item.is_user_and_grp_report!=true && item.is_download_report!=true && item.is_user_and_status_report!=true && item.is_voting_report
+                  !=true && item.is_index_report_2!=true">
+                  <div class="downloadfileslist">
+                    <span>Downloaded Files are : {{item.successfilescount}} &nbsp;|&nbsp; Skipped Files :
+                      {{item.failfilecount - item.successfilescount}} </span>
+                  </div>
+
+                </mat-card>
+              </div>
+
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <app-document-right-side-menu> </app-document-right-side-menu>
+        <!--rt aside component end-->
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

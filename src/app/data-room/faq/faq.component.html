@@ -1,0 +1,352 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+      <div fxFlex="100" fxFlex.xs="100" *ngIf="user!=null || user!=undefined">
+        <div fxFlexOrder.xs="2" *ngIf="
+        user.member.is_dataroom_admin ||
+          user.member.is_la_user ||
+          all_disclaimers ||
+          primary_users_disclaimer_status;
+        else primary_users_disclaimer_status_else
+      ">
+          <mat-card class="mat-card p0">
+            <mat-toolbar class="add-tbpd">
+              <h1>FAQ'S</h1>
+              <span fxFlex></span>
+
+              <button *ngIf="user.member.is_dataroom_admin || user.member.is_la_user" mat-raised-button color="primary"
+                class="blue-btn is-icon" type="button" style="float: right" data-toggle="modal"
+                data-target="#add_to_faq" (click)="tim()">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+
+                Add FAQ
+              </button>
+              &nbsp;&nbsp;
+              <div _ngcontent-c35="" class="cdr-buttons">
+                <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="geBack()">
+                  Back</a>
+              </div>
+            </mat-toolbar>
+            <!-- <div class="QA" *ngIf="data.length == 0 && data2">
+          <mat-list role="list" class="qa-list">
+            <mat-list-item role="listitem"> No FAQ available </mat-list-item>
+          </mat-list>
+        </div>-->
+            <div class="QA" *ngFor="let item of data; let i = index">
+              <mat-list role="list" class="qa-list">
+                <mat-list-item role="listitem" style="height:auto;padding:0px 10px!important;">
+                  <a style="width: 100%">
+                    <h3 data-toggle="modal" [attr.data-target]="'#view' + i">
+                      Q:&nbsp;{{ item.question }}
+                    </h3>
+                    <span class="answer">AA:&nbsp;{{ item.answer }}</span>
+
+                    <span *ngIf="
+                    user.member.is_dataroom_admin || user.member.is_la_user
+                  " class="action-btn" style="float: right;margin-top: -30px;">
+                      <button mat-button class="ico-bnt" type="button" matTooltip="Edit" data-toggle="modal"
+                        [attr.data-target]="'#edit' + i" (click)="send_update(i)">
+                        <i aria-hidden="true" class="fa fa-pencil"></i>
+                      </button>
+
+                      <button mat-button class="ico-bnt" type="button" matTooltip="Delete" data-toggle="modal"
+                        [attr.data-target]="'#delete' + i">
+                        <i aria-hidden="true" class="fa fa-trash"></i>
+                      </button>
+                    </span>
+                  </a>
+
+                  <h4 style="width: 100%">
+                    <span *ngIf="item.created_by">Created on:
+                      {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'('
+                      +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                    <span *ngIf="item.updated_by">&nbsp;&nbsp;Updated on:
+                      {{ item.updated_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'('
+                      +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                    <span class="" *ngIf="item.file_flag && item.folder !== null"><a href="{{ baseUrl }}/file-view/{{ item.folder.id }}/{{
+                      user.id
+                    }}/token={{token}}" (click)="goToViewerPage(item.folder)" style="color: blue" target="_blank"><i
+                          class="fa fa-file-pdf-o" aria-hidden="true" style="
+                        font-size: 14px;
+                        margin: 6px;
+                        color: #888787;
+                        margin-left: 20px;
+                      "></i>{{ item.folder.name }}</a></span>
+                  </h4>
+
+                  <!-- start of view model -->
+                  <div id="view{{ i }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <!-- Modal content-->
+                      <div class="modal-content cdr-copy-files text-left">
+                        <div class="modal-header">
+                          <h5 class="modal-title cdr-copy-title">View FAQ</h5>
+                          <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Question<br />
+                          <div>
+                            <textarea class="form-group" name="reply" [(ngModel)]="item.question" cols="5" rows="5"
+                              style="width: 100%" [readonly]="true"></textarea>
+                          </div>
+                          Answer<br />
+                          <div>
+                            <textarea class="form-group" name="reply" [(ngModel)]="item.answer" cols="5" rows="5"
+                              style="width: 100%" [readonly]="true"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end of view model -->
+
+                  <!-- start of Delete model -->
+                  <div id="delete{{ i }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <!-- Modal content-->
+                      <div class="modal-content cdr-copy-files text-left">
+                        <div class="modal-header">
+                          <h5 class="modal-title cdr-copy-title">
+                            Delete FAQ Confirmation
+                          </h5>
+                          <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="alert alert-danger">
+                            Are you sure you wish to delete the FAQ?
+                          </div>
+                        </div>
+                        <div class="modal-footer cdr-delete-footer">
+                          <div>
+                            <form [formGroup]="deleteForm">
+                              Type 'delete' to Confirm
+                              <input type="text" class="cdr-delete-input" formControlName="delete"
+                                (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                              <br>
+                              <button type="button" [disabled]="is_disabled_delete_button == false" data-dismiss="modal"
+                                class="btn btn-primary" [disabled]="!deleteForm.valid" (click)="deleteFaq(item)">
+                                Confirm Delete
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end of Delete model -->
+
+                  <!-- start of Edit model -->
+                  <div id="edit{{ i }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <!-- Modal content-->
+                      <div class="modal-content cdr-copy-files text-left">
+                        <div class="modal-header">
+                          <h5 class="modal-title cdr-copy-title">Edit FAQ</h5>
+                          <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Edit Question<br />
+                          <div>
+                            <textarea class="form-group" name="reply" [(ngModel)]="item.question" cols="5" rows="5"
+                              style="width: 100%"></textarea>
+                          </div>
+                          Edit Answer<br />
+                          <div>
+                            <textarea class="form-group" name="reply" [(ngModel)]="item.answer" cols="5" rows="5"
+                              style="width: 100%"></textarea>
+                          </div>
+                          <div class="form-group mt-2" *ngIf="item.folder !== null">
+                            <label>Select File</label>
+                            <select [(ngModel)]="item.folder" class="form-control" style="width: 100%"
+                              *ngIf="item.folder !== null" name="dataroom_file" (change)="itemChange($event, item)">
+                              <option [value]="fi?.id" *ngFor="let fi of files">
+                                {{ fi.name }}
+                              </option>
+                            </select>
+                          </div>
+
+                          <div class="checkbox" *ngIf="
+                          item.folder !== null && item?.folder?.name !== null
+                        ">
+                            <label>
+                              <mat-checkbox class="cdr-checkbt" type="checkbox" [(ngModel)]="item.file_flag"
+                                name="selectAll" [checked]="toggle" (change)="test(item)">
+                              </mat-checkbox>
+
+                              <span class="check">
+                                &nbsp;
+                                {{ item.folder.name }}
+                              </span>
+                            </label>
+                          </div>
+
+                          <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="EditFaq(item)"
+                            style="float: right">
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end of Edit model -->
+                  <br />
+                </mat-list-item>
+              </mat-list>
+
+              <mat-divider></mat-divider>
+            </div>
+            <hr />
+
+            <!-- Add an tree menu -->
+            <!-- End of tree -->
+          </mat-card>
+        </div>
+      </div>
+
+      <ng-template #primary_users_disclaimer_status_else>
+        No FAQ Available
+      </ng-template>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3" *ngIf="user!=null">
+        <!--rt aside component start-->
+        <div class="cdr-rt-sidebar">
+          <mat-card class="rounded mb-10 p-0">
+            <div class="data-usages" *ngIf="analytics !== null ">
+              <div class="box" *ngIf="user.member.is_la_user || user.member.is_dataroom_admin">
+                <h3>
+                  Total Questions<span (click)="getAllQuestions()">{{
+                    analytics.total_questions !== "undefined"
+                    ? analytics.total_questions
+                    : ""
+                    }}</span>
+                </h3>
+              </div>
+              <div class="box">
+                <h3>
+                  Answered<span>{{ analytics.answered }}</span>
+                </h3>
+              </div>
+              <div class="box">
+                <h3>
+                  Pending<span>{{ analytics.pending }}</span>
+                </h3>
+              </div>
+              <!-- <div class="box">
+                  <h3>FAQ<span >500</span></h3>
+                </div> -->
+            </div>
+          </mat-card>
+          <a *ngIf="user?.member?.is_la_user || user?.member?.is_dataroom_admin">
+            <span matTooltip="Q&A with category is disabled" [matTooltipDisabled]="features?.qa_with_cat">
+              <button [class.disabled]="!features?.qa_with_cat ? true : null" [disabled]="features?.qa_with_cat==false"
+                mat-raised-button class="cdr-btn big-btn blue-btn" type="button"
+                style="width: 100%; margin-bottom: 15px" (click)="manageCategories()">
+                Manage Categories
+              </button>
+            </span>
+          </a>
+
+          <mat-card class="rounded mb-10 p-0">
+            <ul class="al-doc-opt cat-sec" *ngIf="categories_list">
+              <li><a class="all-doc-act">Categories</a></li>
+              <div class="cat-sec-padd" *ngIf="categories_list.length > 0; else categories_list11">
+                <div class="cat-sec-list" *ngFor="let categories of categories_list; let i = index">
+                  <label><input type="checkbox" name="checked" [(ngModel)]="categories.checked"
+                      (change)="Categorieschanged($event, i)" [value]="categories.id" /><span>{{
+                      categories.categories_name }}</span></label>
+                  <br />
+                </div>
+
+                <div class="cat-sec-list">
+                  <label *ngIf="
+                      user.member.is_la_user || user.member.is_dataroom_admin
+                    "><input type="checkbox" name="checked" (change)="Categorieschanged($event, i)" value="-1"
+                      [(ngModel)]="assigned" /><span>Assigned to me</span> </label><br />
+                </div>
+                <div class="cat-sec-list">
+                  <label *ngIf="
+                      user.member.is_la_user || user.member.is_dataroom_admin
+                    ">
+                    <input type="checkbox" name="checked" (change)="Categorieschanged($event, i)" value="0"
+                      [(ngModel)]="replied" /><span>Replied to</span>
+                  </label>
+                </div>
+              </div>
+              <ng-template #categories_list11> </ng-template>
+            </ul>
+          </mat-card>
+        </div>
+        <!--rt aside component end-->
+      </div>
+
+      <div id="add_to_faq" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content cdr-delete-files">
+            <div class="modal-header">
+              <h4 class="modal-title cdr-delete-title">Add To FAQ</h4>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-danger">
+                Remove any sensitive information. Conversation will be visible
+                to all dataroom members with access to this file
+              </div>
+
+              <form [formGroup]="faqForm">
+                Question<br />
+                <div>
+                  <textarea class="form-group" name="reply" [(ngModel)]="question_data.question" cols="5" rows="5"
+                    placeholder="Enter your Question" formControlName="question" name="question"
+                    style="width: 100%"></textarea>
+                </div>
+
+                Answer<br />
+
+                <div>
+                  <textarea class="form-group" name="reply" [(ngModel)]="question_data.answer" formControlName="answer"
+                    placeholder="Enter your Answer" name="answer" cols="5" rows="5" style="width: 100%"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>Select File</label>
+                  <input class="form-control" matInput placeholder="" [matAutocomplete]="auto" placeholder="Search File"
+                    (keyup)="getFilesOnSearch($event)" formControlName="dataroom_file" [(ngModel)]="folderName" />
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getFileName($event.option.value)">
+                    <mat-option *ngFor="let item of fileList" [value]="item" >
+                      <span>{{ item.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+
+                <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="AddToFaq(question_data)"
+                  style="float: right" [disabled]="
+                    question_data.question === '' || question_data.answer === ''">
+                  Create FAQ
+                </button>
+              </form>
+            </div>
+            <div class="modal-footer cdr-delete-footer">
+              <!-- <div style="width: 100%;"> -->
+            </div>
+          </div>
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

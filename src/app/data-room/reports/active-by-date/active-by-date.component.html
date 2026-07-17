@@ -1,0 +1,120 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1" 
+      (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE916;</i>
+              <span class="t-text">Activity by Date Report</span>
+            </div>
+            <button class="icon-btn" (click)="downloadStatus()">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text">Export</span>
+            </button>
+          </div>
+
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="slt-pre">
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Frompicker" placeholder="From Date" [(ngModel)]="from_date"
+                    [max]="maxDate" [min]="minDate" name="from_date" 
+                    (dateChange)="changeDateWise($event.value, to_date)" />
+                  <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Frompicker></mat-datepicker>
+                </div>
+                &nbsp;
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Topicker" placeholder="To Date" [(ngModel)]="to_date" name="to_date"
+                    [max]="maxDate" [min]="minDate" 
+                    (dateChange)="changeDateWise(from_date, $event.value)" />
+                  <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Topicker></mat-datepicker>
+                </div>
+              </div>
+              <!--             <button mat-raised-button class="cdr-btn big-btn blue-btn mbtn" type="button">Download report</button> -->
+            </div>
+          </div>
+
+          <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+          </mat-progress-spinner>
+          <div *ngIf="!show_spinner" class="table-content">
+            <div class="d-flex flex-row" style="align-items: center; justify-content: center">
+              <a tabindex="0" aria-label="Next page" style="padding-right: 40px" class="ng-star-inserted"
+                (click)="changePage(0)">
+                << <span class="show-for-sr"> Previous</span>
+              </a>
+              <a tabindex="0" aria-label="Next page" class="ng-star-inserted" (click)="changePage(1)">
+                Next
+                <span class="show-for-sr">>></span></a>
+            </div>
+
+            <table class="table dl-table filesh-tbl" *ngIf="count_change == 0">
+              <tr>
+                <th>Date</th>
+                <th>Data Room Views</th>
+                <th>Documents Viewed</th>
+                <!-- <th>Documents Printed</th> -->
+                <th>Documents Downloaded</th>
+              </tr>
+              <tr *ngFor="let item of data">
+                <td>{{ item.date  | date: 'dd-MM-yyyy' : usertimezone['time_zone__offset'] }}  {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</td>
+                <td>{{ item.dataroom_views }}</td>
+                <td>{{ item.documents_view }}</td>
+                <!-- <td>{{ item.documents_print }}</td> -->
+                <td>{{ item.documents_download }}</td>
+              </tr>
+              
+            </table>
+            <table class="table dl-table filesh-tbl" *ngIf="count_change == 1">
+              <tr>
+                <th>Date</th>
+
+                <th>Documents Moved</th>
+                <th>Documents Copied</th>
+                <th>Documents Doculink</th>
+                <th>Documents Deleted</th>
+              </tr>
+              <tr *ngFor="let item of data">
+                <td>{{ item.date }}</td>
+
+                <td>{{ item.Move_activity_count }}</td>
+                <td>{{ item.Copy_activity_count }}</td>
+                <td>{{ item.Drm_activity_count }}</td>
+                <td>{{ item.Delete_activity_count }}</td>
+              </tr>
+              
+            </table>
+
+            <span *ngIf="dataSize && dataSize == 0">Report data not available.</span>
+
+            <div class="d-flex flex-row" style="align-items: center; justify-content: center">
+              <a tabindex="0" aria-label="Next page" class="ng-star-inserted" style="padding-right: 40px"
+                (click)="changePage(0)">
+                << <span class="show-for-sr"> Previous</span>
+              </a>
+              <a tabindex="0" aria-label="Next page" class="ng-star-inserted" (click)="changePage(1)">
+                Next
+                <span class="show-for-sr">>></span></a>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

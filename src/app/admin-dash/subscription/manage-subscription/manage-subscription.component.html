@@ -1,0 +1,409 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch" *ngIf="user != null">
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user"> </app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass" *ngIf="user.id !== ''">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+            <span routerLink="{{ website_url }}/pay-now/{{ user.id }}/{{
+                subscription.team_id
+              }}/">Manage Subscription
+              <span class="no-dr">
+                <!-- (20) -->
+              </span></span>
+            <span fxFlex>
+              <button class="cdr-btn big-btn blue-btn mat-raised-button sub-exp" routerLink="/subscription">
+                All Subscriptions
+              </button>
+              <button class="cdr-btn big-btn blue-btn mat-raised-button sub-exp" (click)="goToBillingHistory()">
+                Billing History
+              </button>
+            </span>
+          </mat-toolbar>
+          <mat-card>
+            <div class="row subs-blk">
+              <div class="col-lg-4">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6>Subscription Status</h6>
+                      <span class="text-primary"
+                        *ngIf="subscription.dataroom?.is_expired == false && subscription.dataroom?.addon_payment_overdue == false && subscription.dataroom?.plan_payment_overdue == false && subscription.dataroom?.is_paid == true">
+                        Active
+                      </span>
+                      <span class="text-warning"
+                        *ngIf="subscription.dataroom?.is_expired == false && subscription.dataroom?.addon_payment_overdue == true">
+                        Active - Payment Overdue
+                      </span>
+                      <span class="text-warning"
+                        *ngIf="subscription.dataroom?.trial_expired == true && subscription.dataroom?.is_paid == false && subscription.dataroom?.is_expired == true">
+                        Trial expired
+                      </span>
+                      <span class="text-danger" *ngIf="subscription.dataroom?.plan_payment_overdue == true">Inactive -
+                        Payment
+                        Overdue</span>
+                      <span class="text-danger"
+                        *ngIf="subscription.is_cancelled == true && subscription.cancel_at_monthend == true">Inactive -
+                        Payment Overdue</span>
+              
+                    </td>
+                  </tr>
+                </table>
+                <hr />
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6>Subscribed Plan</h6>
+                      <div class="d-flex">
+                        <p>{{ subscription_new?.plan?.name }}</p>
+                        <p class="ml-1">
+                          <span *ngIf="subscription_new.is_plan_active"><a target="_blank" style="color: #3352ea"
+                              (click)='goToUpgradePlan()'>(Change
+                              Plan)</a></span>
+                          <span *ngIf="!subscription_new.is_plan_active"><a style="color: #3352ea"
+                              (click)="Upgrade()">(Change Plan)</a></span>
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                <hr />
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6>Dataroom Details</h6>
+                      <p class="m-0">
+                        Dataroom Id :
+                        {{ subscription_new?.dataroom?.id }}
+                      </p>
+                      <p class="m-0">
+                        Dataroom Name :
+                        {{ subscription_new?.dataroom?.dataroom_nameFront |limitTo: 25 }}
+                        {{ subscription_new?.dataroom?.dataroom_nameFront?.length > 25 ? '...' : '' }}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+                <hr />
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6>Plan Details</h6>
+                      <p class="m-0">
+                        Date of Activation :
+                        {{
+                        subscription_new?.start_date
+
+                        }}
+                      </p>
+                      <p class="m-0" *ngIf="subscription_new.is_plan_active">
+                        Current billing start date :
+                        {{ subscription_new?.start_date }}
+                      </p>
+                      <p class="m-0" *ngIf="!subscription_new.is_plan_active">
+                        Billing start date :
+                        {{ subscription_new?.start_date }}
+                      </p>
+                      <p class="m-0" *ngIf="subscription_new.is_plan_active">
+                        Expires on :
+                        {{
+                        subscription_new?.end_date
+                        }}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+                <!-- <hr class="mt-3" /> -->
+
+              </div>
+
+              <!-- plan is inactive and cancelled but not expired -->
+              <div class="col-lg-8"
+                *ngIf="subscription_new.dataroom?.is_expired == true && subscription_new.is_plan_active == false && subscription_new.dataroom?.is_deleted == false">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td>
+                      <span *ngIf="subscription_new.is_cancelled == true">Subscription was cancelled on
+                        {{subscription_new.cancel_at | date : 'mediumDate'}}.</span>
+                      <span *ngIf="subscription_new.is_cancelled == false">Subscription was overdued on
+                        {{subscription_new.end_date | date : 'mediumDate'}}.</span>
+                      <span> You can still reactivate this subscription within 14 days</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <div class="btn-grp">
+                        <button class="btn btn-primary mr-1" type="button" (click)="openReactivateSubscriptionDialog()">
+                          Reactivate
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <hr class="mt-3 mb-1" />
+
+                <div>
+                  <div>Important Points:</div>
+                  <ul>
+                    <li>Reactivation can only be done within 14 Days from the date of cancellation.</li>
+                    <li>Post 14 days from the cancellation date, the data room, its data & logs will automatically be
+                      marked for permanent deletion from the data server.</li>
+                    <li>Data room, data & logs once deleted cannot be reinstated under any circumstances.</li>
+                    <li>You will only be able to reactivate this subscription by buying a new plan, after you click on
+                      “Reactivate”.</li>
+                    <li>You will be able to choose any plan of your choice at the time of reactivation.</li>
+                    <li>{{'If the current data room storage is higher than your newly selected plan, storage add on @ $100
+                      per 1 GB per billing month will also be billed on your card.'}}</li>
+                    <li>Once you reactivate, the billing start date & end date will be reset as per the reactivation
+                      date.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- plan is inactive and payment is overdue -->
+              <div class="col-lg-8"
+                *ngIf="subscription_new.dataroom?.is_deleted == false && (subscription_new.dataroom?.plan_payment_overdue == true || subscription_new.dataroom?.addon_payment_overdue == true)">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td>
+                      <span>Due Amount : ${{dueAmount}}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div>Your subscription is currently active but you have a pending payment.</div>
+                      <div>Please click on Pay Now to clear the current outstanding on your account.</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"
+                      *ngIf="subscription_new.dataroom.plan_payment_overdue == true || subscription_new.dataroom.addon_payment_overdue == true">
+                      <div class="btn-grp">
+                        <button class="btn btn-primary mr-1" type="button" (click)="payNow()">
+                          Pay Now
+                        </button>
+                      </div>
+                      <div class="mt-2" *ngIf="paymentStatus == undefined"></div>
+                      <div class="mt-2 text-primary" *ngIf="paymentStatus == 'dvdSuccess'">
+                        Payment Success! Your order for the DVD has been received & you will be contacted shortly by
+                        our support team. Your payment reference number is {{transactionId}}
+                      </div>
+                      <div class="mt-2 text-danger" *ngIf="paymentStatus == 'dvdFail'">
+                        Payment Failed. Your order could not be placed. Kindly try again.
+                      </div>
+                      <div class="mt-2 text-primary" *ngIf="paymentStatus == 'overdueSuccess'">
+                        Payment Success! Payment reference number – {{transactionId}}. It shall be posted on your
+                        account
+                        shortly.
+                      </div>
+                      <div class="mt-2 text-danger" *ngIf="paymentStatus == 'overdueFail'">
+                        Payment Failed. Kindly retry making the payment
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <hr class="mt-3 mb-1" />
+
+                <div>
+                  <div>Important Points:</div>
+                  <ul>
+                    <li>Once you click on Pay Now, you will be redirected to the Third-Party payment gateway to process
+                      the payment.</li>
+                    <li>Your access to the data room will remain restricted until all the dues are paid.</li>
+                    <li>Access to the data room will be completely restricted for all the users incase the payment is
+                      not cleared within 07 days from the payment due date.</li>
+                    <li>If the dues are not cleared within 15 Days from the payment due date, the data room, all data
+                      files & logs will be marked for permanent deletion from the data server.
+                    </li>
+                    <li>Data room, data & logs once deleted cannot be reinstated under any circumstances.</li>
+                    <li>You will be able to choose any plan of your choice at the time of reactivation.</li>
+                    <li>{{'If the current data room storage is higher than your newly selected plan, storage add on  @ $100
+                      per 1 GB per billing month will also be billed on your card.'}}</li>
+                    <li>Once you reactivate, the billing start date & end date will be reset as per the reactivation
+                      date.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- plan has expired -->
+              <div class="col-lg-8"
+                *ngIf="subscription_new.is_expired == true && subscription_new.is_plan_active == false && subscription_new.dataroom.is_deleted == true">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td>
+                      <div *ngIf="subscription_new.is_cancelled == true">Subscription was cancelled on
+                        {{subscription_new.cancel_at | date : 'mediumDate'}}.</div>
+                      <div *ngIf="subscription_new.is_cancelled == false">Subscription was overdued on
+                        {{subscription_new.end_date | date : 'mediumDate'}}.</div>
+                      <div>Dataroom was deleted on {{subscription_new.dataroom.delete_at | date : 'mediumDate'}}.</div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- plan is active and not cancelled or expired -->
+              <div class="col-lg-8"
+                *ngIf="subscription_new.is_expired == false && subscription_new.is_plan_active == true">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6 class="mt-2">Auto&nbsp;Renewal&nbsp;Date</h6>
+                      <p class="m-0">
+                        {{ subscription_new?.auto_renewal_date }}
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" *ngIf="subscription_new.dataroom.is_paid == true">
+                      <div class="btn-grp">
+                        <div style="margin-bottom: 12px;">
+                          <div *ngIf="subscription_new.is_plan_active && !subscription_new.cancel_at_monthend"
+                            (click)="openAutoRenewDialog($event)">
+                            <span class="cdr-badge live-badge" style="cursor: pointer; width: 24px;">
+                              <i class="fa fa-circle-o"></i>
+                            </span>
+                            <span style="cursor: pointer;">
+                              Auto renew On
+                            </span>
+                          </div>
+                          <div *ngIf="subscription_new.is_plan_active && subscription_new.cancel_at_monthend"
+                            (click)="openAutoRenewDialog($event)">
+                            <span class="cdr-badge hold-badge" style="cursor: pointer; width: 24px;">
+                              <i class="fa fa-circle-o"></i>
+                            </span>
+                            <span style="cursor: pointer;">
+                              Auto renew Off
+                            </span>
+                          </div>
+                        </div>
+                        <button class="btn btn-primary mr-1" *ngIf="subscription_new.is_plan_active" type="button"
+                          (click)="openCancelSubscriptionDialog()">
+                          Instantly Cancel
+                        </button>
+                        <button class="btn btn-primary mr-1" *ngIf="!subscription_new.is_plan_active" type="button"
+                          (click)="openReactivateSubscriptionDialog()">
+                          Reactivate
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+
+                <hr class="mt-3 mb-1" />
+                <table border="0" cellpadding="0" cellspacing="0" width="100%"
+                  *ngIf="subscription_new.dataroom.is_expired == false">
+                  <tr>
+                    <td align="left" valign="top">
+                      <h6 class="mt-2">Order a Data DVD</h6>
+                      <form class="form-horizontal pb-3" [formGroup]="dataDVDForm"
+                        (ngSubmit)="DATADvdFunction(subscriptionId, dataDVDForm)">
+                        <div class="d-flex align-items-center">
+                          <span>Quantity :</span>
+                          <input type="number" min="1" class="form-control ml-2" style="width: 100px;"
+                            value="{{ dvd_quantity || 0}}" [(ngModel)]="dvd_quantity" formControlName="dvd_quantity"
+                            placeholder="Qty" required />
+                        </div>
+                        <div class="mt-2">
+                          <span>Total Fee :</span>
+                          <span class="ml-2">
+                            ${{dvd_quantity * dvdAmount}}
+                          </span>
+                        </div>
+                        <div class="agree-chk mb-2">
+                          <mat-checkbox class="agree-chk" (change)="checkCheckBoxvalue($event)">
+                            <span>Agree to Terms of<a href="https://docullyvdr.com/terms-of-use.html#bills"
+                                class="link-yellow"> Billing & Refund Policy</a></span>
+                          </mat-checkbox>
+                        </div>
+
+                        <button [disabled]="!showbuy" class="btn btn-primary" type="submit">
+                          Pay Now
+                        </button>
+
+                        <div class="mt-2" *ngIf="paymentStatus == undefined">
+                          Once you click on Pay Now, you will be redirected to the Third-Party payment gateway
+                          to process the payment and will be charged in equivalent AED (UAE-Dirhams)
+                        </div>
+                        <div class="mt-2 text-primary" *ngIf="paymentStatus == 'dvdSuccess'">
+                          Payment Success! Your order for the DVD has been received & you will be contacted shortly by
+                          our support team. Your payment reference number is {{transactionId}}
+                        </div>
+                        <div class="mt-2 text-danger" *ngIf="paymentStatus == 'dvdFail'">
+                          Payment Failed. Your order could not be placed. Kindly try again.
+                        </div>
+                        <div class="mt-2 text-primary" *ngIf="paymentStatus == 'overdueSuccess'">
+                          Payment Success! Payment reference number – {{transactionId}}. It shall be posted on your
+                          account
+                          shortly.
+                        </div>
+                        <div class="mt-2 text-danger" *ngIf="paymentStatus == 'overdueFail'">
+                          Payment Failed. Kindly retry making the payment
+                        </div>
+                      </form>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </mat-card>
+        </mat-card>
+      </div>
+      <!--rt aside component start-->
+      <!--rt aside component end-->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->
+
+<div class="modal fade" id="addOn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Buy Addon</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+
+      <div class="modal-body cr-n-dr edrnl">
+        <table class="table dl-table txt-lf" cellpadding="0" cellspacing="0" border="0">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Subscription Name</th>
+              <th>Details</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of addOn; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ a.addon }}</td>
+              <td>
+                <input type="number" #space (change)="addInTotal(a.quantity, a.price, i, addonkey)"
+                  [(ngModel)]="a.quantity" placeholder="1GB" class="custom-select mr-sm-2" />
+              </td>
+              <td>${{ a.total }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="saveAddOn(addOn)">
+          Buy Add Ons
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

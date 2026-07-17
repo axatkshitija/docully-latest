@@ -1,0 +1,54 @@
+.hidden-input-calendar {
+    padding: 0px;
+    width: 45px;
+    border: none;
+}
+
+.hidden-input-calendar:focus {
+    padding: 0px;
+    border: none;
+    box-shadow: none;
+}
+
+i.fa.fa-check-circle {
+    color: blue;
+    cursor: pointer;
+}
+
+div.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.4;
+  }
+  
+
+
+i.fa.fa-ban {
+    color: red;
+    cursor: pointer;
+}
+
+.table-thead .usr-table-list {
+    padding: 10px 0px !important;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.addedNewClassTOPCL .pcl-list {
+    flex-basis: 220px;
+    padding: 0 20px 0 0px;
+}
+.tree-children
+{
+    padding-left: 0px !important;
+}
+
+.pcl-list {
+    flex-basis: 225px !important;
+    padding: 0 !important;
+}
+
+.mat-tab-label
+  {
+    padding: 0px 5px !important;
+    min-width: 140px !important;
+  }

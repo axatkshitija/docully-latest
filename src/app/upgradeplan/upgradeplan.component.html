@@ -1,0 +1,184 @@
+<app-header></app-header>
+<section id="loginFormBx" class="d-flex flex-column">
+  <div class="container" style="margin-top: 100px;">
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10 billing-plan">
+        <div class="choose-plan">
+          <a [routerLink]="['/']" style="margin-bottom: 20px">
+            <img  style="margin-left: 45%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+          </a>
+          <div class="choose-plan">
+            <h4 class="text-center mb-10 mt-10" style="margin:25px 0;font-size:22px" *ngIf="currentplan">You may choose to upgrade or
+              downgrade your plan from here.</h4>
+              <h4 class="text-center mb-10 mt-10" style="margin:25px 0;font-size:22px" *ngIf="!currentplan">You may choose to reactivate your plan from here.</h4>
+            <div *ngIf="currentplan">
+              <p><b>Hello, {{currentplan.customer_name}} </b></p>
+              <p><b>Dataroom Name:</b> {{ currentplan?.dataroom.dataroom_nameFront }}</p>
+              <p><b>Dataroom Id:</b> {{ currentplan?.dataroom.dataroom_id }}</p>
+            </div>
+            <div class="row justify-content-center mt-5 mb-2">
+              <div *ngFor="let plan of plans;let last=last;" class="col-md-6 col-6 col-lg-3">
+                <div *ngIf='currentplan && plan.id === currentplan.plan.id'
+                  style="margin-top: -25px;font-size:15px;background:blue;color:white;width:100%;height:24px;border-radius: 5px 5px 0 0;text-align: center;">
+                  Current Plan</div>
+
+                <div class="plan-price mb-3" *ngIf="currentplan">
+                  <div class="plan-widget" [ngClass]="{ selected: plan.id == selectedItem }"
+                    (click)="plan.id != currentplan.plan.id?AddPlan(plan.id):false">
+
+                    <h6>{{ plan.name }}</h6>
+                    <div class="plan-price-inner mb-2 mt-2"
+                      *ngIf="!(plan.cost ===1200 || plan.cost===3600 || plan.cost===300 || plan.cost===100000)">${{
+                      plan.cost
+                      }}</div>
+  
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost===100000" style="font-size: 80%;"> Custom
+                    </div>
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==1200 || plan.cost==300 ">${{ plan.cost/3 }}
+                    </div>
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==3600">${{ plan.cost/12 }}</div>
+                    <span *ngIf="plan.cost!=100000">
+                      <p>{{plan.cost===0? "":"per month"}}</p>
+                      <hr />
+                      <p>{{ plan.storage == 1000 ?"Unlimited Storage": plan.storage + "GB" }}</p>
+                      <!-- <p>{{ plan.users }} Users</p> -->
+                      <p>{{ plan.cost==0?"Duration " +plan.term:"Billed " + plan.term }}</p>
+  
+                    </span>
+  
+                    <span *ngIf="plan.cost===100000">
+                      <p>We are here for any Custom requirements you may have.</p>
+  
+                    </span>
+                  </div>
+                </div>
+
+                <div class="plan-price mb-3" *ngIf="!currentplan">
+                  <div class="plan-widget" [ngClass]="{ selected: plan.id == selectedItem }"
+                    (click)="AddPlan(plan.id)">
+
+                    <h6>{{ plan.name }}</h6>
+                    <div class="plan-price-inner mb-2 mt-2"
+                      *ngIf="!(plan.cost ===1200 || plan.cost===3600 || plan.cost===300 || plan.cost===100000)">${{
+                      plan.cost
+                      }}</div>
+  
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost===100000" style="font-size: 80%;"> Custom
+                    </div>
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==1200 || plan.cost==300 ">${{ plan.cost/3 }}
+                    </div>
+                    <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==3600">${{ plan.cost/12 }}</div>
+                    <span *ngIf="plan.cost!=100000">
+                      <p>{{plan.cost===0? "":"per month"}}</p>
+                      <hr />
+                      <p>{{ plan.storage == 1000 ?"Unlimited Storage": plan.storage + "GB" }}</p>
+                      <!-- <p>{{ plan.users }} Users</p> -->
+                      <p>{{ plan.cost==0?"Duration " +plan.term:"Billed " + plan.term }}</p>
+  
+                    </span>
+  
+                    <span *ngIf="plan.cost===100000">
+                      <p>We are here for any Custom requirements you may have.</p>
+  
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="btm">
+              <!-- <h5 class="text-center">Your Price Plan</h5> -->
+              <div class="row text-center" style="margin:0 10%;">
+                <p style="text-align:left"><b>Notes:</b></p>
+                <ul style="text-align:left;list-style-type: disc;">
+
+                  <li>Once you upgrade or downgrade the plan, you will be routed to a third party payment gateway to
+                    process the payment.</li>
+
+                  <li>On successful payment, your new plan will be in effect from the current date and will be valid as
+                    per the new plans included term.
+                  </li>
+
+                  <li>You will loose any unused validity of your existing plan.</li>
+
+                  <li>If you choose to downgrade your plan to Mini plan & your existing storage is more than 01 GB, you
+                    will be separately charged for the additional storage @ $100 per GB per Month.
+                  </li>
+
+                  <li>
+                    You will be charged in AED on the payment gateway.
+                  </li>
+                </ul>
+
+              </div>
+
+
+            </div>
+
+            <!-- <div class="text-center" style="width: 200px; margin:20px auto" *ngIf="!currentplan && singleplandata.length !=0">
+              <input class="form-control" name="text" placeholder="Dataroom Name" [(ngModel)]="item.dataroom_name"
+                required>
+            </div> -->
+
+            <div class="next text-center">
+              <div class="buttns pt-4">
+                <button class="createPW-submit mat-raised-button" (click)="goBack()" mat-raised-button>
+                  <span class="mat-button-wrapper">Back</span></button>
+
+                <!-- <button class="createPW-submit mat-raised-button" *ngIf="showcost && singleplandata" style="cursor: default !important" mat-raised-button>
+                  <span *ngFor="let singleplan of singleplandata" class="mat-button-wrapper">New Plan : {{
+                    singleplan.name }}, Total : {{ singleplan.cost }} USD</span></button>
+
+                <button *ngFor="let singleplan of singleplandata" class="createPW-submit mat-raised-button"
+                  (click)="billingpage(singleplan.id)" mat-raised-button>
+                  <span *ngIf="showcost && singleplandata" class="mat-button-wrapper">PAY NOW</span>
+                </button> -->
+                <button type="submit" class="createPW-submit mat-raised-button" *ngIf="singleplandata.length !=0" (click)="billingpage(8)"  mat-raised-button>
+                  <span  class="mat-button-wrapper">Go</span>
+                </button>
+
+              </div>
+              <div class="mat-button-focus-overlay"></div>
+            </div>
+          </div>
+
+          <div class="col-md-2"></div>
+
+
+          <div class="row d-flex content-justify-center" *ngIf="plans && plans.length == 0">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 billing-plan text-center">
+              <div>
+                <h6>You are already on the highest plan,</h6>
+              </div>
+              <div>
+                <h6>Please reach out to sales team</h6>
+              </div>
+              <div>
+                <h6>sales@docully.com for a higher custom plan</h6>
+              </div>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+
+
+
+
+        </div>
+      </div>
+
+      <div class="col-md-1"></div>
+    </div>
+  </div>
+
+
+</section>

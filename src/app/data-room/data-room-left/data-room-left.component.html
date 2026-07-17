@@ -1,0 +1,321 @@
+<!--lf aside component start-->
+<aside class="cdr-lf-sidebar" *ngIf="dataroom_detail && user">
+  <div class="show-as" *ngIf="user.member.is_dataroom_admin || (user.member.is_la_user && perm.is_overview)">
+    <span class="ds">Data Room Stage:</span> Hold
+
+    <img class="img-fluid-stage" src="assets/images/off.png" *ngIf="!dataroom_detail.is_dataroom_on_live"
+      data-toggle="modal" data-target="#changeDataRoomStatus" data-backdrop="static" data-keyboard="false" />
+    <img class="img-fluid-stage" src="assets/images/on.png" *ngIf="dataroom_detail.is_dataroom_on_live"
+      data-toggle="modal" data-target="#changeDataRoomStatus" data-backdrop="static" data-keyboard="false" />
+
+    Live
+  </div>
+
+  <div class="main-buttons">
+    <button mat-fab class="nor-btn" routerLink="/dashboard">
+      <i class="fa fa-home"></i>
+    </button>
+    <button mat-fab class="nor-btn hs-notify" routerLink="/new-message">
+      <i class="fa fa-envelope-o"></i>
+      <span class="notify msg-value">{{ msg_count }}
+        <div class="notify-point">
+          <span class="heartbit" style="border-color:#3453eb"></span>
+          <span class="point"></span>
+        </div>
+      </span>
+    </button>
+    <button mat-fab class="nor-btn" routerLink="/notifications">
+      <i class="fa fa-bell-o"></i>
+      <span class="notify bell-value">{{ notification_count }}
+        <div class="notify-point">
+          <span class="heartbit" style="border-color:#cbb26a"></span>
+          <span class="point"></span>
+        </div>
+      </span>
+    </button>
+  </div>
+
+  <div class="dataroom-name">
+    <mat-card class="rounded p-0">
+      <mat-toolbar class="dr-lf-title" style="min-height: 65px;text-align: center;">
+        <span class="dataroom-lp-name">{{
+          dataroomname != undefined ? dataroomname : ''
+          }}</span>
+        <button class="edit-btn" data-toggle="modal" data-target="#editDrLogoName" data-backdrop="static"
+          data-keyboard="false" *ngIf="user.member.is_dataroom_admin || (user.member.is_la_user && perm.is_overview)">
+          <i class="material-icons cdr-bic">&#xE254;</i>
+        </button>
+      </mat-toolbar>
+      <div class="dataroom-logo">
+        <img src="{{ dataroom_detail.dataroom_logo }}" class="img-fluid" />
+      </div>
+      <div class="upgrade-account" *ngIf="upgrade_msg">
+        <span>{{ upgrade_msg }}</span>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="dataroom-nav" *ngIf="perm">
+    <mat-card class="rounded p-0">
+      <ul class="cdr-nav">
+        <li *ngIf="perm.is_overview">
+          <a routerLink="/overview" routerLinkActive="active">
+            <i class="fa fa-dot-circle-o"></i> Overview
+          </a>
+        </li>
+        <li *ngIf="perm.is_edit_index">
+          <a routerLink="/documents" routerLinkActive="active"><i class="fa fa-dot-circle-o"></i> Documents</a>
+        </li>
+        <li *ngIf="perm.is_users_and_permission">
+          <a routerLink="/user-and-permissions" routerLinkActive="active"><i class="fa fa-dot-circle-o"></i> Users &
+            Permissions</a>
+        </li>
+        <li *ngIf="perm.is_updates">
+          <span matTooltip="Updates is disabled" [matTooltipDisabled]="features?.proj_updates">
+          <a routerLink="/update-doc" routerLinkActive="active"
+            [class.disabled]="!features?.proj_updates ? true : null"><i class="fa fa-dot-circle-o"></i> Updates</a>
+            </span>
+        </li>
+        <li *ngIf="perm.is_q_and_a">
+          <a routerLink="/qa-user" routerLinkActive="active"><i class="fa fa-dot-circle-o"></i> Q&A</a>
+        </li>
+        <li *ngIf="perm.is_voting">
+          <span matTooltip="Voting is disabled" [matTooltipDisabled]="features?.voting_perm">
+          <a routerLink="/voting" [class.disabled]="!features?.voting_perm ? true : null" routerLinkActive="active"><i
+              class="fa fa-dot-circle-o"></i> Voting</a>
+              </span>
+        </li>
+        <li *ngIf="perm.is_reports">
+          <a routerLink="/report-overview" routerLinkActive="active"><i class="fa fa-dot-circle-o"></i> Reports</a>
+        </li>
+      </ul>
+    </mat-card>
+  </div>
+
+  <div class="dataroom-contact">
+    <mat-card class="rounded p-0">
+      <mat-toolbar class="dr-lf-title contact-title" (click)="goToDataroomContactPage()"
+        *ngIf="user.member.is_dataroom_admin || user.member.is_la_user">
+        <span>Primary Contact</span>
+        <button class="edit-btn" *ngIf="perm?.is_users_and_permission">
+          <i class="material-icons cdr-bic">&#xE254;</i>
+        </button>
+      </mat-toolbar>
+      <mat-toolbar class="dr-lf-title contact-title" *ngIf="!user.member.is_dataroom_admin && !user.member.is_la_user">
+        <span>Primary Contact</span>
+      </mat-toolbar>
+
+      <div class="dr-contact-list">
+        <div *ngFor="let primary_user of primary_users; let i = index">
+          <div class="contact-li-item">
+            <div class="con-pic">
+
+                <img onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'"
+                [src]="
+                  primary_user.member.avatar" class="img-fluid"
+                alt="" />
+
+            </div>
+            <div class="con-details">
+              <p class="con-title">{{ primary_user.member.first_name }}</p>
+            </div>
+            <ng-template #elsePart>
+              <div class="con-details">
+                <div class="con-title"></div>
+              </div>
+            </ng-template>
+            <button title="Send Message" data-toggle="modal"
+              [attr.data-target]="'#sendMessage' + primary_user.member.id" data-target="">
+              <i class="fa fa-envelope" aria-hidden="true"></i>
+            </button>
+          </div>
+          <!-- start of copy model -->
+          <div id="sendMessage{{ primary_user.member.id }}" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content cdr-copy-files text-left">
+                <div class="modal-header">
+                  <h5 class="modal-title cdr-copy-title">Send Message</h5>
+                  <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input style="margin-bottom: 12px; width: 100%;" type="text" placeholder="Subject"
+                    [(ngModel)]="update.subject" name="subject" specialIsAlphaNumeric>
+                  <textarea class="form-control" placeholder="Type message" [(ngModel)]="update.message"
+                    name="message"></textarea>
+      
+                </div>
+                <div class="modal-footer cdr-copy-footer">
+                  <div>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                      (click)="getUserBy(primary_user.member)">
+                      Send
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end of copy model -->
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="user-support-list">
+    <div class="add-new-contact">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <button mat-button class="us-btn" (click)="location()" style="height: 50px !important;   padding: 0 12px 0 0px !important;">
+          <i class="material-icons icon-are">&#xE8FD;</i>Help Desk
+        </button>
+      </mat-card>
+    </div>
+  </div>
+</aside>
+
+<div class="modal fade" id="editDrLogoName" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Edit Data Room Name and Logo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl">
+        <form>
+          <div *ngIf="dataroom_detail">
+            <div class="form-group"></div>
+            <div class="form-group">
+              <label for="">Data Room Name</label>
+              <input type="text" class="form-control" placeholder="Google.com"
+                [(ngModel)]="dataroom_detail.dataroom_nameFront" name="dataroom_name" required minlength="3"
+                maxlength="100" #dataroom_name="ngModel" (change)="ChangeDataroomName()" />
+
+              <div *ngIf="
+                  dataroom_name.errors &&
+                  (dataroom_name.dirty || dataroom_name.touched)
+                " class="alert alert-danger">
+                <div [hidden]="!dataroom_name.errors.required">
+                  Data Room Name is required!
+                </div>
+                <div [hidden]="!dataroom_name.errors.minlength">
+                  Dataroom must be at least 3 characters long.
+                </div>
+                <div [hidden]="!dataroom_name.errors.maxlength">
+                  Dataroom cannot be more than 100 characters long.
+                </div>
+              </div>
+            </div>
+
+            <div class="drLogo">
+              <div class="dr-logo-size-fixed" *ngIf="!isUpdateCompanyLogo">
+                <img [src]="dataroom_detail.dataroom_logo" alt="" class="img-fluid" />
+              </div>
+              <div class="dr-logo-size-fixed" *ngIf="isUpdateCompanyLogo">
+                <img [src]="url" alt="" class="img-fluid" />
+              </div>
+            </div>
+            <div class="slide-toggle-block mt-4">
+              <input type="file" accept="image/*" #file class="hideInputTypeFile" (change)="handleFileInput($event)" />
+
+              <span  matTooltip="You cannot change logo" [matTooltipDisabled]="features?.custom_logo">
+              <button mat-raised-button color="primary" [disabled]="!features?.custom_logo" class="blue-text-btn is-icon" (click)="file.click()">
+                <i class="fa fa-edit" aria-hidden="true"></i> Change Logo
+              </button>
+            
+              <button mat-raised-button color="primary"   [disabled]="!features?.custom_logo" class="red-text-btn is-icon m-2"
+                (click)="setDefaultDataroomLogo()">set default dataroom logo
+              </button>
+            </span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Cancel
+              </button>
+              <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button"
+                (click)="updateDataroominformation(dataroom_detail)" data-dismiss="modal">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit dataroom logo and name-->
+<div class="modal fade" id="changeDataRoomStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Edit Data Room Stage</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl" *ngIf="dataroom_detail">
+        <span *ngIf="!dataroom_detail.is_dataroom_on_live">Are you sure you want to enable LIVE STAGE? Data Room will be
+          accessible to all users and all pending invites will be sent.</span>
+        <span *ngIf="dataroom_detail.is_dataroom_on_live">Are you sure you want to enable HOLD STAGE? Data Room will not
+          be
+          accessible to end users during the Hold Stage.</span>
+        <div class="modal-footer">
+          <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button"
+            (click)="updateDataroomStage()" data-dismiss="modal">
+            Yes
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add new call us  -->
+<div class="modal fade" id="callusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5>Call Us On:</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl">
+        <p>
+          Global Support : <a href="tel: +19294192999" target="_blank">+1 (929) 419 2999</a>
+        </p>
+        <p>
+          UAE: <a href="tel: +971561429001" target="_blank">+971 56 142 9001</a>
+        </p>
+
+        <!--         <p>Hong Kong: <a href="tel: +852" target="_blank">+852</a></p>
+        <p>
+          Australia / New Zealand: <a href="tel: +852" target="_blank">+852</a>
+        </p>
+        <p>
+          London:
+          <a href="tel: +44 33 3344 1197" target="_blank">+44 33 3344 1197</a>
+        </p>
+        <p>
+          US:
+          <a href="tel: +1 (929) 9994 333" target="_blank">+1 (929) 9994 333</a>
+        </p>
+        <p>
+          Canada:
+          <a href="tel: +1 (506)-300-3001" target="_blank">+1 (506)-300-3001</a>
+        </p> -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of my team pop up -->

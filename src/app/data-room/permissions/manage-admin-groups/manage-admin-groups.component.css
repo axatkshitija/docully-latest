@@ -1,0 +1,11 @@
+div.disabled {
+  display: none;
+}
+
+
+.containernew {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20% 25% 0 25%;
+}

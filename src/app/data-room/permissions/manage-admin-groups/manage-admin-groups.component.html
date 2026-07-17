@@ -1,0 +1,363 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <!-- left side content -->
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+      </app-data-room-left>
+      <!-- main content -->
+      <div *ngIf="!user?.member?.is_end_user"  fxFlex="84" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card>
+          <div class="row">
+            <div class="col-md-10">
+              <h5>Manage Administrators Group</h5>
+            </div>
+            <div class="col-md-2 text-right">
+              <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="goBack()">
+                Back</a>
+            </div>
+          </div>
+          <mat-tab-group [selectedIndex]="selectedIndex">
+            <mat-tab label="Add New Members">
+              <mat-card>
+                <div>
+                  <mat-horizontal-stepper [linear]="true" #stepper>
+                    <mat-step [stepControl]="firstCreateNewAdmin">
+                      <ng-template matStepLabel>Add New Member</ng-template>
+                      <div class="row pt-20">
+                        <div class="col-md-3">
+                          <div class="addnew_mbr_frm">
+                            <form [formGroup]="memberForm">
+                              <div class="form-group">
+                                <label>Email</label>
+                                <input class="form-control" type="text" name="email" formControlName="email"
+                                  (change)="ChangesByEmail($event.target.value)" />
+                                <small class="alert-danger" [hidden]="memberForm.controls.email.valid">
+                                  Please Enter Valid Email Id
+                                </small>
+                              </div>
+
+                              <div class="form-group">
+                                <label>First Name</label>
+                                <input class="form-control" type="text" name="first_name" maxlength="50"
+                                  formControlName="first_name" />
+                                <div class="alert-danger"
+                                  *ngIf="memberForm.get('first_name').hasError('invalidText') && memberForm.get('first_name').touched">
+                                  Please enter only letters and spaces.
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label>Last Name</label>
+                                <input class="form-control" type="text" maxlength="50" name="last_name"
+                                  formControlName="last_name" />
+                                <div class="alert-danger"
+                                  *ngIf="memberForm.get('last_name').hasError('invalidText') && memberForm.get('last_name').touched">
+                                  Please enter only letters and spaces.
+                                </div>
+                              </div>
+
+                              <button type="button" class="btn btn-primary" style="background-color: #3352ea"
+                                (click)="addNewAdminMember()" [disabled]="!memberForm.valid">
+                                Add Member
+                              </button>
+                            </form>
+                            <div class="or-sap" [class.disabled]="!features?.bulk_users_upload ? true : null">
+                              <hr class="hrOr" />
+                              <span class="spanOr">or</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-9">
+                          <span matTooltip="Contact List is disabled"
+                            [matTooltipDisabled]="features?.bulk_users_upload">
+                            <div class="pcl" [class.disabled]="!features?.bulk_users_upload ? true : null">
+                              <div class="pcl-list">
+                                <h5 style="margin-left: 30px !important;">Contact List</h5>
+                                <mat-list role="list">
+                                  <mat-list-item role="listitem"><a style="color: blue" *ngIf="select">All Contact
+                                    </a><a *ngIf="!select" (click)="ProperSelection(0)">All Contact</a></mat-list-item>
+                                  <mat-list-item role="listitem" *ngFor="let group of all_contacts_groups"><a
+                                      *ngIf="!group.select" (click)="ProperSelection(group.id)">{{ group.group_name
+                                      }}</a><a style="color: blue" *ngIf="group.select">{{ group.group_name
+                                      }}</a></mat-list-item>
+                                </mat-list>
+                              </div>
+                              <div class="select-conatct-list">
+                                <ng-scrollbar visibility="hover" class="scroll-section h-301" style="height: 301px;">
+                                  <mat-list role="list">
+                                    <mat-list-item role="listitem" *ngFor="let contact of all_contacts">
+                                      <mat-checkbox (change)="
+                                        checkNewAdminMember(contact, $event)
+                                      ">{{ contact.first_name }}
+                                        {{ contact.last_name
+                                        }}<div class="emailc" style="font-size: 10px !important;"><i
+                                            class="material-icons" style="font-size: 10px !important;">mail_outline</i>
+                                          {{ contact.email }}</div></mat-checkbox>
+                                    </mat-list-item>
+                                  </mat-list>
+                                </ng-scrollbar>
+                              </div>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div></div>
+
+                    </mat-step>
+                  </mat-horizontal-stepper>
+                </div>
+                <div class="user-per-table">
+                  <table class="table table-striped">
+                    <thead class="user-per-head">
+                      <tr>
+                        <th>Email id</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let member of all_new_admin; let i = index">
+                        <td>{{ member.email }}</td>
+                        <td>{{ member.first_name }}</td>
+                        <td>{{ member.last_name }}</td>
+                        <td>
+                          <span class="action-btn">
+                            <button type="button" matTooltip="Edit" class="ico-btn">
+                              <i class="fa fa-pencil"></i>
+                            </button>
+                            <button type="button" matTooltip="Delete" class="ico-btn" class="ico-btn"
+                              (click)="deleteNeelyAddedAdmin(i)">
+                              <i class="fa fa-trash"></i>
+                            </button>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="w-100 text-center mb-2" *ngIf="all_new_admin.length">
+                  <button type="button" class="btn btn-primary" (click)="addReview()">
+                    Review
+                  </button>
+                </div>
+                <div *ngIf="is_review_added">
+                  <div class="row">
+                    <form [formGroup]="messageForm" class="w-100">
+                      <div class="col-md-12">
+                        <mat-form-field class="cdr-textfile">
+                          <textarea matInput placeholder="Custom Message" formControlName="custom_message"
+                            name="custom_message" matTextareaAutosize matAutosizeMinRows="5" matAutosizeMaxRows="9"
+                            [(ngModel)]="item"></textarea>
+                        </mat-form-field>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="text-center">
+                    <button type="button" class="btn btn-primary" (click)="sendNewMember()">
+                      Send Invitation
+                    </button>
+                  </div>
+                </div>
+              </mat-card>
+            </mat-tab>
+
+            <mat-tab label="Manage Members" (click)="managemerbers()">
+              <mat-card>
+                <div class="row justify-content-between mb-2">
+                  <div class="col-md-12">
+                    <button type="button" (click)="addPrimaryContact($event)" *ngIf="qa_apply"
+                      style="background-color: #3352ea;margin-left: 10px;" class="btn btn-primary float-right">
+                      Apply
+                    </button>
+                    <button type="button" *ngIf="activeButton== 'first' && all_root_admin_selected.length != 0"
+                      class="btn btn-primary float-right" (click)="SendInvitation()">
+                      Send Invitation
+                    </button>
+
+                    <button type="button" *ngIf="activeButton== 'second' && all_root_admin_selected.length != 0"
+                      class="btn btn-danger float-right" data-toggle="modal" data-target="#deleteModel">
+                      Delete Selected
+                    </button>
+                    <button [disabled]="activeButton=='first'" style="margin:0px 20px !important;"
+                      class="btn btn-primary" (click)="setActive('first')">
+                      Invitation
+                    </button>
+
+                    <button [disabled]="activeButton=='second'" class="btn btn-danger" (click)="setActive('second')">
+                      Delete
+                    </button>
+                  </div>
+                  <div id="deleteModel" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <!-- Modal content-->
+                      <div class="modal-content cdr-delete-files">
+                        <div class="modal-header">
+                          <h4 class="modal-title cdr-delete-title">
+                            Delete Members
+                          </h4>
+                          <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="alert alert-danger">
+                            Are you sure you wish to delete selected members
+                            ?
+                          </div>
+                        </div>
+                        <div class="modal-footer cdr-delete-footer">
+                          <div>
+                            <form [formGroup]="deleteForm">
+                              Type 'delete' to Confirm
+                              <input type="text" class="cdr-delete-input" [(ngModel)]="deletes" id="3"
+                                formControlName="delete" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                              <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteBulk()"
+                                [disabled]="
+                                !(deleteForm.valid && delete.value == 'delete')
+                              ">
+                                Confirm Delete
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+                <table class="table table-striped">
+                  <thead class="user-per-head11">
+                    <tr>
+                      <th *ngIf="activeButton!=null">
+                        <form>
+                          <label>
+                            <mat-checkbox class="user-per-check" type="checkbox" *ngIf="activeButton== 'first'"
+                              (change)="onChangeSelectManageMember('first')" name="selectAll"
+                              [(ngModel)]="toggle_manage_member">
+                            </mat-checkbox>
+                            <mat-checkbox class="user-per-check" type="checkbox" *ngIf="activeButton== 'second'"
+                              (change)="onChangeSelectManageMember('second')" name="selectAll"
+                              [(ngModel)]="toggle_manage_member">
+                            </mat-checkbox>
+                          </label>
+                        </form>
+                      </th>
+                      <th>Email Id</th>
+                      <th> Name</th>
+                      <th>Active / Inactive</th>
+                      <th>Resend Invitation</th>
+                      <th>Added By</th>
+                      <th>Primary<br /> Contact</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let member of all_admin_list; let i = index">
+                      <td *ngIf="activeButton== 'first'">
+                        <mat-checkbox [disabled]="member.memberactivestatus" class="user-per-check"
+                          value="{{ member.id }}" [(ngModel)]="member.selected"
+                          (change)="checkIfSelectedManageAdmin($event, member)"></mat-checkbox>
+                      </td>
+                      <td *ngIf="activeButton== 'second'">
+                        <mat-checkbox class="user-per-check" value="{{ member.id }}" [(ngModel)]="member.selected"
+                          [disabled]="member.member.email === user.email"
+                          (change)="checkIfSelectedManageAdmin($event, member)"></mat-checkbox>
+                      </td>
+                      <td>
+                        {{ member.member.email | limitTo: 16}}
+                      </td>
+                      <td>{{ member.member.first_name }} {{ member.member.last_name }}</td>
+                      <td *ngIf="member.member">
+                        <span *ngIf="member.memberactivestatus"> Active </span><span *ngIf="!member.memberactivestatus">
+                          Inactive
+                        </span>
+                      </td>
+
+                      <td *ngIf="member.member">
+                        <button class="admin-user" *ngIf="!member.memberactivestatus"
+                          (click)="resendInvitation(member)">
+                          Resend
+                        </button>
+                        <span *ngIf="member.memberactivestatus">N.A.</span>
+                      </td>
+                      <td *ngIf="member.member_added_by">
+                        {{ member.member_added_by.first_name }}
+                        {{ member.member_added_by.last_name }}
+                      </td>
+
+                      <td>
+                        <mat-checkbox [checked]="true" class="user-per-check" (change)="ClickPrimary($event, i)"
+                          [(ngModel)]="member.is_primary_user" name="is_primary_user"
+                          *ngIf="member.memberactivestatus"></mat-checkbox>
+                        <mat-checkbox [checked]="true" class="user-per-check" [(ngModel)]="member.is_primary_user"
+                          name="is_primary_user" *ngIf="!member.memberactivestatus" [disabled]="true"></mat-checkbox>
+                      </td>
+                      <td>
+                        <span class="action-btn">
+                          <button type="button" class="ico-btn" matTooltip="Delete" mat-menu-item data-toggle="modal"
+                            [attr.data-target]="'#deleteModel' + i"
+                            *ngIf="user.is_superadmin || member.is_dataroom_admin">
+                            <i class="fa fa-trash"></i></button></span>
+                        <div id="deleteModel{{ i }}" class="modal fade" role="dialog">
+                          <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content cdr-delete-files">
+                              <div class="modal-header">
+                                <h4 class="modal-title cdr-delete-title">
+                                  Delete Member
+                                </h4>
+                                <button type="button" class="close" data-dismiss="modal">
+                                  &times;
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="alert alert-danger">
+                                  Are you sure you wish to delete the member
+                                  <strong>{{ member.member.first_name}} {{ member.member.last_name}}
+                                  </strong>?
+                                </div>
+                                <form [formGroup]="deleteForm">
+                                  Type 'delete' to Confirm
+                                  <input type="text" id="1" class="cdr-delete-input form-control"
+                                    formControlName="delete" [(ngModel)]="deletes"
+                                    (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                                </form>
+                              </div>
+                              <div class="modal-footer cdr-delete-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary"
+                                  (click)="removeSelectedElement(member, i)" [disabled]="
+                            !(deleteForm.valid && delete.value == 'delete')">
+                                  Confirm Delete
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+                </table>
+              </mat-card>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-card>
+      </div>
+      <div *ngIf="user?.member?.is_end_user" class="containernew" style="margin-top: 80px;">
+        <mat-card>
+          {{"Your access to this data room is either restricted or not yet defined by the administrator. Please
+          contact the primary contacts of this data room to enable your access. If you need any help please email to
+          support@docullyvdr.com"}}
+        </mat-card>
+      </div>
+      <!-- end of main content -->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

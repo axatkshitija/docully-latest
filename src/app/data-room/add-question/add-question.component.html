@@ -1,0 +1,179 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid" *ngIf="user">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+      ></app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <h1>Add Question</h1>
+            <span fxFlex></span>
+            <div class="cdr-buttons">
+              <a routerLink="/qa-user">
+                <button
+                  mat-raised-button
+                  class="cdr-btn big-btn orange-btn"
+                  data-toggle="modal"
+                  data-target="#createfolder"
+                  data-backdrop="static"
+                  data-keyboard="false"
+                >
+                  Back
+                </button></a
+              >
+            </div>
+          </mat-toolbar>
+          <div class="QA">
+            <form class="form-horizontal" action="/action_page.php">
+              <div class="form-group">
+                <label class="control-label col-sm-5" for="pwd"
+                  >Add your question
+                </label>
+                <div class="col-sm-12">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="pwd"
+                    placeholder="Type your question"
+                    [(ngModel)]="qna.question"
+                    name="question"
+                  />
+                </div>
+                <br />
+                <label class="control-label col-sm-2" for="email"
+                  >Answer :</label
+                >
+                <div class="col-sm-12">
+                  <input
+                    type="text"
+                    class="what-is-dms"
+                    placeholder="Type your answer"
+                    name="text"
+                    [(ngModel)]="qna.answer"
+                    name="answer"
+                  />
+                  <h2 class="attachment">Attachment/Prefrences</h2>
+                  <select
+                    [(ngModel)]="qna.folder"
+                    name="folder"
+                    class="form-control"
+                  >
+                    <option
+                      *ngFor="let item of folder_list"
+                      [value]="item.id"
+                      >{{ item.name }}</option
+                    >
+                  </select>
+                  <!-- <i i class="fa fa-file-pdf-o" aria-hidden="true"></i><span class="pdf2">2. pdf</span> -->
+                  <!-- <a href="#"><button class="add-new-file">Add new file</button></a> -->
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="submit-111" (click)="SaveQNA()">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Add an tree menu -->
+          <!-- End of tree -->
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <div class="cdr-rt-sidebar">
+          <mat-card
+            class="rounded mb-10 p-0"
+            *ngIf="user.is_superadmin || user.is_admin"
+          >
+            <div class="data-usages">
+              <div class="box">
+                <h3>Total Questions<span>500</span></h3>
+              </div>
+              <div class="box">
+                <h3>Answered<span>500</span></h3>
+              </div>
+              <div class="box">
+                <h3>Pending<span>500</span></h3>
+              </div>
+              <div class="box">
+                <h3>Answer<span>1000</span></h3>
+              </div>
+              <div class="box">
+                <h3>FAQ<span>500</span></h3>
+              </div>
+            </div>
+          </mat-card>
+          <mat-card
+            class="rounded mb-10 p-0"
+            *ngIf="user.is_superadmin || user.is_admin"
+          >
+            <ul class="al-doc-opt">
+              <li><a class="all-doc-act">Categories</a></li>
+              <form action="/action_page.php">
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span> Officials</span></label
+                ><br />
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Legal</span></label
+                ><br />
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Financials</span></label
+                ><br />
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Corporate</span></label
+                ><br />
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Confidentials</span></label
+                >
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Assigned to me</span></label
+                ><br />
+                <label
+                  ><mat-checkbox class="user-per-check"></mat-checkbox
+                  ><span>Replied to</span></label
+                >
+              </form>
+            </ul>
+          </mat-card>
+          <a
+            routerLink="/manage-categories"
+            *ngIf="user.is_superadmin || user.is_admin"
+          >
+            <button
+              mat-raised-button
+              class="cdr-btn big-btn blue-btn"
+              type="button"
+              (click)="showHideUploadDiv()"
+              style="width: 100%;"
+            >
+              Manage Categories
+            </button>
+          </a>
+        </div>
+        <!--rt aside component end-->
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

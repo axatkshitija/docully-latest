@@ -1,0 +1,169 @@
+<!-- <app-header></app-header> -->
+<section id="cdr-body">
+    <div class="container-fluid">
+        <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+
+            <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+
+            <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+                <mat-card class=" p-0">
+                    <mat-card-title>
+                        <div class="card-title-text" fxLayout="row">
+                            <span>Users & Permissions</span>
+                            <span fxFlex></span>
+                        </div>
+                        <mat-divider class="mat-divider"></mat-divider>
+                        <mat-tab-group class="tabTopLevel">
+                            <mat-tab label="Manage Admin Group">Content 1</mat-tab>
+                            <mat-tab label="Create New Limited Access Admin Group">Content 2</mat-tab>
+                            <mat-tab label="Create New End User Group">
+                                <mat-tab-group class="tabBottomLevel">
+                                    <mat-tab label="Group Permissions">Content 1</mat-tab>
+                                    <mat-tab label="Add New Members">
+                                        <mat-divider class="mat-divider"></mat-divider>
+                                        <div class="btnarea" fxLayout="row">
+                                            <button mat-raised-button class="radius18 bdrgrey" color="lightgrey" data-toggle="modal" data-target="#add-new-adm">Manually Add new Administrators</button>
+                                            <span fxFlex></span>
+                                            <div class="btn-group">
+                                                <button mat-button class="radius18 bdrgrey">Choose from Contacts</button>
+                                                <button mat-button class="radius18 bdrgrey" fxFlexOffset="10px"><i class="material-icons">file_upload</i> Upload .CSV</button>
+                                            </div>
+                                        </div>
+                                        <div class="tbldata">
+                                            <table class="table">
+                                                <tr>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Email ID</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Satish</td>
+                                                    <td>Pandya</td>
+                                                    <td>satish.t@gmail.com</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="Manage Members">Content 1</mat-tab>
+                                    <mat-tab label="Document Permissions">Content 2</mat-tab>
+                                    <mat-tab label="Q&A Assignment">Content 1</mat-tab>
+                                </mat-tab-group>
+
+                            </mat-tab>
+                        </mat-tab-group>
+                        
+                    </mat-card-title>
+
+                </mat-card>
+            </div>
+
+            <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+                <div class="cdr-rt-sidebar">
+                    <mat-card class="rounded mb-10 p-0">
+                        <mat-toolbar class="cdr-toolbar ">
+                            <span>Data Rooms Usages</span>
+                        </mat-toolbar>
+                        <div class="data-usages">
+                            <img src="assets/images/data-usage.jpg">
+                        </div>
+                    </mat-card>
+
+                    <mat-card class="rounded mb-10 p-0">
+                        <ul class="al-doc-opt">
+                            <li><a class="all-doc-act">All Documents <i class="fa fa-caret-down"></i> </a></li>
+                            <li><a>Recent Documents</a></li>
+                            <li><a>Upload Status</a></li>
+                            <li><a>Not Viewed</a></li>
+                            <li><a>Not Printed</a></li>
+                            <li><a>Not Downloaded</a></li>
+                            <li><a>Index Report</a></li>
+                            <li><a>Trash</a></li>
+                        </ul>
+                    </mat-card>
+                </div>
+                <!--rt aside component end-->
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Add new member -->
+<div class="modal fade" id="add-new-adm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header cdr-modal cdr-h-c">
+                <h5 class="modal-title">Add new members</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="material-icons">&#xE5CD;</i>
+                    </button>
+            </div>
+            <div class="modal-body cr-n-dr edrnl">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label class="sr-only" for="exampleInputEmail3">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="exampleInputPassword3">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="exampleInputPassword3">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button mat-raised-button color="primary" class="grey-btn bdr-rad3">Cancel</button>
+                <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button">Save Changes</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- <app-footer></app-footer> -->
+
+
+<!-- Add dataroom Model here -->

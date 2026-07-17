@@ -1,0 +1,171 @@
+<div class="over-member">
+  <div class="ovr-head">
+    <!-- <h3>Members</h3> -->
+
+  </div>
+  <div class="ovr-body">
+    <div class="d-flex justify-content-between">
+      <div class="col-3">
+        <div class="ovr-head">
+          <h3>Members</h3>
+        </div>
+        <div>
+          <span>Permitted: {{my_team_data?.dataroom_admin_allowed}}</span>
+        </div>
+        <div>
+          <span>Used: {{all_members?.length}}</span>
+        </div>
+        <div>
+          <span>Remaining: {{my_team_data?.dataroom_admin_allowed - all_members?.length}}</span>
+        </div>
+      </div>
+      <div>
+        <button mat-raised-button color="primary" class="blue-btn is-icon" data-toggle="modal"
+          data-target="#add-new-member" data-backdrop="static" data-keyboard="false">
+          <i class="material-icons">&#xE145;</i>&nbsp;Team Member</button>
+      </div>
+    </div>
+
+    <div class="mt-4 mb-4">
+      <div class="d-flex justify-content-between">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Usage Alerts ID</label>
+            <input type="text" class="form-control" placeholder="A valid email to receive usage alerts"
+              [(ngModel)]="usage_alert_email" />
+            <!-- <small class="alert-danger"
+              *ngIf="myTeamForm.controls.usage_alert_email.touched || myTeamForm.controls.usage_alert_email.dirty"
+              [hidden]="myTeamForm.controls.usage_alert_email.valid">
+              Usage Alerts is required
+            </small> -->
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Support Alerts ID</label>
+            <input type="text" class="form-control" placeholder="A valid email to receive support alerts"
+              [(ngModel)]="support_alert_email" />
+            <!-- <small class="alert-danger"
+              *ngIf="myTeamForm.controls.support_alert_email.touched || myTeamForm.controls.support_alert_email.dirty"
+              [hidden]="myTeamForm.controls.support_alert_email.valid">
+              Support Alerts is required
+            </small> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="table dl-table txt-lf" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Id</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+      <tr *ngFor="let member of all_members;let i=index;">
+        <td>{{member.first_name}}</td>
+        <td>{{member.last_name}}</td>
+        <td>{{member.email}}</td>
+        <td class="text-center"><i class="fa fa-pencil cursor-pointer" aria-hidden="true"></i></td>
+        <td class="text-center"><i class="fa fa-trash cursor-pointer" aria-hidden="true"></i></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Add new member -->
+<div class="modal fade" id="add-new-member" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <div class="d-flex align-items-center">
+          <h5 class="modal-title">Add a New Team Member</h5>
+          <span class="ml-3">({{my_team_data?.dataroom_admin_allowed - all_members.length}} remaining)</span>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl">
+        <div>
+          <div *ngIf="is_success_error_message">
+            <div class="row" *ngIf="invitation_send_email?.length >0">
+              <div class="col-md-12">
+                <div class="alert alert-success">
+                  <strong>Success!</strong> Invitation sucessfully send to users <span
+                    *ngFor="let invitation_send of invitation_send_email;">
+                    {{invitation_send.email}} ,
+
+                  </span>.
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="already_exist_user?.length >0">
+              <div class="col-md-12">
+                <div class="alert alert-danger">
+                  <strong>Error!</strong> Below users is already exist in the system <span
+                    *ngFor="let already_user of already_exist_user">
+                    {{already_user}} ,
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form [formGroup]="adminForm" novalidate (ngSubmit)="createNewAdmin(adminForm)">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Email ID</label>
+                <input type="email" class="form-control" placeholder="Type email id" formControlName="email">
+                <small class="alert-danger" *ngIf="adminForm.controls.email.touched || adminForm.controls.email.dirty"
+                  [hidden]="adminForm.controls.email.valid">
+                  Email is required
+                </small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">First Name</label>
+                <input type="text" class="form-control"  maxlength="50" placeholder="Type first name" formControlName="first_name">
+                <small class="alert-danger"
+                  *ngIf="adminForm.controls.first_name.touched || adminForm.controls.first_name.dirty"
+                  [hidden]="adminForm.controls.first_name.valid">
+                  First Name is required
+                </small>
+                <small  class="alert-danger" *ngIf="adminForm.get('first_name').hasError('invalidText') && adminForm.get('first_name').touched">
+                  Please enter only letters and spaces.
+                </small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Last Name</label>
+                <input type="text" class="form-control"  maxlength="50" placeholder="Type last name" formControlName="last_name">
+                <small class="alert-danger"
+                  *ngIf="adminForm.controls.last_name.touched || adminForm.controls.last_name.dirty"
+                  [hidden]="adminForm.controls.last_name.valid">
+                  Last Name is required
+                </small>
+                <small  class="alert-danger" *ngIf="adminForm.get('last_name').hasError('invalidText') && adminForm.get('last_name').touched">
+                  Please enter only letters and spaces.
+                </small>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <button type="submit" [disabled]="!adminForm.valid" class="btn btn-primary addmem-Btn">Add
+                  Member</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>

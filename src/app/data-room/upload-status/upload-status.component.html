@@ -1,0 +1,268 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+      </app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <div class="title">
+              <h2>Upload Status</h2>
+            </div>
+            <span fxFlex></span>
+            
+            <button href="javascript:void(0)" mat-raised-button *ngIf="tab" class="cdr-btn big-btn blue-btn"
+              (click)="BackTab()" style="color: white; font-size: 14px">
+              Back
+            </button>
+            <button href="javascript:void(0)" mat-raised-button *ngIf="tab1" class="cdr-btn big-btn blue-btn"
+              (click)="BackTab()" style="color: white; font-size: 14px">
+              Back
+            </button>
+          </mat-toolbar>
+          <div>
+            <div class="cdr-breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a routerLink="/documents">All Documents</a>
+                </li>
+                <li class="breadcrumb-item active">Upload Status</li>
+              </ol>
+              <span fxFlex></span>
+            </div>
+            <div class="tab-content document-table" id="pills-tabContent">
+              <!-- list view start from here.. -->
+              <div class="tab-pane fade show active" id="listViewDr" role="tabpanel" aria-labelledby="pills-home-tab">
+                <table class="table table-striped" *ngIf="data">
+                  <tbody>
+                    <tr *ngIf="all_root_folder_list.length === 0 &&show_loader===false">
+                      <td colspan="5">No Data available.</td>
+                    </tr>
+                    <tr *ngIf="show_loader === true">
+                      <td colspan="5">
+                        <span
+                          *ngIf="show_loader===true" >
+                          <mat-progress-spinner class="progress-align-center" style="margin: 0 auto !important" [mode]="'indeterminate'" *ngIf="show_loader">
+                          </mat-progress-spinner>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="tab">
+
+
+                    <tr *ngFor="
+                        let act of loop_upload
+                          | paginate: { itemsPerPage: 10, currentPage: p }
+                      ">
+                      <td *ngIf="
+                          act.event == 'file/folder in batch upload' &&
+                          !act.is_folder
+                        ">
+                        <div class="usd">
+                          {{ act.user.first_name }}
+                          {{ act.user.last_name }}
+                          <span>
+                            Uploaded a file
+                            <a href="{{ baseUrl }}/file-view/{{
+                                act.folder.id
+                              }}/{{ user.id }}" (click)="goToViewerPage(act.folder)" style="color: blue"
+                              target="_blank">{{
+                              act.folder.name !== "null"
+                              ? act.folder.name
+                              : ""
+                              }}</a>
+                            in {{ act.bulkupload.dataroom }}
+                          </span>
+
+                          <h5>
+                            Updated on
+                            {{ act.bulkupload.created_date }}
+                            (GST)
+                          </h5>
+                          &nbsp;
+                        </div>
+
+           
+                      </td>
+                    </tr>
+                    <div class="pagination-sec">
+                      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                    </div>
+                  </tbody>
+                  <tbody *ngIf="tab1">
+                    <tr *ngFor="
+                        let act of loop_upload1
+                          | paginate: { itemsPerPage: 10, currentPage: p }
+                      ">
+                      <td *ngIf="
+                          act.event == 'file/folder fail in batch upload' &&
+                          !act.is_folder
+                        ">
+                        <div class="usd" *ngIf="!act.is_folder">
+                          {{ act.bulkupload.user.first_name }}
+                          {{ act.bulkupload.user.last_name }}
+                        
+                          <span *ngIf="!act.is_folder">
+                            uploaded a file
+                            <span>{{
+                              act.file_name !== "null" ? act.file_name : ""
+                              }}</span>
+                            which failed to upload in
+                            {{ act.bulkupload.dataroom }}
+                          </span>
+                          <h5>
+                            Updated on
+                            {{ act.bulkupload.created_date }}
+                            (GST)
+                          </h5>
+                          &nbsp;
+                        </div>
+
+                
+                      </td>
+                    </tr>
+                    <div class="pagination-sec">
+                      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                    </div>
+                  </tbody>
+
+                  <tbody *ngIf="all_root_folder_list.length > 0 && overview_tab">
+                    <tr *ngFor="
+                        let folder of all_root_folder_list
+                          | paginate
+                            : {
+                                itemsPerPage: 10,
+                                currentPage: p,
+                                totalItems: size
+                              };
+                        let i = index
+                      ">
+                      <td *ngIf="
+                          folder.event == 'batch upload' && !folder.isuploadfail
+                        ">
+                        <div class="usd">
+                          {{ folder.user__first_name }}
+                          {{ folder.user__last_name }} Uploaded
+                          {{ folder.totalnumberoffiles }}
+                          files
+                     
+                          in
+                          {{ folder.dataroom__dataroom_nameFront }}
+                          <div>
+                            <span>
+                              Succesfully uploaded
+                              {{ folder.totaluploadedfiles }}
+                            
+                              ,
+                              <a (click)="ViewerMore(folder.id)" style="color: blue">View More</a>
+                              <span *ngIf="folder.totalfailedfiles > 0">
+                                Failed 
+                                {{ folder.totalfailedfiles }}
+                                <span  *ngIf="folder.is_cancelled == true" >due to cancellation</span>,
+                                <a (click)="ViewerMoreFail(folder.id)" style="color: blue">View More</a>
+                              </span>
+                            </span>
+                          </div>
+                          <h5>
+                            Updated on
+                            {{folder.created_date| date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                          </h5>
+                        </div>
+
+                
+                      </td>
+                      <td *ngIf="
+                          folder.event == 'batch upload' && folder.isuploadfail
+                        ">
+                        <div class="usd">
+                          {{ folder.user__first_name }}
+                          {{ folder.user__last_name }} Uploaded
+                          {{ folder.totalnumberoffiles }}
+                          files
+                   
+                          in
+                          {{ folder.dataroom__dataroom_nameFront }}
+                          <div>
+                            <span>
+                              Succesfully uploaded
+                           
+                              {{ folder.totaluploadedfiles }}
+                              ,
+
+                              <a (click)="ViewerMore(folder.id)" style="color: blue">View More</a>
+                              <span *ngIf="folder.isuploadfail">
+                                Failed
+                                {{ folder.totalfailedfiles }}
+                                <span  *ngIf="folder.is_cancelled == true" >due to cancellation</span>,
+                                <a (click)="ViewerMoreFail(folder.id)" style="color: blue">View More</a>
+                              </span>
+                            </span>
+                          </div>
+                          <h5>
+                            Updated on
+                            {{folder.created_date| date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                          </h5>
+                        </div>
+
+                      </td>
+
+                      <td *ngIf="folder.event == 'uploaded'">
+                        <div class="usd">
+                          {{ folder.user__first_name }}
+                          {{ folder.user__last_name }}
+                          <span *ngIf="folder.folder__is_folder; else file_name_view">Uploaded a folder
+                            <span>{{
+                              folder.folder__name !== "null"
+                              ? folder.folder__name
+                              : ""
+                              }}
+                              in {{ folder.dataroom__dataroom_nameFront }}
+                            </span>
+                          </span>
+
+                          <ng-template #file_name_view>
+                            Uploaded a file
+                            <a href="{{ baseUrl }}/file-view/{{
+                                folder.folder_id
+                              }}/{{ user.id }}" (click)="goToViewerPage(folder.folder_id)" style="color: blue"
+                              target="_blank">{{
+                              folder.folder__name !== "null"
+                              ? folder.folder__name
+                              : ""
+                              }}</a>
+                            in {{ folder.dataroom__dataroom_nameFront }}
+                          </ng-template>
+
+                          <h5>
+                            Updated on
+                            {{folder.created_date| date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                          </h5>
+                          &nbsp;
+                        </div>
+
+        
+                      </td>
+                    </tr>
+                    <div class="pagination-sec">
+                      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                    </div>
+                  </tbody>
+                </table>
+                <div style="clear: both"></div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <app-document-right-side-menu> </app-document-right-side-menu>
+        <!--rt aside component end-->
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

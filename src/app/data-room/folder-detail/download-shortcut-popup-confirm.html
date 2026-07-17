@@ -1,0 +1,51 @@
+<!-- <div mat-dialog-title>
+  <div class="d-flex align-items">
+    Initiating Download...
+  </div>
+  <i class="fa fa-times" aria-hidden="true" (click)="onNoClick()" style="float: right !important; cursor: pointer"></i>
+</div>
+
+<div mat-dialog-content>
+  <div class="a-info">
+    <div><b>Data Room:</b><span>&nbsp;Project ABC</span></div>
+    <div><b>Size:</b><span>&nbsp;{{ data.size }}</span></div>
+    Files having download permission will be downloaded. 
+    <span style="font-size: 0.8rem;color: red;" *ngIf="!data.filecount"><br>Selected folder is empty.</span>
+    <span style="font-size: 0.8rem;color: red;" *ngIf="data.size>5000"><br>Size should not more than 5 GB</span>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="!data.filecount || data.size>5000" [mat-dialog-close]="data.ok" class="btn btn-primary">
+    ok
+  </button>
+</div> -->
+
+<div mat-dialog-title>
+  Initiating Download...
+  <i class="fa fa-times" aria-hidden="true" (click)="onNoClick()" style="float: right !important; cursor: pointer"></i>
+</div>
+
+<div mat-dialog-content>
+  <div><b>Data Room:</b><span>&nbsp;{{data.popup_dataroom_name}}</span></div>
+  <div><b>Number of files:</b><span [ngStyle]="{'color': (data.filecount>500) ? 'red' : '#000000'}">&nbsp;{{ data.filecount }}</span></div>
+  <div><b>Size:</b><span>&nbsp;{{ data.size }}</span></div>
+
+  <div class="mt-3" *ngIf="data.filecount<=500">
+    After you click on Continue, the files with download rights will be processed for downloading. Once the process is
+    completed, you will be able to download the files from My Downloads section available on the Documents Tab. Please
+    note that the Download link will automatically expire today at 11:59 PM GST (Gulf Standard Time).
+  </div>
+  <div class="mt-3" *ngIf="data.filecount>500">
+    You can only download a maximum of 500 files in one batch.Kindly remove some of the 
+    files from your selection to bring it within the permissible limit of 500 files
+  </div>
+  <div class="mt-3 d-flex align-items-center" *ngIf="data.filecount<=500">
+    <input type="checkbox" name="" id="">
+    <span class="ml-4">Notify me via email once the processing is completed & the files are ready to be downloaded.</span>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="!data.filecount" [mat-dialog-close]="data.ok" class="btn btn-primary">
+    ok
+  </button>
+</div>

@@ -1,0 +1,32 @@
+.pdfviewmain {
+    background: #D2D2D2;
+}
+
+.pdfvie-head,
+.pdfvie-foot {
+    text-align: center;
+    padding: 25px 0
+}
+
+.pdfvie-head h3 {
+    margin: 0
+}
+
+.pdftoolbar {
+    border-bottom: 1px solid #ADADAD;
+    padding: 15px;
+    text-align: center
+}
+
+.h-500 {
+    height: 540px
+}
+
+.pdftoolbar .mat-mini-fab.mat-accent {
+    background-color: #fff;
+    color: #000
+}
+
+.pdftoolbar .mat-form-field {
+    width: 60px
+}

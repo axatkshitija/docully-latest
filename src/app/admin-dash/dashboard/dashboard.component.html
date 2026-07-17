@@ -1,0 +1,766 @@
+<app-header [user]="user"></app-header>
+<section id="cdr-body" *ngIf="user!=null">
+  <div class="container-fluid">
+    <div class="row">
+      <aside class="cdr-lf-sidebar col-12 col-md-3 col-xl-2">
+        <app-admin-left-side-bar [user]="user"> </app-admin-left-side-bar>
+      </aside>
+      <main class="cdr-md-content col-12 col-md-6 col-xl-7 pl-0 pr-0" style="padding: 0 !important ;">
+        <mat-card class="rounded p-0" style="height: 98%;">
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+            <span>Data Rooms <span class="no-dr">
+              </span></span>
+            <span fxFlex></span>
+
+
+            <div class="search-box p-0 ad-shadow">
+              <div class="seach-inner-bx">
+                <input type="text" class="form-control srch-tx-bx" placeholder="Search data room by name"
+                  [(ngModel)]="filterQuery" />
+                <i class="material-icons ser-ico">&#xE8B6;</i>
+              </div>
+            </div>
+
+            <span> <a style="color: #3352ea; padding-left: 10px;" href="#/billing-term"><i class="fa fa-plus"></i> Data
+                Room</a> </span>
+          </mat-toolbar>
+          <div class="data-room-tabel cdr-table row" style="height: inherit;">
+            <div class="col-12" id="listViewDr" *ngIf="!IsShowHideGride">
+           <ng-scrollbar visibility="hover" class="scroll-section" style="height: 100%;" >
+                <div class="cdr-view list-view">
+                  <table class="table" *ngIf="user">
+                    <tbody *ngFor="
+                        let dataroom of datarooms | dataroomFilter: filterQuery;
+                        let i = index
+                      ">
+
+                      <tr *ngIf="
+                          (dataroom.member?.is_dataroom_admin ||
+                            dataroom.member?.is_la_user)&&
+                            dataroom.member?.is_end_user === false;
+                          else dd1
+                        ">
+                        <td id="admin_user">
+                          <span *ngIf="!dataroom.is_expired">
+                            <a (click)="gotoURl(dataroom.id, dataroom.dataroom_name, dataroom.choose_overview_default_page)"
+                              class="dr-name" style="color: blue"
+                              *ngIf="(dataroom.is_paid || !dataroom.trial_expired) && !(dataroom.is_request_for_archive || dataroom.is_request_for_deletion)">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: green" *ngIf="dataroom.upgrade_msg && !dataroom.member.is_end_user">
+                                ({{ dataroom.upgrade_msg }})
+                              </span>
+                            
+                            </a>
+                            <a class="dr-name" style="color: blue"
+                              *ngIf="(dataroom.is_paid || !dataroom.trial_expired) && (dataroom.is_request_for_archive || dataroom.is_request_for_deletion)">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                            </a>
+                          </span>
+                        
+                          <span *ngIf="dataroom.is_expired" (click)="Expire()">
+                            <a class="dr-name" style="color: blue" *ngIf="dataroom.is_paid || !dataroom.trial_expired">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: green" *ngIf="
+                                dataroom.upgrade_msg &&
+                                !dataroom.member.is_end_user
+                              ">({{ dataroom.upgrade_msg }})</span>
+                            </a>
+
+                          </span>
+                          <a class="dr-name" style="color: blue" (click)="Expire()"
+                            *ngIf="!dataroom.is_paid && dataroom.trial_expired" data-backdrop="static"
+                            data-keyboard="false" data-toggle="modal" [attr.data-target]="'#infoModel' + i">
+                            <img src="assets/images/data-room-ico.png" />
+                            {{ dataroom.dataroom_nameFront }}
+                            <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
+                          </a>
+                        </td>
+
+                        <td>
+                          <span class="cdr-badge live-badge" *ngIf="dataroom.is_dataroom_on_live">
+                            <i class="fa fa-circle-o"></i> Live
+                          </span>
+                          <span class="cdr-badge hold-badge" *ngIf="!dataroom.is_dataroom_on_live">
+                            <i class="fa fa-circle-o"></i> Hold
+                          </span>
+
+
+                        </td>
+
+                        <td class="w-25">
+                          <span *ngIf="dataroom.member.is_dataroom_admin || dataroom.member.is_la_user">
+                            <span class="text-primary"
+                              *ngIf="dataroom.is_expired == false && dataroom.addon_payment_overdue == false && dataroom.plan_payment_overdue == false && dataroom.is_paid == true && dataroom.is_request_for_archive == false && dataroom.is_request_for_deletion == false">
+                              Active
+                            </span>
+                            <span class="text-warning"
+                              *ngIf="dataroom.is_expired == false && dataroom.is_request_for_archive == true">
+                              Archived
+                            </span>
+                            <span class="text-warning"
+                              *ngIf="dataroom.is_expired == false && dataroom.is_request_for_deletion == true">
+                              In Queue for Deletion
+                            </span>
+                            <span class="text-warning"
+                              *ngIf="dataroom.is_expired == false && dataroom.addon_payment_overdue == true">
+                              Active - Payment Overdue
+                            </span>
+                            <span class="text-warning"
+                              *ngIf="dataroom.trial_expired == true && dataroom.is_paid == false && dataroom.is_expired == true">
+                              Trial expired
+                            </span>
+                            <span class="text-danger" *ngIf="dataroom.plan_payment_overdue == true">Inactive - Payment
+                              Overdue</span>
+                          </span>
+                          <p *ngIf='dataroom.last_updated' style=" font-size: 10px; color: #737373;margin-bottom: 0px;">  Last Activity :
+                            {{ dataroom.last_updated | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}     
+                          </p>
+                        </td>
+
+                        <td class="text-right w-25 ">
+                          <span class="total-amt" *ngIf="
+                              dataroom.member.is_dataroom_admin ||
+                              dataroom.member.is_la_user ||
+                              !dataroom.member.is_end_user
+                            ">Size: <b>{{ dataroom.storage_size }} / {{ dataroom.dataroom_storage_allocated }}
+                              GB</b></span>
+                        </td>
+
+                        <div class="modal fade" id="infoModel{{ i }}" tabindex="-1" role="dialog"
+                          aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+                            <div class="modal-content">
+                              <form>
+                                <div class="modal-header cdr-modal cdr-h-c">
+                                  <h5 class="modal-title">Info</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <i class="material-icons">&#xE5CD;</i>
+                                  </button>
+                                </div>
+                                <div class="modal-body cr-n-dr">
+                                  <div class="tab-content" id="edrTabContent">
+                                    <b><i>{{
+                                        dataroom.dataroom_nameFront
+                                        }}</i></b>
+                                    data Room was on trial version and expired
+                                    on
+                                    <b *ngIf="dataroom.trial_expiry_date != 'null+04:00'"><i>
+                                      {{ dataroom.trial_expiry_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']}}{{'(' +usertimezone['time_zone__abbreviation'] +')'}}   
+                                      </i></b>. Contact the support for further
+                                    instructions!!
+                                  </div>
+                                </div>
+                                <div class="modal-footer cdr-md-footer">
+                                  <button mat-raised-button color="primary" data-dismiss="modal"
+                                    class="grey-btn bdr-rad3">
+                                    Cancel
+                                  </button>
+                                  <button mat-raised-button color="primary" class="blue-btn bdr-rad3"
+                                    data-dismiss="modal" (click)="contactSupportTrial(dataroom)">
+                                    Contact Support
+                                  </button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </tr>
+
+                      <ng-template #dd1>
+                        <tr *ngIf=" !dataroom.is_request_for_archive && !dataroom.is_request_for_deletion"
+                          id="end_user">
+                          <td>
+                            <a (click)="
+                                gotoURl(
+                                  dataroom.id,
+                                  dataroom.dataroom_name,
+                                  dataroom.choose_overview_default_page
+                                )
+                              " class="dr-name" style="color: blue" *ngIf="dataroom.is_active_group &&
+                                 dataroom.is_dataroom_on_live &&( dataroom.is_paid || !dataroom.trial_expired)
+                              ">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: green" *ngIf="
+                                  dataroom.upgrade_msg &&
+                                  !dataroom.member.is_end_user
+                                ">({{ dataroom.upgrade_msg }})</span>
+                            </a>
+                            <a class="dr-name" style="color: blue" *ngIf="
+                                !dataroom.is_paid && dataroom.trial_expired
+                              " data-backdrop="static" data-keyboard="false" data-toggle="modal"
+                              [attr.data-target]="'#infoModel' + i">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
+                            </a>
+                            <a class="dr-name" data-backdrop="static" data-keyboard="false" data-toggle="modal"
+                              [attr.data-target]="'#HoldinfoModel' + i" style="color: blue" *ngIf="(!dataroom.is_dataroom_on_live||!dataroom.is_active_group) &&
+                               ( dataroom.is_paid || !dataroom.trial_expired)
+                              ">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: green" *ngIf="
+                                  dataroom.upgrade_msg &&
+                                  !dataroom.member.is_end_user
+                                ">({{ dataroom.upgrade_msg }})</span>
+                            </a>
+                            <a class="dr-name" style="color: blue" *ngIf="
+                                !dataroom.is_paid && dataroom.trial_expired
+                              " data-backdrop="static" data-keyboard="false" data-toggle="modal"
+                              [attr.data-target]="'#infoModel' + i">
+                              <img src="assets/images/data-room-ico.png" />
+                              {{ dataroom.dataroom_nameFront }}
+                              <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
+                            </a>
+                          </td>
+
+                          <td>
+                            <span class="cdr-badge live-badge"
+                              *ngIf="dataroom.is_dataroom_on_live && dataroom.is_active_group">
+                              <i class="fa fa-circle-o"></i> Live
+                            </span>
+                            <span class="cdr-badge hold-badge"
+                              *ngIf="!dataroom.is_dataroom_on_live ||!dataroom.is_active_group">
+                              {{dataroom.is_active_group?'Hold':'Inactive'}}
+                            </span>
+
+
+                            <span *ngIf="
+                                dataroom.member.is_dataroom_admin ||
+                                dataroom.member.is_la_user
+                              ">
+                              <span class="action-btn">
+                                <button mat-button class="ico-bnt" type="button" matTooltip="Delete"
+                                  (click)="deleteDataroom(dataroom)">
+                                  <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                                <button mat-button class="ico-bnt" type="button" matTooltip="Archive"
+                                  (click)="archiveDataroom(dataroom)">
+                                  <i class="fa fa-archive" aria-hidden="true"></i>
+                                </button>
+                                <button mat-button class="ico-bnt" data-backdrop="static" data-keyboard="false"
+                                  data-toggle="modal" [attr.data-target]="'#editDataRoomdir' + i" matTooltip="Edit">
+                                  <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+
+                                <app-edit-dataroom [dataroom]="dataroom" [i]="i">
+                                </app-edit-dataroom>
+                              </span>
+                            </span>
+                          </td>
+                         
+                          <td class="text-right w-25">
+                            <span class="total-amt" *ngIf="
+                                dataroom.member.is_dataroom_admin ||
+                                dataroom.member.is_la_user
+                              ">Size: <b>{{ dataroom.storage_size }} / {{ dataroom.dataroom_storage_allocated }}
+                                GB</b></span>
+                          </td>
+
+                          <!-- edit data room -->
+                          <div class="modal fade" id="infoModel{{ i }}" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-md cr-n-dataroom w-100" role="document">
+                              <div class="modal-content">
+                                <form>
+                                  <div class="modal-header cdr-modal cdr-h-c">
+                                    <h5 class="modal-title">Info</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <i class="material-icons">&#xE5CD;</i>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body cr-n-dr">
+                                    <div class="tab-content" id="edrTabContent">
+                                      <b><i>{{
+                                          dataroom.dataroom_nameFront
+                                          }}</i></b>
+                                      data Room was on trial version and expired
+                                      on
+                                      <b *ngIf="dataroom.trial_expiry_date != 'null+04:00'"><i>
+                                        {{ dataroom.trial_expiry_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']}}{{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                                          </i></b>. Contact the support for further
+                                      instructions!!
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer cdr-md-footer">
+                                    <button mat-raised-button color="primary" data-dismiss="modal"
+                                      class="grey-btn bdr-rad3">
+                                      Cancel
+                                    </button>
+                                    <button mat-raised-button color="primary" class="blue-btn bdr-rad3"
+                                      data-dismiss="modal" (click)="contactSupportTrial(dataroom)">
+                                      Contact Support
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="modal fade" id="HoldinfoModel{{ i }}" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-md cr-n-dataroom" role="document"
+                              style="max-width:900px;width:700px;">
+                              <div class="modal-content">
+                                <form>
+                                  <div class="modal-header cdr-modal cdr-h-c">
+                                    <h5 class="modal-title">Info</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <i class="material-icons">&#xE5CD;</i>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body cr-n-dr">
+                                    <div class="tab-content" id="edrTabContent">
+                                      Access to the <b><i>{{
+                                          dataroom.dataroom_nameFront
+                                          }}</i></b> dataroom is either modified or revoked by the administrator.
+                                      <br /> Please contact dataroom administrator to gain access.
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </div>
+                </ng-scrollbar>
+            </div>
+            <div class="col-12" *ngIf="IsShowHideGride">
+            <ng-scrollbar visibility="hover" class="scroll-section h-271" style="height: 271px;">
+                <div class="cdr-view grid-view">
+                  <div class="row">
+                    <div class="col-md-3 p-0" *ngFor="
+                        let dataroom of datarooms | dataroomFilter: filterQuery;
+                        let i = index
+                      ">
+                      <div class="dr-grid p-rela">
+                        <div class="g-header">
+                          <div class="status-opt green-col pull-left" *ngIf="dataroom.is_dataroom_on_live">
+                            <i class="fa fa-circle"></i>
+                            <span class="st-txt">Live</span>
+                          </div>
+                          <div class="status-opt orange-col pull-left" *ngIf="!dataroom.is_dataroom_on_live">
+                            <i class="fa fa-circle"></i>
+                            <span class="st-txt">Hold</span>
+                          </div>
+                          <div class="more-nav pull-right">
+                            <button class="more-btn" mat-button [matMenuTriggerFor]="menu">
+                              <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <mat-menu #menu="matMenu" class="dr-dropdown">
+                              <button class="dr-item" mat-menu-item type="button" (click)="deleteDataroom(dataroom)">
+                                Delete
+                              </button>
+                              <button class="dr-item" mat-menu-item type="button" (click)="archiveDataroom(dataroom)">
+                                Archive
+                              </button>
+                              <button class="dr-item" mat-menu-item data-backdrop="static" data-keyboard="false"
+                                data-toggle="modal" [attr.data-target]="'#editDataRoomdir' + i">
+                                Edit
+                              </button>
+                            </mat-menu>
+                          </div>
+                          <app-edit-dataroom [dataroom]="dataroom" [i]="i">
+                          </app-edit-dataroom>
+                        </div>
+                        <div *ngIf="user">
+                          <div *ngIf="user.is_admin">
+                            <div class="dr-body text-center" (click)="gotoURl(dataroom.id,null,null)">
+                              <img class="dr-folder-ico" src="assets/images/folder-icon.png" />
+                              <h5 class="dr-title">
+                                {{ dataroom.dataroom_nameFront }}
+                              </h5>
+                            </div>
+                          </div>
+                          <div *ngIf="user.is_superadmin" (click)="gotoURl(dataroom.id,null,null)">
+                            <div class="dr-body text-center">
+                              <img class="dr-folder-ico" src="assets/images/folder-icon.png" />
+                              <h5 class="dr-title">
+                                {{ dataroom.dataroom_nameFront }}
+                              </h5>
+                            </div>
+                          </div>
+                          <div *ngIf="user.is_end_user" (click)="gotoURl(dataroom.id,null,null)">
+                            <div class="dr-body text-center">
+                              <img class="dr-folder-ico" src="assets/images/folder-icon.png" />
+                              <h5 class="dr-title">
+                                {{ dataroom.dataroom_nameFront }}
+                              </h5>
+                            </div>
+                          </div>
+                        </div>
+                        <span class="dr-files-no">{{
+                          dataroom.document_count
+                          }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-scrollbar>
+            </div>
+          </div>
+        </mat-card>
+      </main>
+      <div class="cdr-rt-sidebar col-12 col-md-3 col-xl-3">
+        <app-important-notifications> </app-important-notifications>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer [user]="user"></app-footer>
+<div *ngIf="user!=null" class="modal fade" id="addDateRoom" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title" id="exampleModalLabel">Create New Data Room</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <ul class="nav nav-tabs cr-tab" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+              aria-selected="true">Create a blank Data Room</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+              aria-selected="false">Clone an existing Data Room</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <form [formGroup]="createNewDataroomForm">
+              <div class="dr-tab-content">
+                <div class="form-group" *ngIf="is_dataroom_exist">
+                  <div class="row m-0">
+                    <div class="alert alert-danger">
+                      <strong>Error!</strong> Dataroom already exist with this
+                      name
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="row m-0">
+                    <label for="inputDataroom" class="col-sm-3 col-form-label">New Data Room Name</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Enter dataroom name" name="dataroom_name"
+                        formControlName="dataroom_name" maxlength="50" required />
+                    </div>
+                    <div class="form-control-feedback" *ngIf="
+                        createNewDataroomForm.get('dataroom_name')?.errors &&
+                        (createNewDataroomForm.get('dataroom_name').dirty ||
+                          createNewDataroomForm.get('dataroom_name').touched)
+                      ">
+                      <p *ngIf="
+                          createNewDataroomForm.get('dataroom_name')?.errors
+                            .required
+                        " class="alert-danger">
+                        Dataroom name is required
+                      </p>
+                      <p *ngIf="
+                          createNewDataroomForm.get('dataroom_name')?.errors
+                            .minlength
+                        " class="alert-danger">
+                        Dataroom name must be 3 characters long
+                      </p>
+                      <p *ngIf="
+                          createNewDataroomForm.get('dataroom_name')?.errors
+                            .maxlength
+                        " class="alert-danger">
+                        Dataroom name must be 50 characters long
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="row m-0" formGroupName="dataroom_modules">
+                    <label class="col-sm-3 col-form-label">Enable module</label>
+                    <div class="col-sm-9">
+                      <div class="enabl-module">
+                        <mat-slide-toggle formControlName="is_watermarking">Watermarking</mat-slide-toggle>
+                        <mat-slide-toggle formControlName="is_drm">Doculink</mat-slide-toggle>
+                        <mat-slide-toggle formControlName="is_question_and_answers">Q&A</mat-slide-toggle>
+                        <mat-slide-toggle formControlName="is_collabration">Collaboration</mat-slide-toggle>
+                        <mat-slide-toggle formControlName="is_ocr">OCR</mat-slide-toggle>
+                        <mat-slide-toggle formControlName="is_editor">Editor</mat-slide-toggle>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="row m-0 align-items-center">
+                    <label class="col-sm-3 col-form-label">Apply Account level Branding</label>
+                    <div class="col-sm-9">
+                      <mat-slide-toggle formControlName="is_account_level_branding"></mat-slide-toggle>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="row m-0">
+                    <label for="inputDataroom" class="col-sm-3 col-form-label">Storage Allowed (GB)</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Enter dataroom storage"
+                        name="dataroom_storage_allocated" formControlName="dataroom_storage_allocated" maxlength="4" />
+                    </div>
+                    <div class="form-control-feedback" *ngIf="
+                        createNewDataroomForm.get('dataroom_storage_allocated')
+                          ?.errors &&
+                        (createNewDataroomForm.get('dataroom_storage_allocated')
+                          .dirty ||
+                          createNewDataroomForm.get(
+                            'dataroom_storage_allocated'
+                          ).touched)
+                      ">
+                      <p *ngIf="
+                          createNewDataroomForm.get(
+                            'dataroom_storage_allocated'
+                          )?.errors.required
+                        " class="alert-danger">
+                        Dataroom storage is required
+                      </p>
+                      <p *ngIf="
+                          createNewDataroomForm.get(
+                            'dataroom_storage_allocated'
+                          )?.errors.minlength
+                        " class="alert-danger">
+                        Dataroom storage must be atleast 1 characters long
+                      </p>
+                      <p *ngIf="
+                          createNewDataroomForm.get(
+                            'dataroom_storage_allocated'
+                          )?.errors.maxlength
+                        " class="alert-danger">
+                        Dataroom storage maximum 4 characters allowed
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="add-f-admin">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <div class="add-dm-block">
+                        <label class="bold-txt">Add the first Admin</label>
+                      </div>
+                      <div class="dr-grid-3 br-none" formGroupName="dataroom_admin">
+                        <div class="grid-itm">
+                          <input type="text" class="form-control" placeholder="First Name"
+                            formControlName="first_name"   maxlength="50"/>
+                        </div>
+                        <div class="grid-itm">
+                          <input type="text" class="form-control" placeholder="Last Name" formControlName="last_name"   maxlength="50"/>
+                        </div>
+                        <div class="grid-itm">
+                          <input type="email" class="form-control" placeholder="Email id" formControlName="email" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group cdr-md-footer">
+                  <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+                    Cancel
+                  </button>
+                  <button type="button" [disabled]="!createNewDataroomForm.valid" class="btn btn-primary"
+                    data-dismiss="modal" (click)="submitNewDataroom(createNewDataroomForm.value)">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" *ngIf="update">
+            <div class="dr-tab-content">
+              <div class="form-group">
+                <div class="row m-0">
+                  <label class="col-sm-3 col-form-label">Choose Data Room</label>
+                  <div class="col-sm-9">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row m-0">
+                  <label class="col-sm-3 col-form-label">Clone with Data</label>
+                  <div class="col-sm-9">
+                    <select class="form-control" [(ngModel)]="update.clone_data" name="clone_data">
+                      <option *ngFor="let datarooms_folder of datarooms_folders" [value]="datarooms_folder.id">
+                        {{ datarooms_folder.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row m-0">
+                  <label class="col-sm-3 col-form-label">New Data Room Name</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="inputDataroom" placeholder="Enter dataroom name"
+                      [(ngModel)]="update.dataroom_name"  name="dataroom_name"  maxlength="50" />
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row m-0">
+                  <label class="col-sm-3 col-form-label">Clone with User Groups</label>
+                  <div class="col-sm-9">
+                    <mat-slide-toggle [(ngModel)]="update.user_group" name="user_group"></mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+              <hr class="br-w-pd" />
+              <div class="form-group">
+                <div class="row m-0">
+                  <label class="col-sm-3 col-form-label">Enable module</label>
+                  <div class="col-sm-9">
+                    <div class="enabl-module">
+                      <mat-slide-toggle [(ngModel)]="update.is_watermarking" name="is_watermarking">Watermarking
+                      </mat-slide-toggle>
+                      <mat-slide-toggle [(ngModel)]="update.is_drm" name="is_drm">Doculink</mat-slide-toggle>
+                      <mat-slide-toggle [(ngModel)]="update.is_question_and_answers" name="is_question_and_answers">Q&A
+                      </mat-slide-toggle>
+                      <mat-slide-toggle [(ngModel)]="update.is_collabration" name="is_collabration">Collaboration
+                      </mat-slide-toggle>
+                      <mat-slide-toggle [(ngModel)]="update.is_ocr" name="is_ocr">OCR</mat-slide-toggle>
+                      <mat-slide-toggle [(ngModel)]="update.is_editor" name="is_editor">Editor</mat-slide-toggle>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row m-0 align-items-center">
+                  <label class="col-sm-3 col-form-label">Apply Account level Branding 11</label>
+                  <div class="col-sm-9">
+                    <mat-slide-toggle></mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group cdr-md-footer">
+                <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+                  Cancel
+                </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cloneExistingDataroom()">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer cdr-md-footer">
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="user!=null" class="modal fade" id="editDataRoom" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header cdr-modal cdr-h-c">
+          <h5 class="modal-title">Edit Data Room Properties</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="material-icons">&#xE5CD;</i>
+          </button>
+        </div>
+        <div class="modal-body cr-n-dr">
+          <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="editd-tab" data-toggle="tab" href="#editd" role="tab" aria-controls="editd"
+                aria-selected="true">Edit Details</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="cv-tab" data-toggle="tab" href="#cv" role="tab" aria-controls="cv"
+                aria-selected="false">Add/Change video/ppt.</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="edrTabContent">
+            <div class="tab-pane fade show active" id="editd" role="tabpanel" aria-labelledby="editd-tab">
+              <div class="slide-toggle-block">
+                <mat-slide-toggle>Choose to Keep Indexing On/Off</mat-slide-toggle>
+                <mat-slide-toggle>Choose to Default page (Overview/Files)</mat-slide-toggle>
+                <mat-slide-toggle>Choose to Send/Do not send (Email Daily
+                  Updates)</mat-slide-toggle>
+              </div>
+              <hr />
+              <h5>Overview</h5>
+              <div class="p-edit-sec">
+                <form>
+                  <div class="form-group">
+                    <label for="">Paragraph Heading</label>
+                    <input type="text" class="form-control" placeholder="Overview" />
+                  </div>
+                  <div class="form-group">
+                    <label for="">Content</label>
+                    <textarea class="form-control" rows="4"
+                      placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget odio eros. Donec consectetur rutrum nunc sed aliquam. Cras id faucibus nibh."></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="clearfix"></div>
+              <button mat-raised-button color="primary" class="blue-text-btn is-icon pull-right">
+                <i class="fa fa-plus" aria-hidden="true"></i> Add New Paragraph
+              </button>
+              <div class="clearfix"></div>
+              <h5>Custom Link</h5>
+              <div class="p-edit-sec">
+                <form>
+                  <div class="form-row">
+                    <div class="form-group col-md-5">
+                      <label>Title</label>
+                      <input type="text" class="form-control" placeholder="Our company" />
+                    </div>
+                    <div class="form-group col-md-7">
+                      <label>Link</label>
+                      <input type="text" class="form-control" placeholder="www.google.com" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="clearfix"></div>
+              <button mat-raised-button color="primary" class="blue-text-btn is-icon pull-right">
+                <i class="fa fa-plus" aria-hidden="true"></i> Add New Link
+              </button>
+              <div class="clearfix"></div>
+            </div>
+            <div class="tab-pane fade" id="cv" role="tabpanel" aria-labelledby="cv-tab">
+              <video style="width: 100%" src="assets/images/Confiex Data Video.mp4" controls preload="none"
+                poster="assets/images/videoposter.jpg">
+                Sorry, your browser doesn't support embedded videos, but don't
+                worry, you can <a href="videofile.webm">download it</a> and
+                watch it with your favorite video player!
+              </video>
+              <div class="slide-toggle-block mt-4">
+                <mat-slide-toggle>Choose to Keep Indexing On/Off</mat-slide-toggle>
+                <div class="clearfix"></div>
+                <button mat-raised-button color="primary" class="blue-text-btn is-icon">
+                  <i class="fa fa-edit" aria-hidden="true"></i> Add/Change
+                  video/ppt.
+                </button>
+                <button mat-raised-button color="primary" class="red-text-btn is-icon m-2">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
+                </button>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer cdr-md-footer">
+          <button mat-raised-button color="primary" class="grey-btn bdr-rad3">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" class="blue-btn bdr-rad3" data-dismiss="modal">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="container">
+    <h1>
+        <!-- {{title}} -->
+        {{ message | async | json }}
+    </h1>
+    <button (click)="notify()">Show Notiication</button>
+</div>

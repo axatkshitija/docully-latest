@@ -1,0 +1,19 @@
+<div mat-dialog-title>Notify<i class="fa fa-times" aria-hidden="true" (click)="onNoClick()"
+        style="float: right !important;cursor: pointer;"></i></div>
+
+<div mat-dialog-content>
+    <div>
+        <div>
+            Alert! - If you choose to cancel your subscription now, you will not be able to access this data room again
+            & will instantly loose access to all documents & reports. You will be able to reactivate the same within 07
+            days from now however you will be required to buy & pay for a new subscription plan.
+        </div>
+        <div class="alert alert-danger">
+            Are you sure you want to cancel?
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data.yes" class="btn btn-primary">Yes</button>
+    <button mat-button [mat-dialog-close]="data.no" class="btn btn-primary">No</button>
+</div>

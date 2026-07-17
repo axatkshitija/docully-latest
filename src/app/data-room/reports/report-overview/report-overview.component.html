@@ -1,0 +1,1306 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="62" fxFlex.xs="100" fxFlexOrder.xs="2" *ngIf="user &&(
+          user.is_superadmin ||
+            user.is_admin ||
+            user?.member?.is_la_user ||
+            all_disclaimers ||
+            primary_users_disclaimer_status?.disclaimer_status)
+          else primary_users_disclaimer_status_else
+        ">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="fa fa-bar-chart"></i>
+              <span class="t-text">Overview Report</span>
+            </div>
+            <button class="icon-btn" (click)="downloadStatus()">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text">Export</span>
+            </button>
+          </div>
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="slt-pre">
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Frompicker" placeholder="From Date" [(ngModel)]="from_date"
+                    [max]="maxDate" [min]="minDate" name="from_date"
+                    (dateChange)="changeDateWise($event.value, to_date)" />
+                  <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Frompicker></mat-datepicker>
+                </div>
+                &nbsp;
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Topicker" placeholder="To Date" [(ngModel)]="to_date" name="to_date"
+                    [max]="maxDate" [min]="minDate" (dateChange)="changeDateWise(from_date, $event.value)" />
+                  <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Topicker></mat-datepicker>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dataroom-view">
+            <div class="line-chart-ov">
+
+              <div [chart]="charts"></div>
+            </div>
+          </div>
+          <div class="showlist">
+            <ul class="list-unstyled ovlist">
+              <li class="media file-list ovitlist" *ngIf="overview_tab">
+                <div class="d-flex mg-r-10 wd-50 aticons d-none">
+                  <div [chart]="chart"></div>
+
+                </div>
+
+                <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+                </mat-progress-spinner>
+
+                <div class="reports-notifi-st" *ngIf="!show_spinner">
+                  <div class="pagination-sec">
+                    <pagination-controls (pageChange)="getActivityUser($event)"></pagination-controls>
+                  </div>
+                  <span *ngIf="activitySize && activitySize == 0">Report data not available.</span>
+                  <ul class="list-unstyled" *ngFor="
+                      let act of activity
+                        | paginate: { currentPage: p,itemsPerPage:10, totalItems:activitySize }
+                    ">
+
+
+                    <!-- ---------------------- DRM Download event---------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'drm download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act.folder__is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} downloaded a Doculink to a
+                              folder
+                              <span>{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} downloaded a Doculink to a
+                              file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act.folder_id
+                              }}/{{ act.user_id }}" style="color: blue" target="_blank">{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}</a>
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                    <li class="media file-list" *ngIf="act.event == 'redacted'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} redacted a
+                              file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act.event == 'redact view'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }}view a redacted
+                              file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act.event == 'redact restore'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} restore a redacted file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act.event == 'redact set current version'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} saved a new redacted version of file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act.event == 'redact remove current version'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} changed the current version of the file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <li class="media file-list" *ngIf="act.event == 'redact download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} downloaded a redacted file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <li class="media file-list" *ngIf="act.event == 'redact delete'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} deleted version no. {{act.redact__version}} of a redacted
+                              file
+                              <span>{{
+                                act.folder__name
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- ------------------------ Bulk Download Event ------------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'bulk_download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act.folder__is_folder else file_name_bulk">
+                            <span>
+                              &nbsp;{{ act.user.user__first_name}}
+                              {{ act.user.user__last_name }} downloaded a folder
+                              <span>{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}
+                                in</span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_bulk>
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} downloaded a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act.folder_id
+                              }}/{{ act.user_id }}" style="color: blue" target="_blank">{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}</a>
+
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- ---------------------------- Copy  Sub Event --------------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                    act.event === 'bulk_event_tracker' &&
+                    act.sub_event === 'Copy'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-copy tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user }}
+                            Copied
+                            {{ act.total_files }} files to {{ act.folder_name }}
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} &nbsp;
+                            <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <li class="media file-list" *ngIf="
+                    act.event === 'bulk_event_tracker' &&
+                    act.sub_event === 'redact delete'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user }}
+                            deleted
+                            {{ act.total_files }} redacted
+                            files
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} &nbsp;
+                            <a (click)="ViewerMore(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                    <li class="media file-list" *ngIf="
+                    act.event === 'bulk_event_tracker' &&
+                    act.sub_event === 'redact download'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user }}
+                            downloaded
+                            {{ act.total_files }} a redacted
+                            files
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} &nbsp;
+                            <a (click)="ViewerMore(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- -----------------------------Delete Event------------------------------------ -->
+                    <li class="media file-list" *ngIf="act.event == 'delete'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.folder__deleted_by__first_name}}
+                            {{ act.folder__deleted_by__last_name }} deleted the file
+                            <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                             act.user_id
+                            }}" style="color: blue" target="_blank">{{
+                              act.folder_name !== "null" ? act.folder_name : ""
+                              }}</a>
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+                    <!-- --------------------------- Delete  Sub Event --------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                    act.event == 'bulk_event_tracker' &&
+                    act.sub_event == 'Delete'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user }} deleted
+                              {{ act.total_files }} files
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                              &nbsp;
+                              <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ---------------------- Delete Folder Files Sub Event---------------------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                    act.event == 'bulk_event_tracker' &&
+                    act.sub_event == 'Deleted Folder Files'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user }} deleted
+                              {{ act.total_files }} folder in
+                              {{ act.dataroom_name }}
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                              &nbsp;
+                              <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ---------------  Download Sub Event-------------------------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                    act.event == 'bulk_event_tracker' &&
+                    act.sub_event == 'Download'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user }} Downloaded
+                              {{ act.total_files }} files
+
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                              &nbsp;
+                              <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- ----------------------------- Member Joined------------------------------------ -->
+
+                    <li class="media file-list" *ngIf="act.event === 'member joined'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-user tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;
+                            {{ act.user__first_name}}
+                            {{ act.user__last_name }} added
+                            {{ act.title }}
+                            to this workspace
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- --------------------------- Restore Event---------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Restore'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user.user__last_name }} Restored a folder
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act.event == 'Restore Folder'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Restored a folder
+                            </span>{{act.folder__name }}
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- --------------------------File Download------------------------------ -->
+
+                    <li class="media file-list" *ngIf="act.event == 'file download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} downloaded a file
+                            <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{ act.user_id}}"  style="color: blue"
+                              target="_blank">{{
+                              act.folder__name !== "null" ? act.folder__name : ""
+                              }}</a>
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+
+
+
+                    <!-- ------------------File Views Event------------------------- -->
+                    <li class="media file-list" *ngIf="act.event == 'file view'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act.folder__is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Viewed a folder
+                              <span>{{
+                                act.folder_name !== "null" ? act.folder_name : ""
+                                }}</span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Viewed a file
+                              <a href="{{ baseUrl }}/file-view/{{act.folder_id}}/{{ act.user_id }}" style="color: blue"
+                                target="_blank">{{
+                                act.folder__name !== "null"
+                                ? act.folder__name
+                                : ""
+                                }}</a>
+
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ------------------------------ Restore Event ---------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Restore File'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act.folder__is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Restored a folder
+                              <span>{{
+                                act.folder_name !== "null" ? act.folder_name : ""
+                                }}</span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Restored a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act.folder_id
+                              }}/{{ act.user_id }}" style="color: blue" target="_blank">{{
+                                act.folder__name !== "null"
+                                ? act.folder__name
+                                : ""
+                                }}</a>
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ---------------------------- Move FIle----------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Move File'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-arrows tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Moved a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act.folder_id
+                              }}/{{ act.user_id }}" style="color: blue" target="_blank">{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}</a>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- ------------------- Move Folder ---------------------- -->
+                    <li class="media file-list" *ngIf="act.event == 'Move Folder'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-arrows tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} moved a folder
+                              <span>{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}
+                              </span>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                    <!-- ------------------------ Copy File---------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Copy File'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-copy tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Copied this file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act.folder_id
+                              }}/{{ act.user_id }}" style="color: blue" target="_blank">{{
+                                act.folder_name !== "null"
+                                ? act.folder_name
+                                : ""
+                                }}</a>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ----------------- Copy Folder-------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Copy Folder'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-copy tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            <span>
+                              &nbsp;{{ act.user__first_name}}
+                              {{ act.user__last_name }} Copied Folder
+                              <span>{{
+                                act.folder_name !== "null" ? act.folder_name : ""
+                                }}</span>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                    <!-- ------------------------------ Created Event----------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'Created'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}} {{ act.user__last_name }} Created
+                            this {{ act.folder_name }} Folder
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+                    <!-- ---------------------------- Uploaded File event------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'uploaded' && act.folder__is_folder == false">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} Uploaded a files
+                            <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                              act.user_id
+                            }}" target="_blank">
+                              {{
+                              act.folder__name != "null" ? act.folder__name : ""
+                              }}
+                            </a>
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- --------------------------- Uploaded Folder event------------------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event == 'uploaded' && act.folder__is_folder == true">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} uploaded a folder
+                            <a href="/#/folder_detail/{{ act.folder_id }}" target="_blank">
+                              {{
+                              act.folder__name !== "null" ? act.folder__name : ""
+                              }}
+                            </a>
+
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- ------------------------------ Batch Upload------------------------------ -->
+
+                    <li class="media file-list" *ngIf="act.event == 'batch upload' && act.isuploadfail == false">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} uploaded
+                            {{ act.totalnumberoffiles }} files
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            &nbsp;
+                            <a (click)="ViewerMore(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- -------------------------- Dataroom View-------------------------------- -->
+                    <li class="media file-list" *ngIf="act.event == 'dataroom view'">
+
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-eye tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} viewed {{ act.dataroom__dataroom_nameFront }}
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            <!-- <p>Custom Format: {{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} </p> -->
+                          </small>
+                        </div>
+                      </div>
+
+                    </li>
+                    <!-- ------------------------ File Print---------------------- -->
+
+                    <li class="media file-list" *ngIf="act.event === 'file print'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-user tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user__first_name}}
+                            {{ act.user__last_name }} Printed a file
+                            <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                             act.user_id
+                            }}" style="color: blue" target="_blank">{{
+                              act.folder_name !== "null" ? act.folder_name : ""
+                              }}</a>
+
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- --------------------------- Move Sub Event--------------------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                    act.event === 'bulk_event_tracker' &&
+                    act.sub_event === 'Move'
+                  ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-arrows tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user}}
+                            moved
+                            {{ act.total_files }} files to
+                            {{ act.folder_name }}
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} &nbsp;
+                            <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+
+
+                    <!-- --------------------- Drm download Sub Event----------------------------------------- -->
+
+                    <li class="media file-list" *ngIf="
+                act.event === 'bulk_event_tracker' &&
+                act.sub_event === 'drm download'
+              ">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+                            &nbsp;{{ act.user }}
+                            downloaded a Doculink of
+                            {{ act.total_files }} files
+                          </h6>
+                          <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} &nbsp;
+                            <a (click)="ViewerMoredrm(act)" style="color: blue">View More</a>
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                  </ul>
+                  <div class="pagination-sec">
+                    <pagination-controls (pageChange)="getActivityUser($event)"></pagination-controls>
+                  </div>
+                </div>
+              </li>
+              <li class="file-list ovitlist" *ngIf="tab">
+                <div class="row m-0">
+                  <span fxFlex></span>
+
+                  <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="BackTab()">
+                    Back</a>
+                </div>
+                <br />
+
+
+                <div class="reports-notifi-st">
+
+
+                  <ul class="list-unstyled" *ngFor="
+                      let act of loop_upload
+                        | paginate: { currentPage: p,itemsPerPage:10, totalItems:activitySize }
+                    ">
+                    <li class="media file-list"
+                      *ngIf="act.event == 'file/folder in batch upload' && !act.folder.is_folder">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-file-text-o tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse">
+
+                            <span>
+                              &nbsp;{{ act.user.first_name}}
+                              {{ act.user.last_name }} uploaded a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                              act.folder.id
+                            }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act.folder.name !== "null"
+                                ? act.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act.dataroom.dataroom_name }}
+                            </span>
+
+                            <span *ngIf="act.is_folder">
+                              &nbsp;{{ act.user.first_name}}
+                              {{ act.user.last_name }} uploaded a folder
+                              <span>{{
+                                act.folder.name !== "null"
+                                ? act.folder.name
+                                : ""
+                                }}
+                                in {{ act.dataroom.dataroom_name }}
+                              </span>
+                            </span>
+                          </h6>
+                          <div>
+                            <small>&nbsp;{{ act.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="pagination-sec">
+                  <pagination-controls (pageChange)="getActivityUser($event)"></pagination-controls>
+                </div>
+              </li>
+
+              <li class="file-list ovitlist" id="tab1" *ngIf="tab1">
+                <div class="row m-0">
+                  <span fxFlex></span>
+
+                  <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="BackTab()">
+                    Back</a>
+                </div>
+                <br />
+
+
+                <div class="reports-notifi-st">
+
+
+                  <ul class="list-unstyled" *ngFor="
+                      let act1 of loop_drm
+                        | paginate: { currentPage: p,itemsPerPage:10, totalItems:activitySize }
+                    ">
+                    <li class="media file-list" *ngIf="act1.event == 'bulk_download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act1.folder.is_folder; else file_name_bulk">
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} downloaded a folder
+                              <span>{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}
+                                in {{ act1.dataroom_id.dataroom_name }}
+                              </span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_bulk>
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} downloaded a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act1.folder.id
+                              }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act1.dataroom_id.dataroom_name }}
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act1.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act1.event == 'delete'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-trash tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act1.folder.is_folder; else file_delete_view">
+                            &nbsp;{{ act1.user.first_name}}
+                            {{ act1.user.last_name }} deleted a folder
+                            <span>{{
+                              act1.folder.name !== "null"
+                              ? act1.folder.name
+                              : ""
+                              }}
+                              in {{ act1.dataroom }}
+                            </span>
+                          </h6>
+                          <ng-template #file_delete_view>
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} deleted a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act1.folder.id
+                              }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act1.dataroom }}
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act1.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+
+
+                    <li class="media file-list" *ngIf="act1.event == 'Move File'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-arrows tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act1.folder.is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} Moved a
+                              {{ act1.folder_name }}
+                              <span>{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}
+                                in {{ act1.dataroom_id.dataroom_name }}
+                              </span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} Moved a file to
+                              {{ act1.folder_name }}
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act1.folder.id
+                              }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act1.dataroom_id.dataroom_name }}
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act1.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act1.event == 'Copy File'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-copy tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act1.folder.is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} Copied a folder
+                              <span>{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}
+                                in {{ act1.dataroom_id.dataroom_name }}
+                              </span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} Copied a file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act1.folder.id
+                              }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act1.dataroom_id.dataroom_name }}
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act1.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+
+                    <li class="media file-list" *ngIf="act1.event == 'drm download'">
+                      <div class="row">
+                        <div class="d-flex">
+                          <i class="fa fa-download tx-info tx-40 tx"></i>&nbsp;&nbsp;
+                        </div>
+                        <div class="media-body">
+                          <h6 class="tx-inverse" *ngIf="act1.folder.is_folder; else file_name_view">
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} downloaded a Doculink to a
+                              folder
+                              <span>{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}
+                                in {{ act1.dataroom_id.dataroom_name }}
+                              </span>
+                            </span>
+                          </h6>
+                          <ng-template #file_name_view>
+                            <span>
+                              &nbsp;{{ act1.user.first_name}}
+                              {{ act1.user.last_name }} downloaded a Doculink to a
+                              file
+                              <a href="{{ baseUrl }}/file-view/{{
+                                act1.folder.id
+                              }}/{{ user.id }}" style="color: blue" target="_blank">{{
+                                act1.folder.name !== "null"
+                                ? act1.folder.name
+                                : ""
+                                }}</a>
+                              in {{ act1.dataroom_id.dataroom_name }}
+                            </span>
+                          </ng-template>
+                          <div>
+                            <small>&nbsp;{{ act1.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="pagination-sec">
+                    <pagination-controls (pageChange)="getActivityUser($event)"></pagination-controls>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </mat-card>
+      </div>
+      <ng-template #primary_users_disclaimer_status_else>
+        <div class="w-100 text-center">
+          You have no access Data Room, Accept Disclaimer
+        </div>
+      </ng-template>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

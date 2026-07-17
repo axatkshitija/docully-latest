@@ -1,0 +1,107 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user">
+        </app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+
+            <div class="search-box p-0 ad-shadow">
+              <div class="seach-inner-bx">
+                <input type="text" class="form-control srch-tx-bx" placeholder="Search Subscription"
+                  [(ngModel)]="searchText">
+                <i class="material-icons ser-ico">&#xE8B6;</i>
+              </div>
+            </div>
+
+            <span fxFlex><button class="cdr-btn big-btn blue-btn mat-raised-button sub-exp"
+                (click)="exportExcel()">Export</button> <a
+                class="cdr-btn big-btn blue-btn mat-raised-button sub-exp mr-2"
+                (click)='goToLink("https://services.docullyvdr.com/#/billing-term")'>Buy
+                Plan</a></span>
+          </mat-toolbar>
+          <div class="table-responsive">
+            <table id="excel-table" class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+              <thead>
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Dataroom Id</th>
+                  <th>Dataroom name</th>
+                  <th>Plan Name</th>
+                  <th>Start Date</th>
+                  <th>Expiry Date</th>
+                  <th>Fee</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="subscriptionsSize && subscriptionsSize == 0">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>Subscription plan data not available</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr *ngFor="let subscription of subscriptions| subsciprionFilterPipe : searchText; let i = index;">
+                  <td>{{ i+1 }}</td>
+                  <td *ngIf="subscription!=null">{{ subscription.dataroom_id }}</td>
+                  <td *ngIf="subscription!=null">{{ subscription.dataroom__dataroom_nameFront }} </td>
+                  <td *ngIf="subscription==null"> </td>
+                  <td *ngIf="subscription==null"></td>
+                  <td><a class="title-link">{{ subscription.plan__name }}</a></td>
+                  <td>{{ subscription.start_date | date: 'dd-MM-yyyy' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</td>
+                  <td>{{ subscription.end_date | date: 'dd-MM-yyyy' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</td>
+                  <td> <span>&#36;</span>{{ subscription.total_fee }}</td>
+                  <td>
+                    <span
+                      *ngIf="subscription.dataroom__is_paid == false && subscription.dataroom__is_expired == false && subscription.is_plan_active == false && subscription.dataroom__trial_expiry_date != null">
+                      Active - Trial expires in {{subscription.remainingDays}} days
+                    </span>
+                    <span
+                    *ngIf="subscription.dataroom__is_expired == true && subscription.is_plan_active == false && subscription.dataroom__trial_expired == true && subscription.dataroom__is_deleted == false && subscription.plan__id == 4">
+                      Trial Expired - In queue for deletion
+                    </span>
+                    <span
+                      *ngIf="subscription.dataroom__is_expired == false  && subscription.is_plan_active == true && subscription.auto_renewal == false">
+                      Subscription Active - Expires in {{subscription.remainingDays}} days
+                    </span>
+                    <span
+                      *ngIf="subscription.dataroom__is_expired == false && subscription.is_plan_active == true && subscription.auto_renewal == true">
+                      Subscription Active - Auto renew in {{subscription.remainingDays}} days
+                    </span>
+                    <span
+                      *ngIf="subscription.is_plan_active == false && subscription.dataroom__plan_payment_overdue == true  && subscription.dataroom__is_expired == false">
+                      Inactive - Payment pending
+                    </span>
+                    <span  *ngIf="subscription.is_plan_active == false && subscription.dataroom__is_expired == true && subscription.dataroom__is_deleted == false">
+                      Subscripiton Expired - In queue for deletion
+                    </span>
+                    <span  *ngIf="subscription.dataroom__is_expired == true && subscription.dataroom__is_deleted == true">
+                      Subscription Expired - Dataroom deleted
+                    </span>
+                  </td>
+                  <td> <a class="title-link" routerLink="/manage-subscription/{{subscription.id}}/{{subscription.dataroom_id}}">View/Manage</a></td>
+            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->

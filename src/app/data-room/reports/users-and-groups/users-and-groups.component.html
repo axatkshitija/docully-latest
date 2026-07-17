@@ -1,0 +1,105 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="62" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE7EF;</i>
+              <span class="t-text">Users & Groups Report</span>
+            </div>
+
+            <button class="icon-btn" (click)="downloadStatus()">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text">Export</span>
+            </button>
+          </div>
+
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="form-group row marauto">
+                <label class="col-form-label">Select Group</label>
+                <div class="col-7">
+                  <select class="form-control" [(ngModel)]="group" name="group"
+                    (change)="groupType($event.target.value)">
+                    <option value="0">----All----</option>
+                    <option value="-1">Admin</option>
+                    <option [value]="group.id" *ngFor="let group of groups">
+                      {{ group.group_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <span fxFlex></span>
+              <!-- <button mat-raised-button class="cdr-btn big-btn blue-btn mbtn" type="button">Download report</button> -->
+            </div>
+          </div>
+
+          <hr class="marauto" />
+
+          <div class="toolbar-padd" fxLayout="row" fxLayoutAlign="space-between start center">
+            <div>
+              <mat-slide-toggle [(ngModel)]="removed" name="removed"
+                (change)="RemovedMembers($event.checked)"></mat-slide-toggle>
+              Show Removed Members
+            </div>
+
+          </div>
+          <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+          </mat-progress-spinner>
+          <div *ngIf="!show_spinner" class="table-content minHeight474">
+            <table class="table dl-table filesh-tbl ug-table">
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Groups</th>
+                <th>Status</th>
+                <th>Invited By</th>
+                <th>Joined At</th>
+              </tr>
+              <tr *ngFor="let item of users | paginate: { itemsPerPage:10, currentPage: p,totalItems:size }">
+                <td *ngIf="item.member" style="width: 150px">
+                  <a style="color: #007bff;" [routerLink]="['/member-info', item.member.id]">{{ item.member.first_name
+                    }} {{
+                    item.member.last_name }}</a>
+                </td>
+                <td *ngIf="item.member">{{ item.member.email }}</td>
+                <td>{{ item.group }}</td>
+                <td *ngIf="item.memberactivestatus">Active</td>
+                <td *ngIf="!item.memberactivestatus">Inactive</td>
+                <td>
+                  {{ item.member_added_by.first_name }}
+                  {{ item.member_added_by.last_name }}
+                </td>
+                <td>
+                  {{ item.invitatation_acceptance_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }}
+                  <span *ngIf="item.invitatation_acceptance_date">{{'(' +usertimezone['time_zone__abbreviation'] +')'}} </span>
+                </td>
+              </tr>
+            </table>
+            <div class="pagination-sec">
+              <pagination-controls (pageChange)="getUsersMember($event)"></pagination-controls>
+            </div>
+          </div>
+
+          <!--  </mat-expansion-panel>
+</mat-accordion> -->
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

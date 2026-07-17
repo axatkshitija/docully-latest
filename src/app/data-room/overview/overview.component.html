@@ -1,0 +1,323 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid" *ngIf="useer==true">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2" *ngIf="user!=null&&(
+          user.member.is_dataroom_admin ||
+            user.member.is_la_user ||
+            all_disclaimers ||
+            primary_users_disclaimer_status);
+          else primary_users_disclaimer_status_else
+        ">
+        <mat-card class="mat-card p0" *ngIf="show_data; else hide_data">
+          <mat-toolbar class="overview-hdr">
+            <button color="primary" mat-raised-button title="Manage Disclaimers"
+              class="grey-btn is-icon mat-raised-buttons" type="button"
+              (click)="showDisclaimerPage((is_disclaimer = true))"
+              *ngIf="user.member.is_dataroom_admin || user.member.is_la_user">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </button>
+            <div *ngIf="overviewForm">
+              <div *ngIf="overviewForm.dataroom_overview_heading?.length > 0">
+                <button mat-raised-button color="primary" class="blue-btn blue-btn1 is-icon mat-raised-buttons"
+                  data-toggle="modal" title="Settings" data-target="#editDataRoom" data-backdrop="static"
+                  data-keyboard="false" *ngIf="
+                    user.member.is_dataroom_admin || user.member.is_la_user
+                  ">
+                  <i class="fa fa-cog" style="font-size: 17px"></i>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="overviewForm">
+              <div *ngIf="overviewForm.dataroom_overview_heading?.length <= 0">
+                <div class="overview-info" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px"
+                  fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch"
+                  fxLayoutAlign.sm="center stretch">
+                  <button mat-raised-button mat-raised-buttons color="primary"
+                    class="marauto blue-btn blue-btn1 is-icon mat-raised-buttons" title="Settings" data-toggle="modal"
+                    data-target="#editDataRoom" data-backdrop="static" data-keyboard="false" *ngIf="
+                      user.member.is_dataroom_admin || user.member.is_la_user
+                    ">
+                    <i class="fa fa-cog" style="font-size: 17px"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <span fxFlex></span>
+            <div>
+              <button *ngIf="is_disclaimer_available" style="margin-right: 10px;" class="btn btn-primary"
+                (click)="backOverview()">Back</button>
+              <button mat-raised-button class="blue-btn mar-r-l-10 is-icon mat-raised-button mat-primary"
+                *ngIf="is_disclaimer_available" (click)="goToSignedDisclaimer()">
+                <span class="mat-button-wrapper">
+                  <i aria-hidden="true" class="fa fa-check-circle-o"></i> Signed
+                  Disclaimer</span>
+              </button>
+            </div>
+          </mat-toolbar>
+          <!-- Show div if disclaimer is activated -->
+          <div *ngIf="is_disclaimer_available">
+            <app-disclaimer-page></app-disclaimer-page>
+          </div>
+          <!-- Hide div if disclaimer is not clicked -->
+
+          <div *ngIf="!is_disclaimer_available">
+            <mat-card-content class="height635px" *ngIf="overviewForm">
+              <div *ngIf="overviewForm.dataroom_overview_heading?.length <= 0">
+                <div class="doc-tool no-updates-sec" *ngIf="user.member.is_end_user">
+                  <div>No Contents Available</div>
+                </div>
+              </div>
+              <div *ngIf="overviewForm.dataroom_overview_heading?.length <= 0">
+                <div class="doc-tool no-updates-sec" *ngIf="user.member.is_dataroom_admin">
+                  <div>Overview customization available - Go to settings</div>
+                </div>
+              </div>
+              <div *ngIf="overviewForm.change_video_ppt !== '' && features.proj_video_intro == true">
+                <video style="width: 100%" [src]="overviewForm.change_video_ppt" controls preload="none">
+                  Sorry, your browser doesn't support embedded videos, but don't
+                  worry, you can <a href="videofile.webm">download it</a> and
+                  watch it with your favorite video player!
+                </video>
+              </div>
+              <div *ngIf="overviewForm.dataroom_overview_heading?.length > 0">
+                <div class="overview-info pTB20" fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px"
+                  fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch"
+                  fxLayoutAlign.sm="center stretch">
+                  <div *ngIf="overviewForm && features.custom_external_link == true">
+                    <div class="cirlink clnk" *ngIf="overviewForm.dataroom_custom_links?.length > 0">
+                      <h5>
+                        <i class="fa fa-link" aria-hidden="true"></i> Custom
+                        links
+                      </h5>
+                      <ul>
+                        <li *ngFor="
+                            let link of overviewForm.dataroom_custom_links
+                          ">
+                          <a (click)="openInNewTab(link.link)"><i class="fa fa-circle-thin" aria-hidden="true"></i>
+                            {{ link.link_title }}</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div *ngIf="features.proj_overview == true" fxFlex="75" fxFlex.xs="100">
+                    <div *ngFor="
+                        let paragraph of overviewForm.dataroom_overview_heading
+                      ">
+                      <h5>{{ paragraph.overview_heading }}</h5>
+                      <div class="dr-o-p" [innerHTML]="paragraph.overview_content"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </div>
+        </mat-card>
+        <ng-template #hide_data>
+          <div class="containernew" style="margin-top: 80px;" *ngIf="show_data === false;">
+            <mat-card>
+              Your access to this data room is either restricted or not yet defined by the administrator. Please
+              contact the primary contacts of this data room to enable your access. If you need any help please email to
+              {{'support@docullyvdr.com .'}}
+            </mat-card>
+          </div>
+        </ng-template>
+      </div>
+      <ng-template #primary_users_disclaimer_status_else>
+        <div class="w-100 text-center">
+          You have no access Overview, Accept Disclaimer
+        </div>
+
+      </ng-template>
+
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3" *ngIf="show_data">
+        <app-data-room-right></app-data-room-right>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->
+<div class="modal fade" id="editDataRoom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <form #form="ngForm" (ngSubmit)="OverviewFormSubmit()">
+        <div class="modal-header cdr-modal cdr-h-c">
+          <h5 class="modal-title">Edit Overview Properties</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="material-icons">&#xE5CD;</i>
+          </button>
+        </div>
+        <div class="modal-body cr-n-dr" *ngIf="overviewForm">
+          <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="editd-tab" data-toggle="tab" href="#editd" role="tab" aria-controls="editd"
+                aria-selected="true">General Settings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="cv-tab" data-toggle="tab" href="#cv" role="tab" aria-controls="cv"
+                aria-selected="false">Video Intro Settings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/watermarking-setting" data-dismiss="modal">Watermark Settings</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="edrTabContent">
+            <div class="tab-pane fade show active" id="editd" role="tabpanel" aria-labelledby="editd-tab">
+              <div class="slide-toggle-block">
+                <div style="margin: 5px 0px">
+                  <mat-slide-toggle [(ngModel)]="overviewForm.hide_file_indexing" name="hide_file_indexing">
+                    <span style="font-size: 11.7px;color:#5A5A5A">Enable Indexing. Once enabled, all the folders & files
+                      on the data room will be automatically indexed.</span>
+                  </mat-slide-toggle>
+                </div>
+                <div style="margin: 5px 0px">
+                  <mat-slide-toggle [(ngModel)]="overviewForm.send_daily_email_updates" name="send_daily_email_updates">
+                    <span style="font-size: 11.7px;color:#5A5A5A">Enable Email Notifications. Once enabled, all users
+                      will receive email notifications for all data room alerts.</span>
+                  </mat-slide-toggle>
+                </div>
+                <div style="margin: 5px 0px" matTooltip="Two-factor authentication is disabled."
+                  [matTooltipDisabled]="features?.two_factor_auth">
+                  <mat-slide-toggle [(ngModel)]="overviewForm.permissiom" [disabled]="!features?.two_factor_auth"
+                    name="permissiom ">
+                    <span style="font-size:11.7px;color:#5A5A5A">Enable Two-Factor Authentication. Once enabled, all
+                      users, including admins will be required to enter an OTP
+                      to access the data room.</span>
+                  </mat-slide-toggle>
+                </div>
+              </div>
+              <hr />
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h5>Overview</h5>
+                <span matTooltip="Add New Paragraph is disabled" [matTooltipDisabled]="features.proj_overview">
+                  <button color="primary" type="button" class="blue-text-btn is-icon pull-right"
+                    (click)="addBlock()" [disabled]="!features.proj_overview">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Paragraph
+                  </button>
+                </span>
+              </div>
+              <div class="p-edit-sec" *ngIf="dataroom_overview_head">
+                <div *ngFor="let block of blocks; let i = index" class="block">
+                  <input type="text" placeholder="Enter title" class="form-control"   [disabled]="!features.proj_overview"  placeholder="Overview"  [value]="block.title"
+                    (input)="onTitleChange(i, $event.target.value)" />
+
+                  <ngx-editor-menu [editor]="block.editor" [toolbar]="toolbar"></ngx-editor-menu>
+                  <ngx-editor   [disabled]="!features.proj_overview" [editor]="block.editor" [placeholder]="'Enter text here...'"></ngx-editor>
+
+                  <div class="form-group" style="padding: 10px 0px 15px;">
+                    <button class="btn-danger blue-text-btn is-icon pull-right" (click)="removeBlock(i)"
+                      type="button">
+                      Delete
+                    </button>
+                  </div>
+                  <hr />
+                </div>
+              </div>
+              <div class="clearfix"></div>
+
+              <div class="clearfix"></div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+
+                <h5>Custom Links</h5>
+                <span matTooltip=" Add New Link is disabled" [matTooltipDisabled]="features.custom_external_link">
+                  <button color="primary" [disabled]="!features.custom_external_link"
+                    class="blue-text-btn is-icon pull-right" type="button" (click)="addNewLinks()">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add New Link
+                  </button>
+                </span>
+              </div>
+              <div class="p-edit-sec">
+                <div class="form-row" style="display: ruby !important;"
+                  *ngFor="let link of overviewForm.dataroom_custom_links">
+                  <div class="form-group col-md-5" style="margin-right: 5px !important;">
+                    <label>Title</label>
+                    <input type="text" [disabled]="!features.custom_external_link" class="form-control"
+                      placeholder="Our company" [(ngModel)]="link.link_title" name="link_title"
+                      [ngModelOptions]="{ standalone: true }" />
+                  </div>
+                  <div class="form-group col-md-6" style="margin-right: 5px !important;">
+                    <label>Link</label>
+                    <input type="text" [disabled]="!features.custom_external_link" class="form-control"
+                      placeholder="www.google.com" [(ngModel)]="link.link" [ngModelOptions]="{ standalone: true }" />
+
+                  </div>
+                  <div>
+                    <button (click)="deleteLink(link)" type="button">
+                      <i aria-hidden="true" class="fa fa-trash" style="font-size: 16px"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+
+              <div class="clearfix"></div>
+            </div>
+            <div class="tab-pane fade" id="cv" role="tabpanel" aria-labelledby="cv-tab">
+              <div *ngIf="overviewForm.change_video_ppt !== ''">
+                <video style="width: 100%" [src]="overviewForm.change_video_ppt" controls preload="none">
+                  Sorry, your browser doesn't support embedded videos, but don't
+                  worry, you can <a href="videofile.webm">download it</a> and
+                  watch it with your favorite video player!
+                </video>
+              </div>
+              <div class="slide-toggle-block mt-4">
+                <input type="file" accept="video/*" #file class="hideInputTypeFile" ngFileSelect [options]="options"
+                  (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" single />
+                <span matTooltip="Video Intro is disabled" [matTooltipDisabled]="features.proj_video_intro">
+                  <button mat-raised-button color="primary" [disabled]="!features.proj_video_intro"
+                    class="blue-text-btn is-icon" (click)="file.click()" type="button">
+                    <i class="fa fa-edit" aria-hidden="true"></i> Add/Change
+                    video. (Note : Videos upto 100 MB are allowed to upload.)
+                  </button>
+                </span>
+                <div class="column is-8 is-offset-2">
+                  <div class="upload-items">
+                    <div class="upload-item" *ngFor="let f of files; let i = index">
+                      <span class="filename">
+                        <span>{{ f.name }} ({{ f.id }}) -
+                          {{ f.progress?.data?.percentage }}%</span>
+                        <span>uploading with
+                          {{ f.progress?.data?.speedHuman }}</span>
+                        <span>ETA {{ f.progress?.data?.etaHuman }}</span>
+                      </span>
+                      <div>
+                        <mat-progress-bar mode="determinate" [value]="f.progress?.data?.percentage"></mat-progress-bar>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div *ngIf="overviewForm.change_video_ppt !== ''">
+                    <button mat-raised-button color="primary" class="red-text-btn is-icon m-2" type="button"
+                      (click)="removeOverviewVideo()">
+                      <i class="fa fa-trash-o" aria-hidden="true" style="font-size: 16px"></i>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer cdr-md-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              Cancel
+            </button>
+            <button mat-raised-button color="primary" data-dismiss="modal" (click)="OverviewFormSubmit()"
+              class="blue-btn bdr-rad3" type="submit">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,170 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+      ></app-data-room-left>
+
+      <div fxFlex="20" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <div class="cdr-rt-sidebar">
+          <mat-card class="rounded mb-10 p-0">
+            <mat-toolbar class="cdr-toolbar">
+              <span>New Messages</span>
+            </mat-toolbar>
+            <div class="messages" *ngFor="let message of all_message">
+              <div class="user-msg-lists">
+                <h1
+                  class="pointer-message"
+                  style="cursor: pointer"
+                  (click)="chatPage1(message.user_send.id)"
+                >
+                  {{ message.user_send.first_name }}
+                </h1>
+                <p>{{ message.send_message }}</p>
+              </div>
+            </div>
+            <!-- <div class="messages">
+                  <h1>Mani White</h1>
+                  <p>Use the AlternateViews property to specify copies of an e-mail message in different formats. 
+                    For example, if you send a message in HTML, .   .   .</p><hr>
+                </div>
+                <div class="messages1">
+                  <h1>C Graham</h1>
+                  <h2></h2>
+                  <p>Don’t waste your life looking at the past. Treasure the happy memories, enjoy today and look forward to tomorrow. Life is a journey, enjoy the trip.
+                    I am going to, .   .   .</p>
+                </div>
+                <div class="messages">
+                  <h1>Erin Steed</h1>
+                  <p>Use the AlternateViews property to specify copies of an e-mail message in different formats. 
+                    For example, if you send a message in HTML, .   .   .</p><hr>
+                </div>
+                <div class="messages">
+                  <h1>Erin Steed</h1>
+                  <p>Use the AlternateViews property to specify copies of an e-mail message in different formats. 
+                    For example, if you send a message in HTML, .   .   .</p>
+                </div> -->
+          </mat-card>
+        </div>
+        <!--rt aside component end-->
+      </div>
+
+      <!-- <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+                <mat-card class="mat-card p0">
+                    <mat-toolbar class="cdr-toolbar">
+                        <span>All Messages</span>
+                    </mat-toolbar>
+                    <mat-card-content>
+                        <mat-sidenav-container class="example-container">
+                            <mat-sidenav #sidenav class="example-sidenav">
+                                Jolly good!
+                            </mat-sidenav>
+
+                            <div class="example-sidenav-content">
+                                <button type="button" mat-button (click)="sidenav.open()">
+                            Open sidenav
+                          </button>
+                            </div>
+
+                        </mat-sidenav-container>
+                    </mat-card-content>
+
+                </mat-card>
+            </div> -->
+
+      <div
+        fxFlex="65"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="2"
+        *ngIf="char_message_list; else elseDiv"
+      >
+        <ng-scrollbar visibility="hover" class="scroll-section h-301" style="height: 301px;">
+          <mat-card class="mat-card p0">
+            <div class="new-sms-title">
+              <h1>Chance Graham</h1>
+              <div *ngFor="let char_message of char_message_list">
+                <div
+                  class="sms1"
+                  *ngIf="
+                    char_message.user_send.id === char_message.login_user;
+                    else elseBlock
+                  "
+                >
+                  <p>{{ char_message.send_message }}</p>
+                </div>
+                <ng-template #elseBlock>
+                  <div
+                    class="sms"
+                    *ngIf="char_message.user_send.id != char_message.login_user"
+                  >
+                    <p>{{ char_message.send_message }}</p>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+
+            <div class="tab-content document-table" id="pills-tabContent">
+              <!-- list view start from here.. -->
+              <div
+                class="tab-pane fade show active"
+                id="listViewDr"
+                role="tabpanel"
+                aria-labelledby="pills-home-tab"
+                *ngIf="!is_upload_file"
+              ></div>
+              <!-- Upload page -->
+              <div class="doc-tool" *ngIf="is_upload_file">
+                <app-upload-files></app-upload-files>
+              </div>
+              <!-- End of upload page  -->
+              <!-- grid view start from here.. -->
+              <div
+                class="tab-pane fade"
+                id="gridViewDr"
+                role="tabpanel"
+                aria-labelledby="pills-home-tab"
+              >
+                Coming soon..
+              </div>
+            </div>
+            <!-- Add an tree menu -->
+            <!-- End of tree -->
+          </mat-card>
+        </ng-scrollbar>
+        <div class="msg-txt-box">
+          <textarea
+            type="text"
+            class="form-control"
+            id="pwd"
+            placeholder="Type message"
+            [(ngModel)]="update.message"
+            name="message"
+          ></textarea>
+          <button (click)="sendMessage1()">Send</button>
+        </div>
+      </div>
+      <ng-template #elseDiv>
+        <div fxFlex="54" fxFlex.xs="100" fxFlexOrder.xs="2">
+          <mat-card class="mat-card p0"> </mat-card>
+        </div>
+      </ng-template>
+
+      <!-- <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+                <app-data-room-right></app-data-room-right>
+            </div> -->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

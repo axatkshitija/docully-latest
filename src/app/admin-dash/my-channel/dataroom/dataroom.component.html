@@ -1,0 +1,1478 @@
+<div class="ovr-body">
+  <div class="d-flex justify-content-between">
+    <div class="col-3">
+      <div class="ovr-head">
+        <h3>Data Rooms</h3>
+      </div>
+      <div>
+        <span>Permitted: {{member_not_found?0:my_team_data?.teamdata?.dataroom_allowed}}</span>
+      </div>
+      <div>
+        <span>Used: {{member_not_found?0:all_datarooms?.length}}</span>
+      </div>
+      <div>
+        <span>Remaining: {{member_not_found?0:my_team_data?.teamdata?.dataroom_allowed - all_datarooms?.length}}</span>
+      </div>
+    </div>
+    <div *ngIf="my_team_data?.createdataroomaccess == 'True' || currentUser?.is_superadmin == true">
+      <button mat-raised-button color="primary" class="blue-btn is-icon" data-toggle="modal" data-target="#addDateRoom"
+        data-backdrop="static" data-keyboard="false">
+        <i class="material-icons">&#xE145;</i> New Data Room
+      </button>
+    </div>
+  </div>
+  <div class="seach-inner-bx mt-4 mb-4 col-6">
+    <input type="text" class="form-control srch-tx-bx" placeholder="Search by Dataroom name"
+      (input)="searchList($event)" />
+  </div>
+
+  <div>
+    <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Dataroom name</th>
+          <th>Dataroom Id</th>
+          <th>Permitted Storage</th>
+          <th>Current Storage</th>
+          <th>Edit</th>
+          <th>Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="all_datarooms && all_datarooms.length == 0">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Data not available</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr *ngFor="let dataroom of all_datarooms; let i = index;">
+          <td>{{ i+1 }}</td>
+          <td>{{ dataroom.dataroom_nameFront }}</td>
+          <td>{{ dataroom.id }} </td>
+          <td>{{ dataroom.dataroom_storage_allocated }} GB</td>
+          <td>{{ dataroom.dataroom_consumed}}</td>
+          <td class="text-center">
+            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
+              [attr.data-target]="'#editDataroom' + i" (click)="updateIndex = i; patchDataroomData()"></i>
+          </td>
+          <td>
+            <i class="fa fa-archive" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
+              [attr.data-target]="'#manageDataroom' + i"></i>
+
+            <div class="modal fade" id="manageDataroom{{i}}" tabindex="-1" role="" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+                <div class="modal-content">
+                  <div class="modal-header cdr-modal cdr-h-c">
+                    <h5 class="modal-title" id="exampleModalLabel">Manage Dataroom</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="material-icons">&#xE5CD;</i>
+                    </button>
+                  </div>
+                  <div class="modal-body cr-n-dr">
+                    <div class="row">
+                      <div class="col-6">
+                        <div>
+                          <span>Data Room Name - </span>
+                          <span>{{dataroom['dataroom_name']}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Dataroom Id - </span>
+                          <span>{{dataroom['id']}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Permitted Storage - </span>
+                          <span>{{dataroom['dataroom_storage_allocated']}} GB</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mt-2">
+                          <span>Current Storage - </span>
+                          <span>{{dataroom['dataroom_consumed']}} GB</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Creation Date - </span>
+                          <span>{{dataroom['created_date'] | date : 'mediumDate'}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Last Modified Date - </span>
+                          <span>{{dataroom['updated_date'] | date : 'mediumDate'}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                      <button *ngIf="is_request_for_archive || dataroom.is_request_for_archive" type="button"
+                        class="btn btn-primary mr-3" data-dismiss="modal"
+                        (click)="archivedRequestForDataroom(dataroom)">
+                        Unarchive
+                      </button>
+                      <button *ngIf="!(is_request_for_archive || dataroom.is_request_for_archive)" type="button"
+                        class="btn btn-primary mr-3" data-dismiss="modal"
+                        (click)="archivedRequestForDataroom(dataroom)">
+                        Archive
+                      </button>
+                      <button *ngIf="is_request_for_deletion || dataroom.is_request_for_deletion" type="button"
+                        class="btn btn-primary ml-3" data-dismiss="modal" (click)="deleteDataroom(dataroom)">
+                        Cancel Delete
+                      </button>
+                      <button *ngIf="!(is_request_for_deletion || dataroom.is_request_for_deletion)" type="button"
+                        class="btn btn-primary ml-3" aria-hidden="true" data-toggle="modal"
+                        [attr.data-target]="'#deleteDataroom' + i">
+                        Delete
+                      </button>
+
+                      <div id="deleteDataroom{{ i }}" class="modal modal1 fade" role="dialog">
+                        <div class="modal-dialog">
+                          <div class="modal-content cdr-copy-files text-left">
+                            <div class="modal-header">
+                              <h5 class="modal-title cdr-copy-title">
+                                Delete Dataroom Confirmation
+                              </h5>
+                              <button type="button" class="close" data-dismiss="modal1">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Are you sure you wish to delete Dataroom?
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <div>
+                                <form [formGroup]="deleteForm">
+                                  Type 'delete' to Confirm
+                                  <input type="text" class="cdr-delete-input" formControlName="delete" #delete />
+                                  <button type="button" data-dismiss="modal" class="btn btn-primary"
+                                    [disabled]="!(deleteForm.valid && delete.value == 'delete')"
+                                    (click)="deleteDataroom(dataroom)">
+                                    Confirm Delete
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Create New data room -->
+<div class="modal fade" id="addDateRoom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <div class="d-flex align-items-center">
+          <h5 class="modal-title" id="exampleModalLabel">Create New Data Room</h5>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <form [formGroup]="createNewDataroomForm" (ngSubmit)="submitNewDataroom(createNewDataroomForm.value)">
+              <div class="dr-tab-content">
+                <div class="form-group" *ngIf="is_dataroom_exist">
+                  <div class="row m-0">
+                    <div class="alert alert-danger">
+                      <strong>Error!</strong> Data Room already exist with this
+                      name
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Team / Account</label>
+                    <input type="text" class="form-control" placeholder="Enter Team/Account" name="team"
+                      formControlName="team" disabled="true" required />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('team')?.errors &&
+                          (createNewDataroomForm.get('team').dirty ||
+                            createNewDataroomForm.get('team').touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get('team')?.errors
+                              .required
+                          " class="alert-danger">
+                      Team/Account name is required
+                    </p>
+                  </div>
+
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Dataroom Name</label>
+                    <input type="text" class="form-control" placeholder="Enter dataroom name" name="dataroom_name"
+                      formControlName="dataroom_name" required />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('dataroom_name')?.errors &&
+                          (createNewDataroomForm.get('dataroom_name').dirty ||
+                            createNewDataroomForm.get('dataroom_name').touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .invalidName
+                          " class="alert-danger">
+                      Special characters not allowed! Only letters, numbers, and underscore are allowed.
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .required
+                          " class="alert-danger">
+                      Dataroom name is required
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .minlength
+                          " class="alert-danger">
+                      Dataroom name must be 3 characters long
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .maxlength
+                          " class="alert-danger">
+                      Dataroom name must be 50 characters long
+                    </p>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Permitted Storage</label>
+                    <input type="number" min="0" class="form-control" placeholder="Dataroom storage in GB"
+                      name="dataroom_storage_allocated" formControlName="dataroom_storage_allocated" maxlength="4" />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('dataroom_storage_allocated')
+                            ?.errors &&
+                          (createNewDataroomForm.get('dataroom_storage_allocated')
+                            .dirty ||
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            ).touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.required
+                          " class="alert-danger">
+                      Permitted storage is required
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.minlength
+                          " class="alert-danger">
+                      Permitted storage must be atleast 1 characters long
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.maxlength
+                          " class="alert-danger">
+                      Permitted storage maximum 4 characters allowed
+                    </p>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Permitted Users</label>
+                    <input type="number" min="0" class="form-control" placeholder="Leave Blank if Unlimited"
+                      name="dataroom_users_permitted" formControlName="dataroom_users_permitted" maxlength="4" />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('dataroom_users_permitted')
+                            ?.errors &&
+                          (createNewDataroomForm.get('dataroom_users_permitted')
+                            .dirty ||
+                            createNewDataroomForm.get(
+                              'dataroom_users_permitted'
+                            ).touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_users_permitted'
+                            )?.errors.required
+                          " class="alert-danger">
+                      Permitted Users is required
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_users_permitted'
+                            )?.errors.minlength
+                          " class="alert-danger">
+                      Permitted Users must be atleast 1 characters long
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_users_permitted'
+                            )?.errors.maxlength
+                          " class="alert-danger">
+                      Permitted Users maximum 4 characters allowed
+                    </p>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Data Center location</label>
+                    <br />
+                    <select class="form-control form-control-sm w-100" (change)="onSelectChange($event)">
+                      <option value="false" selected>India</option>
+                      <option value="true">UAE</option>
+                    </select>
+
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Version</label>
+                    <br />
+                    <select class="form-control form-control-sm w-100" (change)="onVersionChange($event)">
+                      <option value=null disabled selected>Choose Pro/Lite</option>
+                      <option value="Pro">Pro</option>
+                      <option value="Lite">Lite</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div class="form-group">
+                      <div class="add-dm-block mt-3">
+                        <label class="bold-txt">Add the first Admin</label>
+                      </div>
+                      <div class="dr-grid-3 br-none" formGroupName="dataroom_admin">
+                        <div class="grid-itm">
+                          <input type="email" class="form-control" placeholder="Email id" formControlName="email"
+                            (change)="ChangesByEmail($event.target.value)" />
+                          <div class="form-control-feedback" *ngIf="
+                                createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('email')?.errors &&
+                                (createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('email').dirty ||
+                                  createNewDataroomForm.get('dataroom_admin')
+                                    .touched)
+                              ">
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('email')?.errors.required
+                                " class="alert-danger">
+                              Admin email is required
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('email')?.errors.minlength
+                                " class="alert-danger">
+                              Admin email must be 3 characters long
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('email')?.errors.maxlength
+                                " class="alert-danger">
+                              Admin email must be 50 characters long
+                            </p>
+                          </div>
+                        </div>
+                        <div class="grid-itm">
+                          <input type="text" class="form-control" placeholder="First Name" maxlength="50"
+                            formControlName="first_name" />
+                          <div class="form-control-feedback" *ngIf="
+                                createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('first_name')?.errors &&
+                                (createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('first_name').dirty ||
+                                  createNewDataroomForm.get('dataroom_admin')
+                                    .touched)
+                              ">
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('first_name')?.errors.required
+                                " class="alert-danger">
+                              Admin first name is required
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('first_name')?.errors.minlength
+                                " class="alert-danger">
+                              Admin first name must be 3 characters long
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('first_name')?.errors.maxlength
+                                " class="alert-danger">
+                              Admin first name must be 50 characters long
+                            </p>
+                          </div>
+                        </div>
+                        <div class="grid-itm">
+                          <input type="text" class="form-control" placeholder="Last Name" maxlength="50"
+                            formControlName="last_name" />
+                          <div class="form-control-feedback" *ngIf="
+                                createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('last_name')?.errors &&
+                                (createNewDataroomForm
+                                  .get('dataroom_admin')
+                                  .get('last_name').dirty ||
+                                  createNewDataroomForm.get('dataroom_admin')
+                                    .touched)
+                              ">
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('last_name')?.errors.required
+                                " class="alert-danger">
+                              Admin last name is required
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('last_name')?.errors.minlength
+                                " class="alert-danger">
+                              Admin last name must be 1 character long
+                            </p>
+                            <p *ngIf="
+                                  createNewDataroomForm
+                                    .get('dataroom_admin')
+                                    .get('last_name')?.errors.maxlength
+                                " class="alert-danger">
+                              Admin last name must be 50 characters long
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <mat-accordion *ngIf="dataroom_version=='Lite'">
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title> Features</mat-panel-title>
+                      <mat-panel-description>
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="row" formGroupName="dataroom_features">
+                      <div class="col-sm-9 col-md-12">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="margin-right: 10px;font-weight: bold;">All Lite
+                          Features
+                        </label>
+
+                        <mat-slide-toggle (change)="checkFeatures($event.checked)">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          Watermarking
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="custom_watermarking">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Two-Factor Authentication
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="two_factor_auth">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Project
+                          Overview
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="proj_overview">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Project
+                          Video Intro
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="proj_video_intro">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          Logo
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="custom_logo">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          External Links
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="custom_external_link">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          via One Drive
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="one_drive_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          via Dropbox
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="dropbox_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Favourites
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="favourites">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Redaction & Version Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="redaction">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Limited
+                          Access Administrators
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="la_admin_access">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Doculink
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="doculink_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Bulk
+                          Users Upload
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="bulk_users_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Auto
+                          Expire Access Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="auto_expire">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Module
+                          Permission Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="module_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Advanced
+                          Q&A with Category / SME
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="qa_with_cat">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Question
+                          Submitter Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="qa_submit">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">On-Platform Voting
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="voting_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">On-Platform Project Updates
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="proj_updates">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Voting
+                          Report
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="voting_report_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Index
+                          Report For Another user
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="index_report_others">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          Status of Self Uploads
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="self_upload_status" *ngIf="!isEnabledSelfStatus">
+                        </mat-slide-toggle>
+                        <mat-slide-toggle [checked]="isEnabledSelfStatus" (change)="onSelfStatusChange($event)"
+                          *ngIf="isEnabledSelfStatus">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          Status of Fellow Admins & Other Users
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="all_user_upload_status" *ngIf="!isEnabledUserStatus">
+                        </mat-slide-toggle>
+                          <mat-slide-toggle [checked]="isEnabledUserStatus" (change)="onUserStatusChange($event)"
+                          *ngIf="isEnabledUserStatus">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Activity
+                          Tracking on File Viewer
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="activity_tracker_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Viewer
+                          Support - Documents + MP3, MP4, JPG, PNG, Open Office Files
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="viewer_support" *ngIf="!isEnabledViewerSupport">
+                        </mat-slide-toggle>
+                        <mat-slide-toggle [checked]="isEnabledViewerSupport" (change)="onViewerSupportChange($event)"
+                          *ngIf="isEnabledViewerSupport">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Secure
+                          Active Fence Viewer
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="fence_viewer">
+                        </mat-slide-toggle>
+                      </div>
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">
+                          Upload Restriction
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="is_upload_restrict">
+                        </mat-slide-toggle>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <div class="row">
+                  <div class="d-flex align-items-center">
+                    <input style="margin: 5px;" type="checkbox" name="" id="" formControlName="storage_exceed_block">
+                    <span class="ml-2">Block Excess Data. New Data upload beyond permitted storage will be blocked if
+                      this option is selected.</span>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer cdr-md-footer"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="editDataroom{{updateIndex}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Data Room</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <form [formGroup]="createNewDataroomForm" (ngSubmit)="editDataroom(createNewDataroomForm.value)">
+              <div class="dr-tab-content">
+                <div class="form-group" *ngIf="is_dataroom_exist">
+                  <div class="row m-0">
+                    <div class="alert alert-danger">
+                      <strong>Error!</strong> Data Room already exist with this
+                      name
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Team / Account</label>
+                    <input type="text" class="form-control" placeholder="Enter Team/Account" name="team"
+                      formControlName="team" disabled="true" required />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('team')?.errors &&
+                          (createNewDataroomForm.get('team').dirty ||
+                            createNewDataroomForm.get('team').touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get('team')?.errors
+                              .required
+                          " class="alert-danger">
+                      Team/Account name is required
+                    </p>
+                  </div>
+
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Dataroom Name</label>
+                    <input type="text" class="form-control" placeholder="Enter dataroom name" name="dataroom_nameFront"
+                      formControlName="dataroom_nameFront" value="dataroom_nameFront" required />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('dataroom_name')?.errors &&
+                          (createNewDataroomForm.get('dataroom_name').dirty ||
+                            createNewDataroomForm.get('dataroom_name').touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .required
+                          " class="alert-danger">
+                      Dataroom name is required
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .minlength
+                          " class="alert-danger">
+                      Dataroom name must be 3 characters long
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get('dataroom_name')?.errors
+                              .maxlength
+                          " class="alert-danger">
+                      Dataroom name must be 50 characters long
+                    </p>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Permitted Storage</label>
+                    <input type="number" min="0" class="form-control" placeholder="Dataroom storage in GB"
+                      name="dataroom_storage_allocated" formControlName="dataroom_storage_allocated" maxlength="4" />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          createNewDataroomForm.get('dataroom_storage_allocated')
+                            ?.errors &&
+                          (createNewDataroomForm.get('dataroom_storage_allocated')
+                            .dirty ||
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            ).touched)
+                        ">
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.required
+                          " class="alert-danger">
+                      Permitted storage is required
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.minlength
+                          " class="alert-danger">
+                      Permitted storage must be atleast 1 characters long
+                    </p>
+                    <p *ngIf="
+                            createNewDataroomForm.get(
+                              'dataroom_storage_allocated'
+                            )?.errors.maxlength
+                          " class="alert-danger">
+                      Permitted storage maximum 4 characters allowed
+                    </p>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Permitted Users</label>
+                    <input type="number" min="1" class="form-control" placeholder="Leave Blank if Unlimited"
+                      name="dataroom_users_permitted" formControlName="dataroom_users_permitted" />
+                    <div class="form-control-feedback" *ngIf="
+                      createNewDataroomForm.get('dataroom_users_permitted')
+                        ?.errors &&
+                      (createNewDataroomForm.get('dataroom_users_permitted')
+                        .dirty ||
+                        createNewDataroomForm.get(
+                          'dataroom_users_permitted'
+                        ).touched)
+                    ">
+                      <p *ngIf="
+                        createNewDataroomForm.get(
+                          'dataroom_users_permitted'
+                        )?.errors.required
+                      " class="alert-danger">
+                        Permitted Users is required
+                      </p>
+                      <p *ngIf="
+                        createNewDataroomForm.get(
+                          'dataroom_users_permitted'
+                        )?.errors.minlength
+                      " class="alert-danger">
+                        Permitted Users must be atleast 1 characters long
+                      </p>
+
+                      <p *ngIf="
+                        createNewDataroomForm.get(
+                          'dataroom_users_permitted'
+                        )?.errors.min
+                      " class="alert-danger">
+                        Permitted Users not allowed 0 user
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Data Center location</label>
+                    <br />
+                    <select class="form-control form-control-sm w-100" (change)="onSelectChange($event)"
+                      [value]="is_uae">
+                      <option value=false selected>India</option>
+                      <option value=true>UAE</option>
+                    </select>
+
+                  </div>
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Version</label>
+                    <br />
+                    <select class="form-control form-control-sm w-100" (change)="onVersionChange($event)"
+                      [value]="edit_dataroom_version">
+                      <option value=null disabled selected>Choose Pro/Lite</option>
+                      <option value="Pro">Pro</option>
+                      <option value="Lite">Lite</option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <br>
+                <mat-accordion *ngIf="dataroom_version=='Lite'">
+
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title> Features</mat-panel-title>
+                      <mat-panel-description>
+
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="row" formGroupName="dataroom_features">
+                      <div class="col-sm-9 col-md-12">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="margin-right: 10px;font-weight: bold;">All Lite
+                          Features
+                        </label>
+
+                        <mat-slide-toggle [checked]="is_all_features" (change)="checkFeatures($event.checked)">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          Watermarking
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="custom_watermarking"
+                          [(ngModel)]="dataroom_features.custom_watermarking">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Two-Factor Authentication
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="two_factor_auth"
+                          [(ngModel)]="dataroom_features.two_factor_auth">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Project
+                          Overview
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.proj_overview" formControlName="proj_overview">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Project
+                          Video Intro
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.proj_video_intro"
+                          formControlName="proj_video_intro">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          Logo
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.custom_logo" formControlName="custom_logo">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Custom
+                          External Links
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.custom_external_link"
+                          formControlName="custom_external_link">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          via One Drive
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.one_drive_upload"
+                          formControlName="one_drive_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          via Dropbox
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.dropbox_upload"
+                          formControlName="dropbox_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Favourites
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.favourites" formControlName="favourites">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">Redaction & Version Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.redaction" formControlName="redaction">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Limited
+                          Access Administrators
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.la_admin_access"
+                          formControlName="la_admin_access">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Doculink
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.doculink_perm" formControlName="doculink_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Bulk
+                          Users Upload
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.bulk_users_upload"
+                          formControlName="bulk_users_upload">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Auto
+                          Expire Access Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.auto_expire" formControlName="auto_expire">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Module
+                          Permission Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.module_perm" formControlName="module_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Advanced
+                          Q&A with Category / SME
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.qa_with_cat" formControlName="qa_with_cat">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Question
+                          Submitter Control
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.qa_submit" formControlName="qa_submit">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">On-Platform Voting
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.voting_perm" formControlName="voting_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label"
+                          style="height: 35px;margin-top: 5px;">On-Platform Project Updates
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle [(ngModel)]="dataroom_features.proj_updates" formControlName="proj_updates">
+                        </mat-slide-toggle>
+                      </div>
+
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Voting
+                          Report
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="voting_report_perm"
+                          [(ngModel)]="dataroom_features.voting_report_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Index
+                          Report For Another user
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="index_report_others"
+                          [(ngModel)]="dataroom_features.index_report_others">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          Status of Self Upload
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="self_upload_status"
+                          [(ngModel)]="dataroom_features.self_upload_status">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Upload
+                          Status of Fellow Admins & Other Users
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="all_user_upload_status"
+                          [(ngModel)]="dataroom_features.all_user_upload_status">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Activity
+                          Tracking on File Viewer
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="activity_tracker_perm"
+                          [(ngModel)]="dataroom_features.activity_tracker_perm">
+                        </mat-slide-toggle>
+                      </div>
+
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Viewer
+                          Support - Documents + MP3, MP4, JPG, PNG, Open Office Files
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="viewer_support"
+                          [(ngModel)]="dataroom_features.viewer_support">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Secure
+                          Active Fence Viewer
+
+                        </label>
+                        <br />
+                        <mat-slide-toggle formControlName="fence_viewer" [(ngModel)]="dataroom_features.fence_viewer">
+                        </mat-slide-toggle>
+                      </div>
+
+                      <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">
+                          Upload Restriction
+                        </label>
+
+                        <br />
+                        <mat-slide-toggle formControlName="is_upload_restrict"
+                          [(ngModel)]="dataroom_features.is_upload_restrict">
+                        </mat-slide-toggle>
+                      </div>
+                      <!-- <div class="col-sm-9 col-md-4">
+                        <label for="inputDataroom" class="col-form-label" style="height: 35px;margin-top: 5px;">Print
+                          Screen Control on Viewer
+  
+                        </label>
+                        <br />
+                        <mat-slide-toggle  
+                         formControlName="print_screen_perm" [(ngModel)]="dataroom_features.print_screen_perm">
+                        </mat-slide-toggle>
+                      </div> -->
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+
+
+                <div class="row">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" name="" id="" formControlName="storage_exceed_block">
+                    <span class="ml-2">Block Excess Data. New Data upload beyond permitted storage will be blocked if
+                      this option is selected.</span>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer cdr-md-footer"></div>
+    </div>
+  </div>
+</div>
+
+
+<!--Clone Dataroom-->
+<div class="modal fade" id="profile" tabindex="-1" role="" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title" id="exampleModalLabel">Clone Data Room</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <ul class="nav nav-tabs cr-tab" id="myTab" role="tablist">
+          <!-- <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Create a blank Data Room</a>
+          </li> -->
+          <div class="dr-tab-content">
+            <div class="form-group">
+              <div class="row m-0">
+                <label class="col-sm-3 col-form-label">Choose Data Room</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" placeholder="" [(ngModel)]="update.dataroomname"
+                    name="dataroom_id" specialIsAlphaNumeric maxlength="50" />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row m-0">
+                <label class="col-sm-3 col-form-label">Clone with Data</label>
+                <div class="col-sm-9">
+                  <select class="form-control" [(ngModel)]="update.clone_data" name="clone_data">
+                    <option *ngFor="let datarooms_folder of datarooms_folders" [value]="datarooms_folder.id">
+                      {{ datarooms_folder.name }}
+                    </option>
+                    <!-- <option> Folder</option>
+        <option>Google</option>
+        <option>yahoo</option>
+        <option>HDFC bank</option>
+        <option>Facebook</option>
+        <option>Linkedin</option> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row m-0">
+                <label class="col-sm-3 col-form-label">New Data Room Name</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="inputDataroom" placeholder="Enter dataroom name"
+                    [(ngModel)]="update.dataroom_name" name="dataroom_name" specialIsAlphaNumeric maxlength="50" />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row m-0">
+                <label class="col-sm-3 col-form-label">Clone with User Groups</label>
+                <div class="col-sm-9">
+                  <mat-slide-toggle [(ngModel)]="update.user_group" name="user_group" specialIsAlphaNumeric
+                    maxlength="50"></mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+            <hr class="br-w-pd" />
+            <div class="form-group">
+              <div class="row m-0">
+                <label class="col-sm-3 col-form-label">Enable module</label>
+                <div class="col-sm-9">
+                  <div class="enabl-module">
+                    <mat-slide-toggle [(ngModel)]="update.is_watermarking" name="is_watermarking">Watermarking
+                    </mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)]="update.is_drm" name="is_drm">Doculink</mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)]="update.is_question_and_answers" name="is_question_and_answers">Q&A
+                    </mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)]="update.is_collabration" name="is_collabration">Collaboration
+                    </mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)]="update.is_ocr" name="is_ocr">OCR</mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)]="update.is_editor" name="is_editor">Editor</mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row m-0 align-items-center">
+                <label class="col-sm-3 col-form-label">Apply Account level Branding 11</label>
+                <div class="col-sm-9">
+                  <mat-slide-toggle></mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+            <div class="form-group cdr-md-footer">
+              <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cloneExistingDataroom()">
+                Save
+              </button>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End of dataroom -->
+<div class="modal fade" id="manageDataroom" tabindex="-1" role="" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title" id="exampleModalLabel">Manage Dataroom</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr" *ngIf="selectedIndex != null">
+        <div class="row">
+          <div class="col-6">
+            <div>
+              <span>Data Room Name - </span>
+              <span>{{all_datarooms[selectedIndex]['dataroom_name']}}</span>
+            </div>
+            <div class="mt-1">
+              <span>Dataroom Id - </span>
+              <span>{{all_datarooms[selectedIndex]['id']}}</span>
+            </div>
+            <div class="mt-1">
+              <span>Permitted Storage - </span>
+              <span>{{all_datarooms[selectedIndex]['dataroom_storage_allocated']}} GB</span>
+            </div>
+            <div class="mt-1">
+              <span>Current Storage - </span>
+              <span>{{all_datarooms[selectedIndex]['dataroom_consumed']}} GB</span>
+            </div>
+            <div class="mt-1">
+              <span>Creation Date - </span>
+              <span>{{all_datarooms[selectedIndex]['created_date'] | date : 'mediumDate'}}</span>
+            </div>
+            <div class="mt-1">
+              <span>Last Modified Date - </span>
+              <span>{{all_datarooms[selectedIndex]['updated_date'] | date : 'mediumDate'}}</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div>
+              <span>Deletion Request Date - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Deletion Date - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Deletion Requested by - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Archived On Date - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Archived by - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Unarchived On Date - </span>
+              <span></span>
+            </div>
+            <div class="mt-1">
+              <span>Unarchived by - </span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <button type="button" class="btn btn-primary" data-dismiss="modal"
+              (click)="archivedRequestForDataroom(all_datarooms[selectedIndex])">
+              Archive
+            </button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal"
+              (click)="deletionRequestForDataroom(all_datarooms[selectedIndex])">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

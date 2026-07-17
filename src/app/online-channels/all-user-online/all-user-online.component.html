@@ -1,0 +1,93 @@
+<div>
+  <div class="col-3">
+    <div class="ovr-head">
+      <h3>All Users List</h3>
+    </div>
+    <div>
+      <span *ngIf="data != undefined">Total: {{data.length}}</span>
+    </div>
+  </div>
+  <div class="seach-inner-bx mt-4 mb-4 row">
+    <div class="col-6">
+      <input type="text" class="form-control srch-tx-bx" placeholder="Search by User Full Name"
+        [(ngModel)]="search.userFullName" />
+    </div>
+    <div class="col-6">
+      <input type="text" class="form-control srch-tx-bx" placeholder="Search by Email Id"
+        [(ngModel)]="search.emailId" />
+    </div>
+  </div>
+  <div class="seach-inner-bx mt-4 mb-4 row">
+    <div class="col-6">
+      <input type="text" class="form-control srch-tx-bx" placeholder="Search by Team" [(ngModel)]="search.team" />
+    </div>
+    <div class="col-6">
+      <input type="text" class="form-control srch-tx-bx" placeholder="Search by Dataroom"
+        [(ngModel)]="search.dataroom" />
+    </div>
+  </div>
+  <div class="seach-inner-bx mt-4 mb-4 row">
+    
+    <div class="col-6">
+      <select class="form-control form-control-sm w-100" [(ngModel)]="search.role">
+        <option value="" disabled selected>Search by Role</option>
+        <option value="admin">Admin</option>
+        <option value="laadmin">LA Admin</option>
+        <option value="enduser">End User</option>
+      </select>
+    </div>
+    
+  </div>
+  <div class="row mb-5">
+    <div class="col-1 mb-4">
+      <button class="btn btn-primary addmem-Btn" (click)="getFilteredUsers()">
+        Search
+      </button>
+    </div>
+    <div class="col-6 mb-4">
+      <button class="btn btn-primary addmem-Btn" (click)="resetList()">
+        Reset
+      </button>
+    </div>
+</div>
+<div style="overflow: auto!important;">
+  <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+    <thead>
+      <tr>
+        <th>Sr. No.</th>
+        <th>User Full Name</th>
+        <th>Email Id</th>
+        <th>Team</th>
+        <th>Dataroom</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="data.length == 0">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Data not available</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr *ngFor="let user of data | paginate
+      : { itemsPerPage: 10, currentPage: p1, id: 'files' }; let i = index;">
+        <td>{{ i+1 }}</td>
+        <td>{{ user.userfullname }}</td>
+        <td>{{ user.email }} </td>
+        <td>{{ (user.team.length>18) ? (user.team | slice:0:18 ) + "..." : (user.team)  }}</td>
+        <td>{{ user.dataroomname }}</td>
+        <td>{{ user.role }}</td>
+      </tr>
+      <tr>
+       <td colspan="6" class="mt-5">
+         <pagination-controls (pageChange)="p1 = $event" id="files"></pagination-controls>
+       </td> 
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>

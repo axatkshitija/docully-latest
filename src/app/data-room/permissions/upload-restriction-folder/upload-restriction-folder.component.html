@@ -1,0 +1,132 @@
+<app-header></app-header>
+<section id="cdr-body">
+    <div class="container-fluid">
+        <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column"
+            fxLayout.sm="column" fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+            <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+                (onInitEvent)="receiveAutoMsgHandler($event)">
+            </app-data-room-left>
+            <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass"
+                style="background-color: #fff !important;">
+                <div class="row m-0"
+                    style="background:#fff;z-index: 10;position: sticky !important; top: 0 !important;padding: 10px 0;">
+                    <div class="col-md-9">
+                        <h4 style="font-family: poppins;">Manage {{group_name}} Upload Restrictions </h4>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn"
+                            (click)="goBack()">
+                            Back</a>
+                    </div>
+                    <div class="col-md-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item active">
+                                <a (click)="getFolderHomePath()">All Documents</a>
+                            </li>
+                            <li class="breadcrumb-item active" *ngFor="let data of breadcrumb">
+                                <a (click)="getFolderPath(data.id)">{{ data.name }}</a>
+                            </li>
+                        </ol>
+                    </div>
+
+                </div>
+                <div class="managepermission ">
+                    <div class="table-thead">
+                        <div class="usr-table-list tp-hdr-tb"
+                            style="position: sticky !important; top:130px;background-color:#fff;z-index: 10;">
+                            <div class="solvedHulalal" style="width: 42%;">
+                                <span style="width: 20%; margin-left: 20px;">Index</span>
+                                <span class="usr-title-th" style="width: 80%;margin-left: 40px;">Folder Name</span>
+                            </div>
+                            <div class="thanks" style="width:60% ;display: flex;font-size: 15px;">
+                                <span style="width: 160px;cursor: pointer;">
+                                </span>
+                                <span style="width: 200px;cursor: pointer;" matTooltip="Calendar">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div class="d-flex justify-content-center align-items-center">
+                            <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'"
+                                *ngIf="show_spinner">
+                            </mat-progress-spinner>
+                        </div>
+                        <div *ngIf="nodes.length===0&&!show_spinner"
+                            style="margin-left:40px;margin-top: 5px;font-weight: 500;">
+                            <p>The folder is empty.</p>
+                        </div>
+
+
+                        <tree-root *ngIf="!show_spinner" [nodes]="nodes" [options]="options">
+                            <ng-template #treeNodeTemplate let-node let-index="index">
+
+                                <div class="usr-table-list tp-hdr-tb">
+
+                                    <div class="allfoldersredered" style="width: 50%; display: flex; margin-left: 3px;"
+                                        [class.disabled]="node.data.perm.is_view_only== false ? true : null">
+                                        <span class="d-flex align-items-start flex-column" style="width: 20%;">
+                                            <span>{{node.data.names | onlyIndex}}</span>
+                                        </span>
+
+                                        <span class="usr-title-td" *ngIf="node.data.is_folder===false"
+                                            class="usr-title-td"
+                                            style="word-break: break-word;width: 80%; cursor: default;">
+                                            {{ node.data.name}}
+                                        </span>
+                                        <span class="usr-title-td" *ngIf="node.data.is_folder===true"
+                                            (click)="getSubFolderElement(node.data.id)" class="usr-title-td"
+                                            style="word-break: break-word;width: 80%;">
+                                            <span *ngIf="node.data.is_folder">
+                                                <img src="../../../../assets/images/ICONS_PNG/folder.png"
+                                                    style="width: 17px !important" />
+                                            </span>
+                                            {{ node.data.name}}
+                                        </span>
+                                    </div>
+
+
+                                    <div class="allcheckboxesrendered" style="width: 60%;display: flex;"
+                                        [class.disabled]="node.data.perm.is_upload == false ? true : null">
+
+                                        <span style="width: 100px;">
+                                            <mat-checkbox (change)="clickUploadRestriction($event, node.data)"
+                                                [(ngModel)]="node.data.perm.folder_timer_upload_ristrict"
+                                                name="is_shortcut"
+                                                [indeterminate]="node.data.shortcut_indeterminate"></mat-checkbox>
+                                        </span>
+                                        <span style="width: 240px">
+                                            <input [(ngModel)]="node.data.perm.folder_timer_upload_ristrict_date"
+                                                [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1"
+                                                (ngModelChange)="onChangeDate($event,node.data)"
+                                                [disabled]="!node.data.perm.folder_timer_upload_ristrict"
+                                                placeholder="Date Time"
+                                                style="margin-right: 10px !important;width: 180px !important;">
+                                            <owl-date-time #dt1></owl-date-time>
+                                            <span style="display: inline-block;">{{'('
+                                                +usertimezone['time_zone__abbreviation'] +')'}} </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </tree-root>
+
+                    </div>
+                    <hr />
+
+                    <div class="col-md-4 text-right"></div>
+                    <div *ngIf="nodes.length != 0" class="d-flex justify-content-center mt-3 mb-3">
+                        <button type="submit" class="updates" style="margin-left: 0px;"
+                            (click)="UpdateFoldersFilesPermission()">
+                            Update
+                        </button>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<app-footer></app-footer>

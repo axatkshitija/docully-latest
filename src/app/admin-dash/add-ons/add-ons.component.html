@@ -1,0 +1,97 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user">
+        </app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+
+
+            <span fxFlex><button class="cdr-btn big-btn blue-btn mat-raised-button sub-exp" (click)="Allsubscription()" >All subscription</button> <a
+                class="cdr-btn big-btn blue-btn mat-raised-button sub-exp mr-2" (click)="goBack()"
+
+                >Back</a></span>
+            <!-- <div class="col-md-6 mp-0 text-right">
+                <a class="download-csvfile">Download Sample Team CSV </a>
+              </div> -->
+          </mat-toolbar>
+<!--           <div *ngIf="!showdata">
+            <p>Additional storage not available</p>
+          </div> -->
+          <div class="table-responsive">
+            <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+              <thead>
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Status</th>
+                  <th>Price</th>
+                  <th>Add on type </th>
+                  <th>GB
+                  <th>
+                  <th>Date and Time</th>
+                  <!-- <th>Auto renew</th> -->
+                  <!-- <th>Add ons taken</th> -->
+                  <!-- <th>Cancellation Requested</th> -->
+                  <!-- <th>Cancellation date</th> -->
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="subscriptionsSize != undefined && subscriptionsSize == 0">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>Additional storage not available</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr
+                  *ngFor="let subscription of subscriptions1| subsciprionFilterPipe : searchText; let i = index;">
+                  <td>{{ i+1 }}</td>
+                  <td *ngIf="subscription.planstatus">Active</td>
+                  <td *ngIf="!subscription.planstatus">Inactive</td>
+                  <td>{{ subscription.addon_plan.cost }}</td>
+                  <td>{{ subscription.addon_plan.name }}</td>
+                  <td>{{ subscription.addon_plan.storage }}</td>
+                  <td></td>
+                  <td>{{ subscription.created_date | date:'dd-MM-yyyy HH:mm':'timezone'}}</td>
+                  <!-- <td>{{subscriptions1.plan.created_date}}</td> -->
+                  <!-- <td *ngIf="subscription.planstatus==false">Inactive</td>
+                  <td *ngIf="subscription.planstatus==true">Active</td>
+
+                  <td><a class="title-link">{{ subscription.cost }}</a></td>
+                  <td>static</td>
+                  <td>{{ subscription.storage }}</td>
+                  <td>{{ subscriptions1.created_date | date:'dd-MM-yyyy HH:mm':'timezone' }}</td> -->
+                  <!-- <td>{{ subscription.end_date | date:'dd-MM-yyyy HH:mm':'timezone' }}</td> -->
+
+                  <!-- <td *ngIf="subscription.plan_status=='1'"> <a class="title-link"
+                      routerLink="/manage-subscription/{{subscription.id}}">Manage</a></td>
+                  <td> <a class="title-link" routerLink="/add-ons/{{subscription.id}}">Add Ons</a></td> -->
+                  <!-- <tr>
+                  <td>{{subscriptions1.plan.created_date}}</td> -->
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-card>
+      </div>
+      <!--rt aside component start-->
+
+      <!--rt aside component end-->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->

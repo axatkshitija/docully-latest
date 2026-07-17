@@ -1,0 +1,158 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card>
+          <a routerlink="/documents">All Documents > <span *ngIf="!Upload_file_folder_path"></span>
+            {{Upload_file_folder_path}}</a>
+        </mat-card>
+        <mat-card>
+          <h5 style="font-family:'poppins';text-align: center;font-size: 18px;">Upload Folders Section</h5>
+        </mat-card>
+        <form novalidate="" class="ng-untouched ng-pristine ng-valid">
+          <div class="hero is-fullheight">
+            <div class="hero-body">
+              <div class="container">
+                <div class="columns is-multiline">
+                  <div class="column is-12 is-offset-2" *ngIf="showListOnDrop==false">
+                    <ngx-file-drop dropZoneLabel="Drop only folders here." (onFileDrop)="startUploadOnclick($event)"
+                      (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+                    </ngx-file-drop>
+                    <br />
+
+                    [*Note: Files cannot be uploaded at root folder level.]
+                    <br />
+                    <span style="color: red;">Please upload maximum 500 files in one batch, irrespective of the data
+                      size.</span>
+
+                  </div>
+                  <br />
+
+                  <!-- Upload Section List Before Upload -->
+
+                  <span class="beforeupl" *ngIf="showListOnDrop==true">
+                    <div style="display: flex; align-items: center;justify-content: space-between;"
+                      [hidden]="hideAllAboveUploadStatus==true">
+                      <div style="width: 80%;"><strong>Filename</strong></div>
+                      <div style="text-align:center;width: 20%;">
+                        <strong> Actions</strong>
+                      </div>
+                    </div>
+                    <div *ngFor="let transferFile of clickeventtransferfiles;let i = index"
+                      style="display: flex; align-items: center;justify-content: space-between;"
+                      [hidden]="hideAllAboveUploadStatus==true">
+
+                      <span style="width: 80%;">{{(transferFile.relativePath.length > 40)? (transferFile.relativePath |
+                        slice : 0 : 40 )+'...':(transferFile.relativePath)}} </span>
+                      <span style="text-align:center;width: 20%;">
+                        <i class="fa fa-trash-o" aria-hidden="true" style="color:red;cursor: pointer;"
+                          (click)="getItemID(i)"></i>
+                      </span>
+
+                    </div>
+                  </span>
+
+
+                  <!-- Start Button -->
+                  <div class="row text-center d-flex align-items-center justify-content-center mt-4" align="centre"
+                    *ngIf="showListOnDrop==true" [hidden]="hideAllAboveUploadStatus==true">
+                    <button mat-flat-button color="primary" (click)="onclickStart()"
+                      [hidden]="hideAllAboveUploadStatus==true">Start</button>
+                  </div>
+                  
+                  <!-- Div Upload Section Note -->
+                  <div class="uploadsection-note mt-3 mb-3" *ngIf="start_upload" style="font-family: 'poppins';">
+                    <div class="note1" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">Your files are
+                      being virus scanned, checked for errors, uploaded on the server & are optimized for viewing on the
+                      platform...</div>
+                    <div class="note2 mt-2" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">Do not
+                      click anywhere on this page or close this window until the uploading is finished.</div>
+                    <div class="note2 mt-2" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">The
+                      uploading speed may vary depending on your Internet's uploading speed & the quality of the files
+                      being uploaded.</div>
+                  </div>
+                  <!-- Div Upload Section Note Ends -->
+                  <span *ngIf="start_upload">
+                    <span style="display: flex; align-items: center;justify-content: space-between;">
+                      <div style="margin-bottom: 20px; width: 75%;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                          <span>Upload Status</span>
+                          {{ uploadStatusResponse ? sampleRes : 0 }} / {{ uploadStatusResponse ?
+                          uploadStatusResponse['totalnumberoffiles'] : 0 }}
+                        </div>
+                        <mat-progress-bar mode="determinate" value="{{ percentDone }}"></mat-progress-bar>
+                      </div>
+                      <span style="width: 20%;">
+                        <button mat-flat-button color="primary" (click)="cancelUploading()">Cancel</button>
+                      </span>
+                    </span>
+                    <div class="column is-8 is-offset-2"
+                      style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 5px;">
+                      <div style="width: 10%;"><strong>Sr. No.</strong></div>
+                      <div style="width: 80%;"><strong>File Name</strong></div>
+                      <div style="width: 10%;"><strong>Status</strong></div>
+                    </div>
+                    <div class="column is-8 is-offset-2"
+                      style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 5px;"
+                      *ngFor="let file of files;let i = index">
+                      <div style="width: 10%;">{{i+1}}</div>
+                      <div style="width: 80%;">{{ (file.relativePath.length > 40)? (file.relativePath | slice : 0 : 40
+                        )+'...':(file.relativePath)}} </div>
+                      <div style="width: 10%;">
+                        <span *ngIf="file.uploaded == true">Done </span>
+                        <span *ngIf="file.uploaded == false">Pending </span>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <hr />
+      <div fxFlex="20" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-document-right-side-menu></app-document-right-side-menu>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- start of Notify model -->
+<div id="notifyModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content cdr-delete-files">
+      <div class="modal-header">
+        <h4 class="modal-title cdr-delete-title">Notify</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          Are you sure you want to notify all members about uploading new file ?
+        </div>
+      </div>
+      <div class="modal-footer cdr-delete-footer">
+        <div>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="NotifyAllMembers()">
+            Yes
+          </button>
+          &nbsp;
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="DontNotifyAllMembers()">
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end of Notify model -->

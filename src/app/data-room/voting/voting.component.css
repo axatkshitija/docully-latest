@@ -1,0 +1,23 @@
+.cuppa-dropdown {
+	border: 1px solid !important;
+}
+
+.radio-padding-right {
+	padding-right: 10px !important;
+}
+
+
+.closed {
+	color: #eb9b04;
+}
+
+.open {
+	color: #4bd600;
+}
+
+input[type="radio"] {
+	transform: scale(1.5);
+	/* Increases the size */
+	margin-right: 8px;
+	/* Adds spacing */
+}

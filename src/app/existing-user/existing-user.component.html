@@ -1,0 +1,173 @@
+
+<section id="loginFormBx" class="sec-padding h-1pr" style="height: 100vh; padding-top: 130px;">
+  <div class="container h-1pr">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="cr-account-page">
+
+
+        <div   class="login-form-area">
+          <div class="login-form-body">
+            <a [routerLink]="['/']" style="margin-bottom: 20px; margin-left: 20px; margin-top: 20px;">
+              <img style="margin-left: 35%;margin-top: 20px ;margin-bottom: 20px;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+            </a>
+            <form
+              name="form"
+              (ngSubmit)="f.form.valid && login()"
+              #f="ngForm"
+              novalidate
+            >
+            <div >
+              <div class="row">
+                <div class="col-md-1 text-center">
+                </div>
+                <div class="col-md-10 text-center">
+                  <p style="color: #cbb26a; font-weight: bold;">It seems you are an existing user, please enter your password to continue.</p>
+                </div>
+                <div class="col-md-1 text-center">
+                
+                </div>
+              </div>
+            </div>
+            
+              <div class="fr-top-con">
+                <h1
+                  class="lg-heading wow animated-1 fadeInUp"
+                  data-wow-delay="1s"
+                >
+                  Sign In
+                </h1>
+
+                <div
+                  class="alert alert-danger"
+                  role="alert"
+                  *ngIf="isLoginError"
+                >
+                  <strong>Oops !</strong> Email Id/Password is incorrect!!!
+                </div>
+
+                <div
+                  [ngClass]="{ 'has-error': f.submitted && !email.valid }"
+                  class="form-group"
+                >
+                  <label for="email" class="error-msg dmslb">Email Id</label>
+                  <input
+                    type="text"
+                    class="form-control dmsbx"
+                    name="email"
+                    autocomplete="off"
+                    [(ngModel)]="model.email"
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                    #email="ngModel"
+                    required
+                    
+                  />
+                  <small
+                    *ngIf="email.hasError('required') && email.touched"
+                    class="text-danger"
+                    >Email is required .
+                  </small>
+                  <div *ngIf="email?.errors?.pattern">
+                    This is not a valid Email!!!
+                  </div>
+                </div>
+
+                <div
+                  [ngClass]="{ 'has-error': f.submitted && !password.valid }"
+                  class="form-group"
+                >
+                  <label for="password" class="error-msg dmslb">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control dmsbx"
+                    name="password"
+                    [(ngModel)]="model.password"
+                    #password="ngModel"
+                    required
+                  />
+                  <small
+                    *ngIf="password.hasError('required') && password.touched"
+                    class="text-danger"
+                    >Password is required .
+                  </small>
+                </div>
+
+                <!-- <div>
+                  <label for="captcha" class="error-msg dmslb"> Captcha </label>
+                  <input type="text" class="form-control dmsbx" name="captcha"
+                      [(ngModel)]="model.captcha" #captcha="ngModel"  maxlength="6"  autocomplete="off" required />
+
+                  <small *ngIf="captcha.hasError('required') && captcha.touched"
+                      class="text-danger">Captcha is required .
+                  </small>
+                  <small *ngIf="captchaError" class="text-danger">Invalid captcha code!
+                  </small>
+                  <div class="captcha-container">
+                    <div class="captcha-box" (click)="refreshCaptcha()">
+                        <span class="captcha-text">{{ captchaCode }}</span>
+                    </div>
+                
+                </div>
+              </div> -->
+
+              <div class="col-12">
+                <div class="row">
+                    <div class="form-check keepme-s col-6">
+                        <label class="form-check-label m-0">
+                            <input type="checkbox" id="keep-me" class="form-check-input">
+                            Keep me signed in
+                        </label>
+                    </div>
+             
+                    <div class="col-5 align-self-end text-right p-0" style="margin-left: 15px !important;text-align:right !important;">
+                        <a [routerLink]="['/forget']" class="forgot-pas">Forgot Password?</a>
+                    </div>
+                </div>
+            </div>
+                <div class="col-12 text-center submit-btn-st">
+                  <button
+                    [disabled]="loading"
+                    class="btn btn-active dmsbtn cdr-o-btn"
+                    style="background: #cbb26a;"
+                  >
+                    Sign In
+                  </button>
+                  <img
+                    *ngIf="loading"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="fm-footer">
+          <p>
+            Don't have an account?
+            <a [routerLink]="['/signup']"> Register here</a>
+          </p>
+          <p>
+            <a
+              href="https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#term"
+              style="color: #007bff !important; text-decoration: underline"
+              >Terms of Use</a
+            >
+            &nbsp;
+            <a
+              href="https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#privacy"
+              style="color: #007bff !important; text-decoration: underline"
+              >Privacy Policy</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<router-outlet></router-outlet>
+
+<!--
+<app-footer></app-footer>
+-->

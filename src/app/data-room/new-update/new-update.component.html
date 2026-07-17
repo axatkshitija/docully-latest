@@ -1,0 +1,144 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+      <div fxFlex="100" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card ">
+          <div class="new-update-title">
+            <h1>
+              Send Update
+              <button mat-raised-button class="cdr-btn big-btn blue-btn" type="button" routerLink="/update-doc"
+                style="float: right; margin-right: 10px">
+                Back
+              </button>
+            </h1>
+
+            <hr />
+          </div>
+          <div *ngIf="!is_upload_file">
+            <form class="form-horizontal pb-3" (ngSubmit)="newUpdate()" name="myForm">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="email">Send an update to : </label><br />
+                      <select class="form-control" (change)="checkMemButton($event.target.value)">
+                        <option value="group_list">Group List</option>
+                        <option value="mem_list">Member List</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <div *ngIf="mem_list">
+                        <select id="email" name="email" [(ngModel)]="update.member" class="form-control" multiple>
+                          <option *ngFor="let user of dataroom_user" [value]="user.member.email">
+                            {{
+                            user.member.email
+                            }}
+                          </option>
+                        </select>
+                      </div>
+                      <div *ngIf="group_list">
+                        <select id="email" name="email" [(ngModel)]="update.member" class="form-control" multiple>
+                          <option *ngFor="let group of dataroom_groups" [value]="group.id">
+                            {{ group.group_name }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="subject">Subject : </label>
+                      <input type="text" class="form-control" id="subject" required placeholder="Type subject"
+                        [(ngModel)]="update.subject" name="subject" />
+                    </div>
+                    <div style="color: red" *ngIf="error_subject">
+                      {{ update.subject == "" ? "Enter the Subject" : "" }}
+                    </div>
+
+                    <div class="form-group" *ngIf="show_file">
+                      <label>Select File</label>
+                      <input class="form-control" placeholder="" [matAutocomplete]="auto"
+                        (keyup)="getFilesOnSearch($event)" [(ngModel)]="fileName"
+                        [ngModelOptions]="{standalone: true}" />
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getFileName($event.option.value)">
+                        <mat-option *ngFor="let item of fileList" [value]="item">
+                          <span>{{ item.name }}</span>
+                        </mat-option>
+                      </mat-autocomplete>
+                    </div>
+                    <!-- <div class="form-group" *ngIf="show_file">
+                      <label>Select File</label>
+                      <select
+                        class="form-control"
+                        [(ngModel)]="update.file"
+                        name="update.file"
+                      >
+                        <option value="0">--Select--</option>
+                        <option [value]="fi.id" *ngFor="let fi of files">
+                          {{ fi.name }}
+                        </option>
+                      </select>
+                    </div> -->
+                  </div>
+
+                  <div class="col-md-12">
+                    <label for="pwd">Message body : </label>
+                    <div style="color: red" *ngIf="error_message">
+                      {{ update.message == "" ? "Enter the Message" : "" }}
+                    </div>
+
+                    <textarea type="text" rows="5" class="form-control" id="pwd" required placeholder="Type message"
+                      [(ngModel)]="update.message" name="message"></textarea>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <div class="col-sm-offset-2">
+                        <div class="checkbox">
+                          <label><input type="checkbox" [(ngModel)]="update.send_update_email"
+                              name="send_update_email" /><span class="check">An email alert will be sent to the
+                              user</span></label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+     
+
+              <div class="create">
+                <div class="col-sm-offset-2 col-sm-4">
+                  <button class="btn btn-default" type="submit">
+                    Send Update
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-content document-table" id="pills-tabContent">
+            <!-- list view start from here.. -->
+            <div class="tab-pane fade show active" id="listViewDr" role="tabpanel" aria-labelledby="pills-home-tab"
+              *ngIf="!is_upload_file"></div>
+            <!-- Upload page -->
+            <div class="doc-tool" *ngIf="is_upload_file">
+              <app-upload-files></app-upload-files>
+            </div>
+            <!-- End of upload page  -->
+            <!-- grid view start from here.. -->
+            <div class="tab-pane fade" id="gridViewDr" role="tabpanel" aria-labelledby="pills-home-tab">
+              Coming soon..
+            </div>
+          </div>
+          <!-- Add an tree menu -->
+          <!-- End of tree -->
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- Add dataroom Model here -->
+<!-- add all pop ups here -->

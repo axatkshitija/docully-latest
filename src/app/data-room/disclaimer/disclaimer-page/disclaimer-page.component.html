@@ -1,0 +1,136 @@
+<div fxFlex="100" fxFlex.xs="100" fxFlexOrder.xs="2" *ngIf="overview">
+  <mat-card class="mat-card p0">
+    <mat-toolbar class="add-tbpd">Disclaimer <span fxFlex></span> </mat-toolbar>
+    <mat-card-content>
+      <div class="cr-n-dr">
+        <div
+          class="drLogo mb-2"
+          ngFileDrop
+          [options]="options"
+          (uploadOutput)="onUploadOutput($event)"
+          [uploadInput]="uploadInput"
+        >
+          <p>Drag a file here (Only .pdf)</p>
+        </div>
+
+        <div class="col-md-12 text-center">OR</div>
+        <div class="drLogo mb-2">
+          <input
+            type="file"
+            id="file"
+            (change)="handleFileInput($event.target.files)"
+            class="hideInputTypeFile"
+            #disclaimer
+            single
+          />
+          <button
+            mat-raised-button
+            color="primary"
+            class="darkgrey-text-btn is-icon big-btn"
+            (click)="disclaimer.click()"
+            type="button"
+          >
+            <i class="fa fa-link" aria-hidden="true"></i> Upload New Disclaimer
+          </button>
+        </div>
+        <div class="column is-8 is-offset-2">
+          <div class="upload-items">
+          </div>
+        </div>
+        <mat-checkbox
+          [(ngModel)]="overview.show_multiple_times_disclaimer"
+          [disabled]="defaultdisclaimer.length == 0"
+          class="fnt-13"
+          (change)="getAllTimeDisclaimer($event.checked)"
+          >Want dataroom members to accept disclaimer every time they sign in ?
+        </mat-checkbox>
+        <table class="table table-sm mt-3 disclaimer-tbl">
+          <thead>
+            <tr>
+              <th scope="col">Disclaimer</th>
+              <th scope="col">Preview Status</th>
+              <th scope="col" style="width: 160px">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let disclaimer of all_dataroom_disclaimers; let i = index"
+            >
+              <td>{{ disclaimer.dataroom_disclaimer_name }}</td>
+              <td>
+                {{ disclaimer.dataroom_disclaimer_preview_status }}
+                <span
+                  _ngcontent-c28=""
+                  class="cdr-badge live-badge ng-star-inserted"
+                  *ngIf="disclaimer.is_dataroom_disclaimer_default"
+                  >Default
+                </span>
+              </td>
+              <td>
+                <div class="action-btn">
+                  <button
+                    class="icon-btn"
+                    data-toggle="tooltip"
+                    title="Download"
+                    type="button"
+                    (click)="download_dataroom_disclaimer(disclaimer)"
+                  >
+                    <i class="fa fa-download"></i>
+                  </button>
+                  <a
+                    class="icon-btn"
+                    type="button"
+                    data-toggle="tooltip"
+                    title="Preview"
+                    (click)="goToDislaimers(disclaimer.id)"
+                  >
+                    <i class="fa fa-eye"></i>
+                  </a>
+                  <span
+                    *ngIf="is_dataroom_disclaimer_default"
+                    class="t-text"
+                    id="make_id_true"
+                  >
+                    <button
+                      class="icon-btn"
+                      type="button"
+                      data-toggle="tooltip"
+                      title="Make Not Default"
+                      (click)="make_default_dataroom_disclaimer(disclaimer.id)"
+                    >
+                      <i class="fa fa-check" aria-hidden="true"></i>
+                    </button>
+                  </span>
+                  <span
+                    *ngIf="is_dataroom_disclaimer_default === false"
+                    class="t-text"
+                    id="make_id_false"
+                  >
+                    <button
+                      class="icon-btn"
+                      type="button"
+                      data-toggle="tooltip"
+                      title="Make Default"
+                      (click)="make_default_dataroom_disclaimer(disclaimer.id)"
+                    >
+                      <i class="fa fa-check"></i>
+                    </button>
+                  </span>
+                  <button
+                    class="icon-btn"
+                    type="button"
+                    data-toggle="tooltip"
+                    title="Delete"
+                    (click)="delete_dataroom_disclaimer(disclaimer.id, i)"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

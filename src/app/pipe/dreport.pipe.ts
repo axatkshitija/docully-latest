@@ -1,0 +1,17 @@
+import * as _ from "lodash";
+import { Pipe, PipeTransform } from "@angular/core";
+
+@Pipe({
+  name: "dnameSearch",
+})
+export class DRFilterPipe implements PipeTransform {
+  transform(array: any[], query: string): any {
+    if (query) {
+      return _.filter(
+        array,
+        (row) => row.user__first_name.toLowerCase().indexOf(query.toLowerCase()) > -1
+      );
+    }
+    return array;
+  }
+}

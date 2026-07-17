@@ -1,0 +1,239 @@
+<app-header></app-header>
+<section id="cdr-body">
+    <div class="container-fluid">
+        <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column"
+            fxLayout.sm="column" fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+            <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+            </app-data-room-left>
+            <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+                <mat-card class="mat-card p0">
+                    <mat-toolbar class="add-tbpd">
+                        <div class="title" style="width: 100%;">
+                            <h2 style="display: inline;float: left;width: 9ch;">
+                                Version & History
+                            </h2>
+                            <span style="float: right;display: inline; width: 10%;">
+                                <button class="btn btn-primary" (click)="goBack()">Back</button></span>
+
+                        </div>
+                        <span fxFlex></span>
+                    </mat-toolbar>
+                    <div>
+
+                        <div class="datatime-status">
+                            <div class="topbar-af">
+
+                                <div *ngIf="BulkDelete">
+                                    <button mat-raised-button class="btn btn-danger" aria-hidden="true"
+                                        data-toggle="modal" data-target="#deleteModel" style="color: white;">
+                                        <i class="fa fa-trash" style="color: white;font-size: 12px;"></i> Delete
+                                    </button>
+                                    <button mat-raised-button class="btn btn-primary"
+                                        style="color: white;margin-left:5px;" (click)="DownloadSelectedFiles()">
+                                        <i class="fa fa-download" style="color: white;font-size: 12px;"></i> Download
+                                    </button>
+                                </div>
+                                <span fxFlex></span>
+                                <div id="deleteModel" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <div class="modal-content cdr-delete-files">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title cdr-delete-title">
+                                                    Delete Folders and Files
+                                                </h4>
+                                                <button type="button" class="close" data-dismiss="modal">
+                                                    &times;
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="alert alert-danger">
+                                                    Are you sure you wish to delete selected files ?
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer cdr-delete-footer">
+                                             
+                                                    <form>
+                                                        Type 'delete' to Confirm
+                                                        <input type="text" class="w-100 mb-2 cdr-delete-input"
+                                                            formControlName="delete" [(ngModel)]="deletes" id="2"
+                                                            (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                                                        <button type="button"
+                                                            [disabled]="is_disabled_delete_button == false"
+                                                            class="btn btn-primary" data-dismiss="modal"
+                                                            (click)="remove_favourite_all_files()">
+                                                            Confirm Delete
+                                                        </button>
+                                                    </form>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content document-table" id="pills-tabContent">
+
+                            <div class="tab-pane fade show active" id="listViewDr" role="tabpanel"
+                                aria-labelledby="pills-home-tab">
+                                <table class="table table-striped">
+                                    <thead class="user-per-head">
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" id="select" name="select"
+                                                    (click)="selectAll($event.target.checked)" />
+                                            </th>
+                                            <th>File</th>
+                                            <th>Updated User</th>
+                                            <th>Updated Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="show_spinner === true">
+                                            <td colspan="6">
+                                                <mat-progress-spinner class="progress-align-center"
+                                                    style="margin: 0 auto !important" [mode]="'indeterminate'"
+                                                    *ngIf="show_spinner">
+                                                </mat-progress-spinner>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="show_spinner === false && all_root_folder_list.length ==0">
+                                            <td colspan="6">
+                                                There is no documents.
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="
+                                        let folder of all_root_folder_list
+                                          | paginate
+                                            : {
+                                                itemsPerPage: 10,
+                                                currentPage: p,
+                                                totalItems: size
+                                              };
+                                        let i = index
+                                      ">
+                                            <td>
+                                                <input type="checkbox" [(ngModel)]="folder.checked"
+                                                    (change)="showBulkDownload()" />
+                                            </td>
+                                            <td>
+                                                <div class="tbl-icon-txt">
+
+                                                    <span class="icon-span"><img [src]="folder.icons" /></span> <span
+                                                        class="recent-doc-title">
+                                                        <a (click)="openRedactor(folder.folder_id,folder.id)"
+                                                            style="color: blue" target="_blank">{{ folder.name }}</a>
+                                                        <span style="color: black;" *ngIf="folder.version != 0">
+                                                            ({{folder.version}}) </span><span class="icon-span"
+                                                            *ngIf="folder.current_version"><img
+                                                                [src]="'assets/images/ICONS_PNG/current-version.png'"
+                                                                style="width: 18px !important;" /></span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>{{folder.user__first_name}} {{folder.user__last_name}} </td>
+                                            <td>
+                                                {{
+                                                folder.created_date
+                                                | date: "dd-MM-yyyy HH:mm": usertimezone['time_zone__offset'] }} {{'('
+                                                +usertimezone['time_zone__abbreviation'] +')'}}
+                                            </td>
+                                            <td>
+
+                                                <button class="tb-actb" mat-button [matMenuTriggerFor]="menu">
+                                                    <i class="material-icons">&#xE5D4;</i>
+                                                </button>
+                                                <mat-menu #menu="matMenu" class="cdr-actbtn animated flipInX">
+                                                    <button mat-menu-item type="button">
+                                                        <a (click)="openRedactor(folder.folder_id,folder.id)"
+                                                            style="color: blue" target="_blank">View</a>
+                                                    </button>
+                                                    <button mat-menu-item aria-hidden="true" data-toggle="modal"
+                                                        [attr.data-target]="'#deleteModelA'+i"
+                                                        *ngIf="folder.version != 0">
+                                                        Delete
+                                                    </button>
+                                                    <button mat-menu-item *ngIf="!folder.current_version"
+                                                        (click)="setCurrentVersion(folder.id)">
+                                                        Set Current Version
+                                                    </button>
+                                                    <button mat-menu-item *ngIf="folder.current_version"
+                                                        (click)="removeCurrentVersion(folder.id)">
+                                                        Remove Current Version
+                                                    </button>
+                                                    <button mat-menu-item (click)="downloadVersion(folder)">
+                                                        Download
+                                                    </button>
+                                                    <button mat-menu-item
+                                                        (click)="openRedactor(folder.folder_id,folder.id)">
+                                                        Redact
+                                                    </button>
+                                                </mat-menu>
+                                                <div id="deleteModelA{{i}}" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+
+                                                        <div class="modal-content cdr-delete-files">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title cdr-delete-title">
+                                                                    Delete Folders and Files
+                                                                </h4>
+                                                                <button type="button" class="close"
+                                                                    data-dismiss="modal">
+                                                                    &times;
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="alert alert-danger">
+                                                                    Are you sure you wish to delete selected files ?
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer cdr-delete-footer">
+                                                                <div>
+                                                                    <form>
+                                                                        Type 'delete' to Confirm
+                                                                        <input type="text" class="cdr-delete-input"
+                                                                            formControlName="delete"
+                                                                            [(ngModel)]="deletes" id="2"
+                                                                            style="height: 32px;"
+                                                                            (keyup)="onKeyCheckDelete(delete.value)"
+                                                                            #delete />
+                                                                        <button type="button"
+                                                                            [disabled]="is_disabled_delete_button == false"
+                                                                            class="btn btn-primary" data-dismiss="modal"
+                                                                            (click)="remove_favourite_single_files(folder.id)">
+                                                                            Confirm Delete
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                <!-- <div class="pagination-sec" *ngIf="show_spinner==false">
+                                    <pagination-controls (pageChange)="getAllFavourites($event)"></pagination-controls>
+                                </div> -->
+                                <div style="clear: both"></div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+
+            <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+                <!--rt aside component start-->
+                <app-document-right-side-menu> </app-document-right-side-menu>
+                <!--rt aside component end-->
+            </div>
+        </div>
+    </div>
+</section>
+<app-footer></app-footer>

@@ -1,0 +1,19 @@
+    <div mat-dialog-title>
+        Bulk Download File Limit Exceeded...
+        <i class="fa fa-times" aria-hidden="true" (click)="onNoClick()" style="float: right !important; cursor: pointer"></i>
+    </div>
+  
+  <div mat-dialog-content>
+    <div class="filecount" style="font-size: 16px;font-weight: bold;">
+        Currently Selected Files : <span style="color: red;">{{data.filecount}}</span>
+    </div>
+    <div class="mt-3" style="color: red;font-size: 15px;">
+      You can only download a maximum of 500 files in one batch.Kindly remove some of the 
+      files from your selection to bring it within the permissible limit of 500 files
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button  [mat-dialog-close]="data.ok" class="btn btn-primary">
+      Okay
+    </button>
+  </div>

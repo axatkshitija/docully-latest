@@ -1,0 +1,154 @@
+<app-header></app-header>
+<section id="cdr-body" *ngIf="data">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports <span fxFlex></span>
+            <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn" (click)="goBack()">
+              Back</a>
+          </mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="fa fa-bar-chart"></i>
+              <span class="t-text">Activity By Files</span>
+            </div>
+          </div>
+
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="slt-pre"></div>
+            </div>
+          </div>
+
+          <div class="table-content">
+            <div class="file-title-wd">
+              <i class="fa fa-file-o"></i>
+              <div class="act-file-bx">
+                <span>{{ data.name }}</span>
+                <span class="act-t-txt">{{ data.user.first_name }} {{ data.user.last_name }}</span><span
+                  class="act-t-email"> ({{ data.user.email }})</span>
+              </div>
+            </div>
+
+            <div class="status-panl">
+              <ul class="status-bar three-pnl">
+                <li class="tit-it-list">
+                  <span>Total Views</span>
+                  <strong>{{ data.viewed_count }}</strong>
+                </li>
+                <li class="tit-it-list">
+                  <span>Total Downloads</span>
+                  <strong>{{ data.download_count }}</strong>
+                </li>
+
+                <li class="tit-it-list">
+                  <span>Total Moved</span>
+                  <strong>{{ data.Move_activity_count }}</strong>
+                </li>
+                <li class="tit-it-list">
+                  <span>Added</span>
+                  <strong class="added-date">
+                    {{ data.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }}
+                    {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                  </strong>
+                </li>
+              </ul>
+              <ul class="status-bar three-pnl">
+
+                <li class="tit-it-list">
+                  <span>Total Copied</span>
+                  <strong>{{ data.Copy_activity_count }}</strong>
+                </li>
+                <li class="tit-it-list">
+                  <span>Total Doculink </span>
+                  <strong>{{ data.Drm_activity_count }}</strong>
+                </li>
+                <li class="tit-it-list">
+                  <span>Deleted Date</span>
+                  <strong class="added-date" *ngIf="data.Delete_activity_count != 'None'; else deleted">{{
+                    data.Delete_activity_count
+                    | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }}
+                    {{'(' +usertimezone['time_zone__abbreviation'] +')'}} </strong>
+                  <ng-template #deleted>
+                    <strong class="added-date">No Deleted File</strong>
+                  </ng-template>
+                </li>
+                <li class="tit-it-list" style="border: none;">
+                </li>
+              </ul>
+            </div>
+
+            <table class="table dl-table filesh-tbl">
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Activity</th>
+              </tr>
+              <tr *ngFor="let activity of activities">
+                <td>
+                  {{ activity?.created_date | date: 'dd-MM-yyyy, HH:mm a'}}
+                  {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+
+                </td>
+                <td>
+                  {{ activity.folder__deleted_by__first_name == null || activity.folder__deleted_by__first_name == undefined ? activity.user.first_name  : activity.folder__deleted_by__first_name }} {{ activity.folder__deleted_by__last_name == null || activity.folder__deleted_by__last_name == undefined ? activity.user.last_name : activity.folder__deleted_by__last_name }}
+                </td>
+                <td *ngIf="activity.event == 'file view'">
+                  viewed the file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'file print'">
+                  printed the file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'file download'">
+                  downloaded the file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'drm download'">
+                  downloaded a Doculink to {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'delete'">
+                  deleted a file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'Copy Folder'">
+                  copied the folder{{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'Copy File'">
+                  copied the file{{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+
+                <td *ngIf="activity.event == 'Moved Folder'">
+                  moved the folder{{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+        
+               
+                <td *ngIf="activity.event == 'Move File'">
+                  moved the file{{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'bulk_download'">
+                  bulk downloaded this zip file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+                <td *ngIf="activity.event == 'Bulk download'">
+                  bulk downloaded the file {{ activity.folder__name  ==null || activity.folder__name == undefined ? activity.folder.name  : activity.folder__name }}
+                </td>
+              </tr>
+            </table>
+
+            <div class="table-pagination">
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

@@ -1,0 +1,303 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+      </app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <div class="title">
+              <h2>
+                {{ type == 2 ? "Viewed Documents" : "Not Viewed Documents" }}
+              </h2>
+            </div>
+            <span fxFlex></span>
+          </mat-toolbar>
+          <div>
+            <div class="cdr-breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a routerLink="/documents">All Documents</a>
+                </li>
+                <li class="breadcrumb-item active">
+                  All {{ type == 2 ? "Viewed Documents" : "Not Viewed" }}
+                </li>
+              </ol>
+              <span fxFlex></span>
+            </div>
+            <div class="datatime-status">
+              <div class="topbar-af">
+              
+                  <div class="form-group">
+                    <span style="white-space: nowrap">
+                      <label class="col-form-label">Select: &nbsp; </label>
+                      <select class="form-control" [(ngModel)]="type" name="type"
+                      (change)="changeType($event.target.value)">
+                      <option value="1">Not Viewed Files</option>
+                      <option value="2">Viewed Files</option>
+                    </select>
+                    </span>
+                  </div>
+             
+                <div *ngIf="BulkDelete">
+                  <button
+                    type="button"
+                    (click)="DeleteSelectedFiles()"
+                    class="ico-bnt"
+                  >
+                    <i class="fa fa-trash"></i> BulkDelete
+                  </button>
+                  <button
+                    type="button"
+                    (click)="DownloadSelectedFiles()"
+                    class="ico-bnt"
+                  >
+                    <i class="fa fa-download"></i> BulkDownload
+                  </button>
+                </div>
+                <span fxFlex></span>
+                <!-- <button mat-raised-button class="cdr-btn big-btn blue-btn mbtn" type="button">Download report</button> -->
+              </div>
+            </div>
+      
+            <div class="tab-content document-table" id="pills-tabContent">
+              <!-- list view start from here.. -->
+              <div
+                class="tab-pane fade show active"
+                id="listViewDr"
+                role="tabpanel"
+                aria-labelledby="pills-home-tab"
+              >
+                <table class="table table-striped">
+                  <thead class="user-per-head">
+                    <tr>
+                      <th>
+                        <input
+                          type="checkbox"
+                          id="select"
+                          name="select"
+                          (click)="selectAll($event.target.checked)"
+                        />
+                      </th>
+                      <th
+                        *ngIf="
+                          datarooms_indexing ||
+                          user.member.is_dataroom_admin ||
+                          user.member.is_la_user
+                        "
+                      >
+                        <span *ngIf="datarooms_indexing.hide_file_indexing"
+                          >Index</span
+                        >
+                      </th>
+                      <th>Documents</th>
+                      <th>Containing Folders</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="show_spinner === true">
+                      <td colspan="6">
+                          <mat-progress-spinner class="progress-align-center" style="margin: 0 auto !important"
+                            [mode]="'indeterminate'" *ngIf="show_spinner">
+                          </mat-progress-spinner>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngFor="
+                        let folder of all_root_folder_list
+                          | paginate
+                            : {
+                                itemsPerPage: 10,
+                                currentPage: p,
+                                totalItems: size
+                              };
+                        let i = index
+                      "
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="folder.checked"
+                          (click)="showBulkDownload()"
+                        />
+                      </td>
+                      <td
+                        *ngIf="
+                          datarooms_indexing ||
+                          user.member.is_dataroom_admin ||
+                          user.member.is_la_user
+                        "
+                        class="padd"
+                      >
+                        <div
+                          *ngIf="
+                            datarooms_indexing.hide_file_indexing ||
+                            user.member.is_dataroom_admin ||
+                            user.member.is_la_user
+                          "
+                        >
+                          <!--                         <div *ngIf="!is_edit_index_number">
+                     --><span *ngIf="datarooms_indexing.hide_file_indexing">{{
+                            folder.index
+                          }}</span>
+                          <!--                         </div>
+                     -->
+                        </div>
+                      </td>
+                      <td>
+                        <div class="tbl-icon-txt">
+                          <span class="icon-span"
+                            ><img [src]="folder.icons"
+                          /></span>
+                          <span class="recent-doc-title"
+                            ><a
+                              href="{{ baseUrl }}/file-view/{{ folder.id }}/{{
+                                user.id
+                              }}" 
+                              (click)="goToViewerPage(folder)"
+                              style="color: blue"
+                              target="_blank"
+                              >{{ folder.name }}</a
+                            ></span
+                          >
+                        </div>
+                      </td>
+                      <td>{{ folder.parent_folders }}</td>
+                      <td>
+                        {{
+                          folder.created_date
+                          | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] 
+                        }}
+                         {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                      </td>
+                      <td>
+                        <div class="recent-doc-menu">
+                          <button
+                            class="tb-actb"
+                            mat-button
+                            [matMenuTriggerFor]="menu"
+                          >
+                            <i class="material-icons">&#xE5D4;</i>
+                          </button>
+                          <mat-menu
+                            #menu="matMenu"
+                            class="cdr-actbtn animated flipInX"
+                          >
+                            <button
+                              mat-menu-item
+                              *ngIf="folder.perm.is_view_and_print_and_download"
+                              (click)="DownloadFiles(folder)"
+                            >
+                              Download
+                            </button>
+                        
+                            <button
+                              mat-menu-item
+                              data-toggle="modal"
+                              [attr.data-target]="'#deleteModel' + i"
+                              *ngIf="
+                                user.member.is_dataroom_admin ||
+                                user.member.is_la_user
+                              "
+                            >
+                              Delete
+                            </button>
+                          </mat-menu>
+
+                          <!-- start of delete model -->
+                          <div
+                            id="deleteModel{{ i }}"
+                            class="modal fade"
+                            role="dialog"
+                          >
+                            <div class="modal-dialog">
+                              <!-- Modal content-->
+                              <div class="modal-content cdr-delete-files">
+                                <div class="modal-header">
+                                  <h4 class="modal-title cdr-delete-title">
+                                    Delete Folders and Files
+                                  </h4>
+                                  <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="alert alert-danger">
+                                    Are you sure you wish to delete the
+                                    <strong>{{ folder.name }} </strong>?
+                                  </div>
+                                </div>
+                                <div class="modal-footer cdr-delete-footer">
+                                  <div>
+                                    <form [formGroup]="deleteForm">
+                                      Type 'delete' to Confirm
+                                      <input
+                                        type="text"
+                                        class="cdr-delete-input"
+                                        formControlName="delete"
+                                        (keyup)="onKeyCheckDelete(delete.value)"
+                                        
+                                        #delete
+                                      />
+                                      <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        [disabled]="is_disabled_delete_button == false"
+                                        data-dismiss="modal"
+                                        (click)="
+                                          delete_folder_or_file(
+                                            folder.dataroom_folder_uuid,
+                                            i
+                                          )
+                                        "
+                                        [disabled]="!deleteForm.valid"
+                                      >
+                                        Confirm Delete
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- end of delete model -->
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination-sec" *ngIf="show_spinner==false">
+                  <pagination-controls
+                    (pageChange)="getAllNotViewedDocument($event)"
+                  ></pagination-controls>
+                </div>
+                <div style="clear: both"></div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <app-document-right-side-menu> </app-document-right-side-menu>
+        <!--rt aside component end-->
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

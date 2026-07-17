@@ -1,0 +1,54 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1" (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE065;</i>
+              <span class="t-text">Index Report</span>
+            </div>
+          </div>
+          <div class="datatime-status minHeight">
+            <div class="topbar-af">
+              <div class="form-group row" style="margin-left: 20px; width: 70%; align-items: center;">
+                <span style="margin-right: 15px;">Search Users</span>
+                <div style="width: 60%">
+                  <input class="form-control" placeholder="start typing user name" [matAutocomplete]="auto"
+                    (keyup)="getMembersOnSearch($event)" (click)="getMembersOnSearch($event)"
+                    [(ngModel)]="memberName" />
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getMemberName($event.option.value)">
+                    <mat-option *ngFor="let member of members" [value]="member.member">
+                      <span>{{ member.member.email }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+
+                </div>
+              </div>
+              <!-- <span fxFlex></span> -->
+              <button mat-raised-button color="primary" [disabled]="members?.length==0" (click)="downloadStatus()">
+                Download
+              </button>
+            </div>
+          </div>
+
+          <hr class="marauto" />
+
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

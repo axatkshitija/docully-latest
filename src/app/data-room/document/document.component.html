@@ -1,0 +1,903 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+      <div fxFlex="72" fxFlex.xs="100" fxFlexOrder.xs="2"
+        *ngIf="user!=null ||user!=undefined && primary_users_disclaimer_status">
+        <div *ngIf="(user?.member?.is_dataroom_admin) ||
+            user?.member?.is_la_user ||
+            all_disclaimers ||
+            primary_users_disclaimer_status;
+          else primary_users_disclaimer_status_else">
+          <mat-card class="mat-card p0" *ngIf="show_data; else hide_data">
+            <mat-toolbar class="add-tbpd">
+              <div class="find-doc-bx filter-opt">
+                <input type="text" placeholder="Search Files Globally" class="form-control filterSr searchbox"
+                  [(ngModel)]="search" (change)="giveSearchValue($event.target.value)" required />
+                <button class="search-icon" (click)="getSearchResult()">
+                  <i class="material-icons ser-ico">&#xE8B6;</i>
+                </button>
+                <div class="dropdown filteroptionSearch">
+                  <button class="btn filter-btn-s" type="button" id="srFilterOption" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-angle-down"></i>
+                  </button>
+                  <div class="dropdown-menu filterdroppnl" data-backdrop="static" data-keyboard="false"
+                    aria-labelledby="srFilterOption" id="filterPopup">
+                    <h2>Filter with</h2>
+
+                    <div class="fil-text-box">
+                      <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" placeholder="Search" class="form-control" [(ngModel)]="search_by_name" />
+                      </div>
+                      <div class="form-group">
+                        <label>File type:</label>
+                        <input type="text" placeholder="Search" class="form-control" [(ngModel)]="search_by_type" />
+                      </div>
+                      <div class="form-group">
+                        <label>Uploaded By:</label>
+                        <input type="text" placeholder="Search" class="form-control"
+                          [(ngModel)]="search_by_uploaded_by" />
+                      </div>
+
+                      <h5>Filter by Dates</h5>
+                      <div class="filterBydate">
+                        <mat-form-field>
+                          <input matInput [matDatepicker]="picker" placeholder="Start date"
+                            (dateChange)="changeDateWise()" [(ngModel)]="from_date" />
+                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field>
+                          <input matInput [matDatepicker]="pickert" placeholder="End date" [(ngModel)]="to_date"
+                            (dateChange)="changeDateWise()" />
+                          <mat-datepicker-toggle matSuffix [for]="pickert"></mat-datepicker-toggle>
+                          <mat-datepicker #pickert></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <button type="button" class="cdr-btn big-btn blue-btn" (click)="getSearchResult()">
+                      Search</button>&nbsp;
+                    <button type="button" class="cdr-btn big-btn blue-btn" (click)="ResetFields()">
+                      Reset Fields
+                    </button>
+                  </div>
+                </div>
+                <!-- filter dropdown start from here   -->
+
+                <!-- filter dropdown end from here   -->
+              </div>
+              <span fxFlex></span>
+              <div class="cdr-buttons">
+                <button mat-raised-button style="margin-right:0.5rem !important" class="cdr-btn big-btn orange-btn mr-2"
+                  data-toggle="modal" data-target="#createfolder" data-backdrop="static" data-keyboard="false" *ngIf="
+                 (user?.member?.is_dataroom_admin || user?.member?.is_la_user) &&
+                  createFolder
+                ">
+                  Create folder
+                </button>
+
+                <button mat-raised-button class="cdr-btn big-btn blue-btn" (click)="showHideUploadDiv()"
+                  *ngIf="(user?.member?.is_dataroom_admin || user?.member?.is_la_user) && !is_upload_file && createFolder">
+                  <i class="fa fa-upload"></i> Upload
+                </button>
+                <button mat-raised-button class="cdr-btn big-btn blue-btn" type="button" (click)="showHideUploadDiv()"
+                  *ngIf="is_upload_file">
+                  Back
+                </button>
+                <button mat-raised-button class="cdr-btn big-btn blue-btn" type="button" (click)="showHideBackSearch()"
+                  *ngIf="back">
+                  Back
+                </button>
+              </div>
+            </mat-toolbar>
+
+            <div *ngIf="!is_upload_file">
+              <div *ngIf="isActionBar">
+                <div class="cdr-breadcrumb">
+                  <span></span>
+                  <span class="show-sl-files">{{ selected_folder_list_count }} folders selected</span>
+                </div>
+              </div>
+              <div *ngIf="isActionBar">
+                <div class="doc-tool">
+                  <button class="icon-btn" *ngIf="select" type="button" (click)="download_popup()">
+                    <i class="fa fa-download" [ngClass]="{ select: true }"></i>
+                    <span class="t-text">Download</span>
+                  </button>
+                  <button class="icon-btn" *ngIf="!select" type="button" [disabled]="!select"
+                    (click)="download_popup()">
+                    <i class="fa fa-download select1"></i>
+                    <span class="t-text">Download</span>
+                  </button>
+
+                  <span matTooltip="Doculink is disabled" [matTooltipDisabled]="features?.doculink_perm">
+                    <button class="icon-btn" type="button" (click)="downloadShortcutBulk()" *ngIf="selectshortcut"
+                      [disabled]="!features?.doculink_perm" [class.disabled]="!features?.doculink_perm ? true : null">
+                      <i class="fa fa-external-link" [ngClass]="{ select: true }"></i>
+                      <span class="t-text">Doculink</span>
+                    </button>
+                  </span>
+                  <span matTooltip="Doculink is disabled" [matTooltipDisabled]="features?.doculink_perm">
+                    <button class="icon-btn" type="button" [disabled]="!selectshortcut"
+                      (click)="downloadshortut_popup()" *ngIf="!selectshortcut" [disabled]="!features?.doculink_perm"
+                      [class.disabled]="!features?.doculink_perm ? true : null">
+                      <i class="fa fa-external-link select1"></i>
+                      <span class="t-text">Doculink</span>
+                    </button>
+                  </span>
+                  <button class="icon-btn" type="button" data-toggle="modal" data-target="#deleteModel" *ngIf="
+                    user?.member?.is_dataroom_admin || user?.member?.is_la_user
+                  ">
+                    <i class="fa fa-trash"></i>
+                    <span class="t-text">Delete</span>
+                  </button>
+
+                  <button class="icon-btn" type="button" (click)="openDialog('multi', 'copy')" *ngIf="
+                    user?.member?.is_dataroom_admin || user?.member?.is_la_user
+                  ">
+                    <i class="fa fa-copy"></i>
+                    <span class="t-text">Copy</span>
+                  </button>
+                  <button class="icon-btn" type="button" (click)="openDialog('multi', 'move')" *ngIf="
+                    user?.member?.is_dataroom_admin || user?.member?.is_la_user
+                  ">
+                    <i class="fa fa-arrows"></i>
+                    <span class="t-text">Move</span>
+                  </button>
+                  <span matTooltip="Favourites is disabled" [matTooltipDisabled]="features?.favourites">
+                    <button class="icon-btn" type="button" (click)="favourite_all_files()" *ngIf="
+                  user.member.is_dataroom_admin || user.member.is_la_user
+                " [disabled]="!features?.favourites" [class.disabled]="!features?.favourites ? true : null">
+                      <i class="fa fa-star"></i>
+                      <span class="t-text">Favourite</span>
+                    </button>
+                  </span>
+                  <!-- start of delete model -->
+                  <div id="deleteModel{{ i }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <!-- Modal content-->
+                      <div class="modal-content cdr-delete-files">
+                        <div class="modal-header">
+                          <h4 class="modal-title cdr-delete-title">
+                            Delete Folders and Files
+                          </h4>
+                          <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="alert alert-danger">
+                            Are you sure you wish to delete selected files/folders
+                            ?
+                          </div>
+                        </div>
+                        <div class="modal-footer cdr-delete-footer">
+                          <div>
+                            <form [formGroup]="deleteForm">
+                              Type 'delete' to Confirm
+                              <input type="text" class="cdr-delete-input" [(ngModel)]="deletes" id="3"
+                                formControlName="delete" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                              <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                (click)="delete_all_files()" [disabled]="
+                                !(deleteForm.valid && delete.value == 'delete')
+                              ">
+                                Confirm Delete
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end of delete model -->
+
+                  <!-- start of delete model -->
+                </div>
+                <span fxFlex></span>
+              </div>
+            </div>
+            <div class="tab-content document-table height635px" id="pills-tabContent" *ngIf="showDocuments">
+              <!-- list view start from here.. -->
+              <div class="tab-pane fade show active" id="listViewDr" role="tabpanel" aria-labelledby="pills-home-tab"
+                *ngIf="!is_upload_file">
+                <table class="table doc-table dl-table" cellpadding="0" cellspacing="0" border="0">
+                  <thead>
+                    <tr style="background-color: #f5f5f5 !important;border-bottom: 1px solid grey;">
+                      <th class="tb-ckb">
+                        <mat-checkbox class="cdr-checkbt" type="checkbox" name="selectAll" [checked]="toggle"
+                          (change)="onChangeSelect()">
+                        </mat-checkbox>
+                      </th>
+                      <th *ngIf="
+                        datarooms_indexing ||
+                        user?.member?.is_dataroom_admin ||
+                        user?.member?.is_la_user
+                      ">
+                        <span *ngIf="
+                          datarooms_indexing?.hide_file_indexing ||
+                          user?.member?.is_dataroom_admin ||
+                          user?.member?.is_la_user
+                        ">
+                          <span *ngIf="datarooms_indexing?.hide_file_indexing">Index</span></span>
+                      </th>
+                      <th></th>
+                      <th>Title</th>
+                      <th>Last Modified</th>
+                      <th class="">Action</th>
+                    </tr>
+                    <tr *ngIf="all_root_folder_list.length == 0 && getfolderdata == true">
+                      <td colspan="3">No Data available.</td>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="
+                    let folder of all_root_folder_list
+                      | folderSearch: filterQuery;
+                    let i = index
+                  " class="borderpx">
+                    <tr id="{{ i }}" (click)="setClickedRow(i)" [class.active]="i == selectedRow" class="borderpx">
+                      <td class="padd">
+                        <mat-checkbox class="cdr-checkbt" #{{folder.id}} [ngModel]="folder.selected" type="checkbox"
+                          (ngModelChange)="checkbox_value(folder, i)">
+                        </mat-checkbox>
+                      </td>
+                      <td *ngIf="datarooms_indexing" class="padd">
+                        <div *ngIf="
+                          (editedIndex !== i &&
+                            datarooms_indexing?.hide_file_indexing) ||
+                          user?.member?.is_dataroom_admin ||
+                          user?.member?.is_la_user
+                        ">
+                          <span *ngIf="datarooms_indexing?.hide_file_indexing">{{
+                            folder.index
+                            }}</span>
+                        </div>
+                        <div *ngIf="editedIndex === i">
+                          <div *ngIf="is_edit_index_number">
+                            <div class="edit-name">
+                              <input style="width: 100px;" type="number" [(ngModel)]="folder.index"
+                                (keyup.enter)="editIndexNumber(folder)" />
+                              <span style="margin-left: 12px; font-size: 18px; color: blue;">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"
+                                  (click)="editIndexNumber(folder)"></i>
+                              </span>
+                              <span style="margin-left: 12px; font-size: 18px; color: red;">
+                                <i class="fa fa-times" aria-hidden="true" (click)="hideEditIndex(i)"></i>
+                              </span>
+
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="padd">
+                        <i class="fa fa-star" style="color: #c0a96aff !important;margin-right: 20px !important;"
+                          *ngIf="folder.favourite"></i>
+                      </td>
+                      <td class="padd">
+                        <div *ngIf="edittedName !== i" class="tbl-icon-txt-other">
+                          <a [routerLink]="['../folder_detail', folder.id]">
+                            <span class="icon-span"><img class="img" style="width: 17px !important"
+                                src="assets/images/ICONS_PNG/folder.png" /></span>
+                            {{ folder.name | limitTo: 25
+                            }}{{ folder.name.length > 25 ? "..." : "" }}
+                          </a>
+                        </div>
+                        <div *ngIf="edittedName === i">
+                          <div *ngIf="is_edit_folder_name">
+                            <div class="edit-name">
+                              <input type="text" [(ngModel)]="folder.name" (keyup.enter)="editFolderName(folder)" />
+                              <button type="button" class="btn btn-primary" (click)="editFolderName(folder)">
+                                Submit
+                              </button>
+
+                              <button type="button" class="btn btn-secondary" (click)="hideEditIndex(i)">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        {{
+                        folder.updated_date
+                        | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']
+                        }}
+                        {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                      </td>
+                      <td class="tb-ac padd">
+                        <div>
+                          <button class="tb-actb" mat-button [matMenuTriggerFor]="menu" (click)="hideEditIndex(i)"
+                            *ngIf="!folder.isAction" [disabled]="!folder.isActionEnabled">
+                            <i class="material-icons">&#xE5D4;</i>
+                          </button>
+
+                          <mat-menu #menu="matMenu" class="cdr-actbtn">
+                            <button mat-menu-item *ngIf="
+                              user?.member?.is_dataroom_admin ||
+                              user?.member?.is_la_user
+                            " (click)="isEditIndexNumber(i)">
+                              Edit Index
+                            </button>
+                            <button mat-menu-item *ngIf="
+                              user?.member?.is_dataroom_admin ||
+                              user?.member?.is_la_user
+                            " (click)="isEditFolderName(i)">
+                              Edit Name
+                            </button>
+                            <button mat-menu-item *ngIf="
+                              folder.is_view_and_print_and_download &&
+                              !folder.is_folder
+                            " (click)="DownloadFiles(folder)">
+                              Download
+                            </button>
+
+                            <button mat-menu-item *ngIf="
+                              folder.is_view_and_print_and_download &&
+                              folder.is_folder
+                            " (click)="downloadsingle_popup(folder)">
+                              Download
+                            </button>
+                            <span matTooltip="Doculink is disabled" [matTooltipDisabled]="features?.doculink_perm">
+                              <button mat-menu-item *ngIf="folder.is_shortcut && folder.is_folder"
+                                (click)="BulkDownloadDrm(folder)" [disabled]="!features?.doculink_perm">
+                                Download as Doculink
+                              </button>
+                            </span>
+
+                            <button mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModel' + i" *ngIf="
+                              user?.member?.is_dataroom_admin ||
+                              user?.member?.is_la_user
+                            ">
+                              Delete
+                            </button>
+                            <button mat-menu-item (click)="openDialog(folder.id, 'copy')" *ngIf="
+                              user?.member?.is_dataroom_admin ||
+                              user?.member?.is_la_user
+                            ">
+                              Copy
+                            </button>
+                            <button mat-menu-item (click)="openDialog(folder.id, 'MoveSelectedFile')" *ngIf="
+                              user?.member?.is_dataroom_admin ||
+                              user?.member?.is_la_user
+                            ">
+                              Move
+                            </button>
+                            <span matTooltip="Favourites is disabled" [matTooltipDisabled]="features?.favourites">
+                              <button mat-menu-item (click)="
+                            favourite_single_files(folder.id,folder.favourite)" [disabled]="!features?.favourites"
+                                *ngIf="
+                            user.member.is_dataroom_admin ||
+                            user.member.is_la_user
+                          ">
+                                {{folder.favourite?'Remove Favourite':'Add to Favourite'}}
+                              </button>
+                            </span>
+                          </mat-menu>
+
+                          <!-- start of delete model -->
+                          <div id="deleteModel{{ i }}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                              <!-- Modal content-->
+                              <div class="modal-content cdr-delete-files">
+                                <div class="modal-header">
+                                  <h4 class="modal-title cdr-delete-title">
+                                    Delete Folders and Files
+                                  </h4>
+                                  <button type="button" class="close" data-dismiss="modal">
+                                    &times;
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="alert alert-danger">
+                                    Are you sure you wish to delete the
+                                    <strong>{{ folder.name }} </strong>?
+                                  </div>
+                                  <form [formGroup]="deleteForm">
+                                    Type 'delete' to Confirm
+                                    <input type="text" id="1" class="cdr-delete-input form-control"
+                                      formControlName="delete" [(ngModel)]="deletes"
+                                      (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                                  </form>
+                                </div>
+                                <div class="modal-footer cdr-delete-footer">
+                                  <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="
+                                delete_folder(
+                                      folder
+                                    )
+                                  " [disabled]="
+                              !(deleteForm.valid && delete.value == 'delete')">
+                                    Confirm Delete
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Upload page -->
+              <div class="doc-tool" *ngIf="is_upload_file">
+                <app-upload-folders></app-upload-folders>
+              </div>
+              <!-- End of upload page  -->
+              <!-- grid view start from here.. -->
+              <div class="tab-pane fade" id="gridViewDr" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="row">
+                  <div class="col-md-3" *ngFor="let folder of all_root_folder_list; let i = index">
+                    <div class="doc-gridview">
+                      <div class="docs-grid p-rela">
+                        <div class="g-header">
+                          <div class="status-opt orange-col pull-left ng-star-inserted">
+                            <span class="doc-text"> {{
+                              folder.updated_date
+                              | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']
+                              }}
+                              {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                          </div>
+                          <div class="doc-new-menu">
+                            <button class="tb-actb" mat-button [matMenuTriggerFor]="menu">
+                              <i class="material-icons">&#xE5D4;</i>
+                            </button>
+                            <mat-menu #menu="matMenu" class="cdr-actbtn animated flipInX">
+
+                              <button mat-menu-item (click)="isEditFolderName(i)">
+                                Edit Name
+                              </button>
+                              <button mat-menu-item *ngIf="
+                                folder.is_view_print_and_download &&
+                                !folder.is_folder
+                              " (click)="DownloadFiles(folder)">
+                                Download
+                              </button>
+                              <button mat-menu-item *ngIf="
+                                folder.is_view_print_and_download &&
+                                folder.is_folder
+                              " (click)="download_single_folder(folder)">
+                                Download
+                              </button>
+                              <button mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModal' + i">
+                                Delete
+                              </button>
+                            </mat-menu>
+
+                            <!-- start of delete model -->
+                            <div id="deleteModal{{ i }}" class="modal fade" role="dialog">
+                              <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content cdr-delete-files">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title cdr-delete-title">
+                                      Delete Folders and Files
+                                    </h4>
+                                    <button type="button" class="close" data-dismiss="modal">
+                                      &times;
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="alert alert-danger">
+                                      Are you sure you wish to delete the
+                                      <strong>{{ folder.name | limitTo: 25
+                                        }}{{
+                                        folder.name.length > 25 ? "..." : ""
+                                        }} </strong>?
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer cdr-delete-footer">
+                                    <div>
+                                      <form [formGroup]="deleteForm">
+                                        Type 'delete' to Confirm
+                                        <input type="text" class="cdr-delete-input" id="2" formControlName="delete"
+                                          [(ngModel)]="deletes" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="
+                                      delete_folder(
+                                        folder
+                                      )
+                                        " [disabled]="
+                                        !(deleteForm.valid && delete.value == 'delete')">
+                                          Confirm Delete
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- end of delete model -->
+                          </div>
+                        </div>
+                        <a (click)="goToNextFolder(folder.id)">
+                          <div class="ng-star-inserted" [routerLink]="['../folder_detail', folder.id]">
+                            <div class="ng-star-inserted">
+                              <div class="dr-body text-center">
+                                <i class="fa fa-folder-open doc-folder"></i>
+                                <!-- <h5 class="dr-title"> {{folder.name}}</h5> -->
+                              </div>
+                            </div>
+                            <div *ngIf="edittedName !== i">
+
+                              <h5 class="dr-title">
+                                {{ folder.name | limitTo: 25
+                                }}{{ folder.name.length > 25 ? "..." : "" }}
+                              </h5>
+                            </div>
+                          </div>
+                          <!-- <span class="dr-files-no">1</span> -->
+                        </a>
+                        <div *ngIf="edittedName === i">
+                          <div *ngIf="is_edit_folder_name">
+                            <div class="edit-name">
+                              <input type="text" [(ngModel)]="folder.name" (keyup.enter)="editFolderName(folder)" />
+                              <button type="button" class="btn btn-primary" (click)="editFolderName(folder)">
+                                Submit
+                              </button>
+                              <button type="button" class="btn btn-secondary" (click)="hideEditIndex(i)">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-content document-table height635px" id="pills-tabContent" *ngIf="showSearchDocuments">
+              <div class="dataroom-list">
+                <h3>Folder Results</h3>
+                <div class="dataroom-items" *ngIf="search_folders.length <= 0">
+                  <span class="dr-date">Not Found</span>
+                </div>
+                <div class="dataroom-items" *ngIf="search_folders.length > 0">
+                  <div class="dr-title-up" *ngFor="
+                            let folder of search_folders
+                              | paginate
+                                : { itemsPerPage: 5, currentPage: p, id: 'folders' };
+                            let i = index
+                          ">
+                    <div class="cdr-breadcrumb doc-src">
+                      <h4 class="drt-name" *ngIf="!folder.is_no_access; else view_no">
+                        <a (click)="goToNextFolder(folder.id)"><span *ngIf="folder.hideindexingflag">{{ folder.index }}
+                            &nbsp;</span>{{ folder.name | limitTo: 25
+                          }}{{ folder.name.length > 25 ? "..." : "" }}
+                        </a>
+                      </h4>
+                      <ng-template #view_no>
+                        <h4>
+                          <span>
+                            <span *ngIf="folder.hideindexingflag">{{ folder.index }} &nbsp;</span>
+                            {{ folder.name | limitTo: 25
+                            }}{{ folder.name.length > 25 ? "..." : "" }}
+                          </span>
+                        </h4>
+                      </ng-template>
+                      <ol class="breadcrumb" *ngIf="!folder.is_no_access; else no_access">
+                        <li class="breadcrumb-item active">
+                          <a (click)="refresh()">All Documents</a>
+                        </li>
+                        <li class="breadcrumb-item active" *ngFor="let data of folder.parent_folders">
+                          <a [routerLink]="['/folder_detail', data.id]" target="_blank">{{ data.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                          <a [routerLink]="['/folder_detail', folder.id]" target="_blank">{{ folder.name | limitTo: 25
+                            }}{{ folder.name.length > 25 ? "..." : "" }}
+                          </a>
+                        </li>
+                      </ol>
+                      <ng-template #no_access>
+                        <ol class="breadcrumb" *ngIf="!folder?.is_no_access; else no_access">
+                          <li class="breadcrumb-item active">
+                            <a (click)="refresh()">All Documents</a>
+                          </li>
+                          <li class="breadcrumb-item active" *ngFor="let data of folder.parent_folders">
+                            <span>{{ data.name }}</span>
+                          </li>
+                          <li class="breadcrumb-item active">
+                            <span target="_blank">{{ folder.name | limitTo: 25
+                              }}{{ folder.name.length > 25 ? "..." : "" }}
+                            </span>
+                          </li>
+                        </ol>
+                      </ng-template>
+                      <span class="dr-date" style="float: right">updated
+                        {{
+                        folder.updated_date
+                        | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']
+                        }}
+                        {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                    </div>
+
+                  </div>
+                  <div class="pagination-sec">
+                    <pagination-controls (pageChange)="p = $event" id="folders"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dataroom-list">
+                <h3>File Results</h3>
+                <div class="dataroom-items" *ngIf="search_files.length <= 0">
+                  <span class="dr-date">Not Found</span>
+                </div>
+                <div class="dataroom-items" *ngIf="search_files.length > 0">
+                  <div class="dr-title-up" *ngFor="
+                            let folder of search_files
+                              | paginate
+                                : { itemsPerPage: 5, currentPage: p1, id: 'files' };
+                            let i = index
+                          ">
+                    <!-- <p class="dr-othr-info"> -->
+                    <div class="cdr-breadcrumb doc-src">
+                      <h4 class="drt-name">
+                        <a href="{{ baseUrl }}/file-view/{{ folder.id }}/{{
+                                  user.id
+                                }}" (click)="goToViewerPage(folder)" target="_blank">
+                          <span *ngIf="folder.hideindexingflag">{{ folder.index }} &nbsp;</span>
+                          {{ folder.name | limitTo: 25
+                          }}{{ folder.name.length > 25 ? "..." : "" }}
+                        </a>
+                      </h4>
+
+                      <ol class="breadcrumb">
+                        <li class="breadcrumb-item active">
+                          <a (click)="refresh()">All Documents</a>
+                        </li>
+                        <li class="breadcrumb-item active" *ngFor="let data of folder.parent_folders">
+                          <a [routerLink]="['/folder_detail', data.id]" target="_blank">{{ data.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                          <a href="{{ baseUrl }}/file-view/{{ folder.id }}/{{
+                                    user.id
+                                  }}" (click)="goToViewerPage(folder)" target="_blank">{{ folder.name | limitTo: 25
+                            }}{{ folder.name.length > 25 ? "..." : "" }}
+                          </a>
+                        </li>
+                      </ol>
+                      <span class="dr-date" style="float: right">updated
+                        {{
+                        folder.updated_date
+                        | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']
+                        }}
+                        {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                    </div>
+
+                    <!-- </p> -->
+                  </div>
+                  <div class="pagination-sec">
+                    <pagination-controls (pageChange)="p1 = $event" id="files"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3" *ngIf="show_data">
+        <div class="cdr-rt-sidebar" *ngIf="user">
+          <mat-card *ngIf="user?.member?.is_dataroom_admin ||user?.member?.is_la_user" class="rounded" style="margin-bottom: 20px;padding: 10px;">
+            <div class="Aligncentre"  style="padding: 0px;">
+              <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinnerr">
+              </mat-progress-spinner>
+              </div>
+              <ng-scrollbar  visibility="hover" track="horizontal" style="overflow-x: auto;height:150px;" *ngIf="storage_data && !show_spinnerr">
+                <div style="min-width: 400px;height: 300px;" >
+                  <table style="text-align:center;width: 100% !important;height:150px;">
+                    <tr>
+                      <td></td>
+                      <th style="color: #737373;font-weight: 500;">Count </th>
+                      <th style="color: #737373;font-weight: 500;">Storage (MB)</th>
+                      <th style="color: #737373;font-weight: 500;">Pages </th>
+                    </tr>
+                    <tr>
+                      <td  style="text-align: left !important;">Documents</td>
+                      <td> {{storage_data?.docx_count}} </td>
+                      <td> {{storage_data?.docx_storage}} </td>
+                      <td> {{storage_data?.docx_page_count}} </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important;">Media / Other Files</td>
+                      <td> {{storage_data?.others_count}} </td>
+                      <td> {{storage_data?.others_storage}} </td>
+                      <td> {{storage_data?.others_page_count}} </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: left !important;">Total</td>
+                      <td> {{storage_data?.docx_count + storage_data?.others_count}} </td>
+                      <td> {{storage_data?.docx_storage + storage_data?.others_storage}} </td>
+                      <td> {{storage_data?.docx_page_count + storage_data?.others_page_count}} </td>
+                    </tr>
+                  </table>
+                </div>
+              </ng-scrollbar>
+          </mat-card>
+
+
+          <mat-card class="rounded mb-10 p-0">
+            <div class="cdr-tree all-docu-sty" style="margin: 0px !important;">
+              <h6><a>All Documents</a></h6>
+
+              <app-selection-tree></app-selection-tree>
+
+            </div>
+          </mat-card>
+
+          <mat-card class="rounded mb-10 p-0">
+            <ul class="al-doc-opt">
+              <li>
+                <a routerLink="/recent-doc" routerLinkActive="active"><i class="material-icons">note</i> Recent
+                  Documents</a>
+              </li>
+              <li>
+                <a routerLink="/upload-status-documents" routerLinkActive="active"><i
+                    class="material-icons">cloud_upload</i>
+                  Upload Status</a>
+              </li>
+              <li>
+                <a routerLink="/download-status-documents" routerLinkActive="active"><i
+                    class="material-icons">cloud_download</i>
+                  My Downloads</a>
+              </li>
+              <li>
+                <div matTooltip="Favorites is disabled" [matTooltipDisabled]="features?.favourites">
+                  <a routerLink="/favourites" [class.disabled]="!features?.favourites ? true : null"
+                    routerLinkActive="active"><i class="material-icons">star</i>
+                    Favourites</a>
+                </div>
+              </li>
+              <li>
+                <a routerLink="/not-view-documents" routerLinkActive="active"><i class="material-icons">visibility</i>
+                  Not
+                  Viewed / Viewed</a>
+              </li>
+
+              <li>
+                <a routerLink="/not-download-documents" routerLinkActive="active"><i
+                    class="material-icons">move_to_inbox</i>
+                  Not Downloaded /
+                  Downloaded</a>
+              </li>
+              <li>
+                <a routerLink="/indexes-report" routerLinkActive="active"><i class="material-icons">
+                    format_list_numbered</i>
+                  Index Report</a>
+              </li>
+              <li>
+                <a routerLink="/trash-doc" *ngIf="user?.member?.is_dataroom_admin || user?.member?.is_la_user"
+                  routerLinkActive="active"><i class="material-icons"> delete_outline</i> Trash</a>
+              </li>
+            </ul>
+          </mat-card>
+        </div>
+      </div>
+
+
+
+
+      <ng-template #hide_data>
+        <div class="containernew" style="margin-top: 80px;" *ngIf="show_data === false;">
+          <mat-card>
+            Your access to this data room is either restricted or not yet defined by the administrator. Please
+            contact the primary contacts of this data room to enable your access. If you need any help please email to
+            support{{'@'}}docullyvdr.com.
+          </mat-card>
+        </div>
+      </ng-template>
+      <ng-template #primary_users_disclaimer_status_else>
+        <div class="w-100 text-center">
+          <!-- You have no access Dataroom, Accept Disclaimer -->
+        </div>
+      </ng-template>
+    </div>
+
+
+  </div>
+  <!-- end of right side menu -->
+
+</section>
+<app-footer></app-footer>
+
+<div class="modal fade" id="createfolder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Create New Folder</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <form [formGroup]="newFolderForm">
+          <div class="form-group mt-2">
+            <input type="text" class="form-control" placeholder="Type folder name" formControlName="folder_name" />
+            <small class="alert-danger" [hidden]="newFolderForm.controls.folder_name.valid">
+              Valid Folder Name is required
+            </small>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              Cancel
+            </button>
+            <!-- <button data-dismiss="modal" type="button" class="btn btn-primary" (click)="createNewFolder(newFolderForm)" [disabled]="!newFolderForm.valid" >Create</button> -->
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="createNewFolder()"
+              [disabled]="!newFolderForm.valid">
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- start of copy model -->
+<div id="copyModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content cdr-copy-files text-left">
+      <div class="modal-header">
+        <h5 class="modal-title cdr-copy-title">Copy Folders and Files</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          Choose the Destination Folder (Source & Destionation Should not be
+          Same) :
+        </div>
+
+
+      </div>
+      <div class="modal-footer cdr-copy-footer">
+        <div>
+          <button type="button" class="btn btn-primary" (click)="CopySelectedFile()" data-dismiss="modal">
+            Confirm copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end of copy model -->
+
+<!-- start of MOVE model -->
+<div id="moveModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content cdr-move-files text-left">
+      <div class="modal-header">
+        <h5 class="modal-title cdr-move-title">Move Folders and Files</h5>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          Choose the Destination Folder (Source & Destionation Should not be
+          Same) :
+        </div>
+      </div>
+      <div class="modal-footer cdr-move-footer">
+        <div>
+          <button type="button" class="btn btn-primary" (click)="MoveSelectedFile()" data-dismiss="modal">
+            Confirm Move
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end of MOVE model -->
+
+<ng-http-loader [backgroundColor]="'#eb9b04'" [debounceDelay]="100" style="z-index: 0; height: 500%"
+  *ngIf="startLoader">
+</ng-http-loader>

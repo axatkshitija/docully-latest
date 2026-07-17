@@ -1,0 +1,77 @@
+<section id="loginFormBx" class="h-100vh d-flex flex-column bg-transparent">
+  <div class="container my-auto">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="col-md-9 col-lg-7 col-xl-5 mx-auto">
+    
+        <div class="subscription-popup" style="overflow: hidden !important;">
+          <!-- <fa-icon class="icon" [icon]="backArrow"></fa-icon> -->
+          <div class="row">
+      
+            <a [routerLink]="['/']" style="margin-bottom: 20px; margin-left: 15px;">
+              <img style="margin-left: 35%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png"  />
+            </a>
+            <div class="col-md-12 text-center">
+              <h1 mat-dialog-title style="font-size: 24px !important;">Sign-up for a Subscription</h1>
+              <span>
+                <p style="color: #cbb26a; font-weight: bold;">Lets begin with entering your email id</p>
+              </span>
+            </div>
+          </div>
+          <form (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+            <div class="row">
+              <div class="col-md-12 pb-3">
+                <input type="email_id" name="email_id" placeholder="Email ID" class="form-control"
+                  [(ngModel)]="model.email" #email_id="ngModel" autocomplete="off"
+                  [ngClass]="{ 'is-invalid': f.submitted && email_id.invalid }"
+                  pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" required />
+                <div *ngIf="f.submitted && email_id.invalid" class="invalid-feedback">
+                  <div *ngIf="email_id?.errors?.required">
+                    Email Name is required
+                  </div>
+                  <div *ngIf="email_id?.errors?.pattern">
+                    This is not a valid Email!!!
+                  </div>
+                </div>
+              </div>
+              <!-- <div  class="col-md-12 pb-3">
+     
+                <input type="text" class="form-control dmsbx" name="captcha"
+                    [(ngModel)]="model.captcha" #captcha="ngModel" autocomplete="off" placeholder="Captcha" maxlength="6" required />
+
+                <small *ngIf="captcha.hasError('required') && captcha.touched"
+                    class="text-danger">Captcha is required .
+                </small>
+                <small *ngIf="captchaError" class="text-danger">Invalid captcha code!
+                </small>
+                <div class="captcha-container">
+                  <div class="captcha-box" (click)="refreshCaptcha()">
+                      <span class="captcha-text">{{ captchaCode }}</span>
+                  </div>
+              
+              </div>
+            </div> -->
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="d-flex justify-content-between">
+                  <button mat-raised-button class="btn btn-light" style="width: 48%;" (click)="goBack()">
+                    Back
+                  </button>
+                  <button mat-raised-button  style="width: 48%;background-color: #cbb26a;color: #fff;" type="Submit">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<router-outlet></router-outlet>
+
+<!--
+  <app-footer></app-footer>
+  -->

@@ -1,0 +1,26 @@
+.sub-exp {
+    float: right;
+}
+.special-note {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 15px;
+}
+.blue-btn {
+    margin-right: 20px;
+}
+.btns {
+    text-align: center;
+    margin-top: 40px;
+}
+.agree-chk {
+    margin-top: 15px;
+}
+table.manage-tbl tbody td:first-child {
+    font-weight: 600;
+}
+
+.subs-blk hr{
+    display:block;
+        margin: .3rem 0;
+}

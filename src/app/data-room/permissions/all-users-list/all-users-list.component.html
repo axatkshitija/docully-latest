@@ -1,0 +1,56 @@
+<app-header></app-header>
+<section id="cdr-body">
+    <div class="container-fluid">
+        <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+            <!-- left side content -->
+            <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1">
+            </app-data-room-left>
+            <!-- main content -->
+            
+            <div fxFlex="84" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+          
+                <mat-card class="p0">
+                    <mat-toolbar class="add-tbpd">
+                        <h1>User List</h1>
+                        <span fxFlex></span>
+                        <button mat-raised-button class="cdr-btn big-btn blue-btn" type="button" (click)="goBack()">Back</button>
+                      
+                        <!-- <button mat-raised-button class="cdr-btn big-btn blue-btn">Back</button> -->
+                      </mat-toolbar>
+                    <table class="dms-table33 w-100 table dl-table"> 
+                      <tr class="dmstable-trs">
+                        <!-- <th>Id</th> -->
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Group</th>
+                        <th>Group Type</th>
+                        <th>Disclaimer Status</th>
+                      </tr>
+                      <tr *ngFor="let dataroom_user of dataroom_users_list;" class="dmstable-trs">
+                        <!-- <td>{{dataroom_user.id}}</td> -->
+                        <td>{{dataroom_user.first_name}} {{dataroom_user.last_name}}</td>
+                        <td>{{dataroom_user.email}}</td>
+                        <td>{{dataroom_user.group_name}}</td>
+                        <td *ngIf="dataroom_user.is_dataroom_admin; else group_type_if">Admin</td>
+                        <ng-template #group_type_if><td *ngIf="dataroom_user.is_la_user; else group_type_else">La User</td></ng-template>
+                        <ng-template #group_type_else><td *ngIf="dataroom_user.is_end_user">End User</td></ng-template>
+                        <td>
+                            <span *ngIf="dataroom_user.is_discalimer">
+
+                                <span *ngIf="dataroom_user.disclaimer_status==true" style="color:green;"> Completed</span>
+                                <span *ngIf="dataroom_user.disclaimer_status==false" style="color:red;"> Pending</span>
+                                
+                            </span>
+
+                            <span *ngIf="dataroom_user.is_discalimer==false" style="color:red;">Disclaimer is not available</span>
+                            
+                        </td>
+                      </tr>
+                    </table>
+                </mat-card>
+            </div>
+            <!-- end of main content -->
+        </div>
+    </div>
+</section>
+<app-footer></app-footer>

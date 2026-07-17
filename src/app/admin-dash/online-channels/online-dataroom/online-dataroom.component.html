@@ -1,0 +1,355 @@
+<div class="ovr-body">
+  <h6>Team Name : &nbsp;{{data?.company_name}}</h6>
+  
+
+  <div>
+    <table class="table dl-table tbl-sub mt-4" cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Dataroom name</th>
+          <th>Dataroom Id</th>
+          <th>Permitted Storage</th>
+          <th>Current Storage</th>
+          <th>Edit</th>
+          <th>Manage</th>
+          <th>State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="!data">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Data not available</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr >
+          <td>1</td>
+          <td>{{ data?.dataroom__dataroom_nameFront }}</td>
+          <td>{{ data?.dataroom_id }} </td>
+          <td>{{ data?.dataroom__dataroom_storage_allocated }} GB</td>
+          <td>{{ data?.dataroom_consumed }} GB</td>
+          <td class="text-center" >
+            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
+              [attr.data-target]="'#editDataroom'" (click)="patchDataroomData()" *ngIf="data?.dataroom__is_deleted===false"></i>
+            <i class="fa fa-pencil" style="cursor: pointer;color: #d9d9d9!important;" *ngIf="data?.dataroom__is_deleted===true"></i>
+          </td>
+          <td>
+            <i class="fa fa-archive" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
+              [attr.data-target]="'#manageDataroom'"></i>
+            <div class="modal fade" id="manageDataroom" tabindex="-1" role="" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+                <div class="modal-content">
+                  <div class="modal-header cdr-modal cdr-h-c" style="background-color:#cbb26a!important;">
+                    <h5 class="modal-title" id="exampleModalLabel text-white" style="color: white!important;">Manage Dataroom</h5>
+                    <button type="button" class="close" style="color: white !important;" data-dismiss="modal" aria-label="Close">
+                      <i class="material-icons">&#xE5CD;</i>
+                    </button>
+                  </div> 
+                  <div class="modal-body cr-n-dr">
+                    <div class="row">
+                      <div class="col-6">
+                        <div>
+                          <span>Data Room Name - </span>
+                          <span>{{data?.dataroom__dataroom_nameFront}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Dataroom Id - </span>
+                          <span>{{data?.dataroom_id}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Permitted Storage - </span>
+                          <span>{{data?.dataroom__dataroom_storage_allocated}} GB</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mt">
+                          <span>Current Storage - </span>
+                          <span>{{data['dataroom_consumed']}} GB</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Creation Date - </span>
+                          <span>{{data?.dataroom__created_date | date : 'mediumDate' : usertimezone['time_zone__offset']}} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Last Modified Date - </span>
+                          <span>{{data?.dataroom__updated_date | date : 'mediumDate' : usertimezone['time_zone__offset']}} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mt-2">
+                          <span>Plan Name - </span>
+                          <span>{{data?.plan__name }}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>User Name - &nbsp;</span>
+                          <span>{{data?.user__first_name }} &nbsp; {{data?.user__last_name}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>User Email - &nbsp;</span>
+                          <span>{{data?.user__email }}</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mt-2">
+                          <span>Plan Validity - &nbsp;</span>
+                          <span>  {{ data?.end_date | date : 'mediumDate' : usertimezone['time_zone__offset'] }} {{'('
+                            +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                        </div>
+                        <div class="mt-2">
+                          <span>Number of users- &nbsp;</span>
+                          <span>{{data?.plan__users}} </span>
+                        </div>
+                        
+                      </div>
+                      <div class="col-6">
+                        <div class="mt-2">
+                          <span class="deleteddata" *ngIf="is_request_for_deletion || data?.dataroom__is_request_for_deletion || data?.dataroom__is_deleted===true">Deleted By <strong> Harvinnder</strong></span>
+                        </div>
+                        <div class="mt-2">
+                          <span class="deleteddata" *ngIf="(is_request_for_deletion || data?.dataroom__is_request_for_deletion) && data?.dataroom__is_deleted===false">Deletion Requested On &nbsp;<strong>{{data?.dataroom?.delete_request_at}}</strong></span>
+                        </div>
+                        <div class="mt-2">
+                          <span class="deleteddata" *ngIf="is_request_for_deletion || data?.dataroom__is_request_for_deletion || data?.dataroom__is_deleted===true">Deleted On &nbsp;<strong> {{data?.dataroomdeletiondate}}</strong></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row justify-content-center mt-4">
+                      <button *ngIf="is_request_for_archive || data?.dataroom__is_request_for_archive" type="button"
+                        class="btn btn-primary mr-3" data-dismiss="modal"
+                        (click)="archivedRequestForDataroom(data?.dataroom_id)" [disabled]="data?.dataroom__is_deleted===true">
+                        Unarchive
+                      </button>
+                      <button *ngIf="!(is_request_for_archive || data?.dataroom__is_request_for_archive)" type="button"
+                        class="btn btn-primary mr-3" data-dismiss="modal" [disabled]="data?.dataroom__is_deleted===true"
+                        (click)="archivedRequestForDataroom(data?.dataroom_id)">
+                        Archive
+                      </button>
+                      <button *ngIf="!(is_request_for_deletion || data?.dataroom__is_request_for_deletion)" type="button"
+                        class="btn btn-primary mr-3" aria-hidden="true" data-toggle="modal" [disabled]="data?.dataroom__is_deleted===true"
+                        [attr.data-target]="'#deleteDataroom'">
+                        Delete
+                      </button>
+                      <button *ngIf="is_request_for_deletion || data?.dataroom__is_request_for_deletion" type="button"
+                        class="btn btn-primary mr-3" data-dismiss="modal" [disabled]="data?.dataroom__is_deleted===true" (click)="deleteDataroom(data?.dataroom_id)">
+                        Cancel Delete
+                      </button>
+                      
+                      <button type="button"
+                        class="btn btn-primary mr-3" aria-hidden="true" data-toggle="modal"
+                        [attr.data-target]="'#deleteDataroomNow'" [disabled]="data?.dataroom__is_deleted===true">
+                        Delete Now
+                      </button><br><br>
+                     
+                      <div id="deleteDataroom" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                          <div class="modal-content cdr-copy-files text-left">
+                            <div class="modal-header" style="background-color: #cbb26a!important;">
+                              <h5 class="modal-title cdr-copy-title" style="color: white!important;">
+                                Delete Dataroom Confirmation
+                              </h5>
+                              <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Are you sure you wish to delete Dataroom?
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <div>
+                                <form [formGroup]="deleteForm">
+                                  Type 'delete' to Confirm
+                                  <input type="text" class="cdr-delete-input" formControlName="delete" #delete />
+                                  <button type="button" data-dismiss="modal" class="btn btn-primary mt-3"
+                                    [disabled]="!(deleteForm.valid && delete.value == 'delete')"
+                                    (click)="deleteDataroom(data?.dataroom_id)">
+                                    Confirm Delete
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="deleteDataroomNow" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                          <div class="modal-content cdr-copy-files text-left">
+                            <div class="modal-header" style="background-color: #cbb26a!important;">
+                              <h5 class="modal-title cdr-copy-title" style="color:white!important;">
+                                Delete Dataroom Now Confirmation
+                              </h5>
+                              <button type="button" class="close" data-dismiss="modal" style="color: white!important;">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Are you sure you wish to delete Dataroom?
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <div>
+                                <form [formGroup]="deleteFormNow">
+                                  Type 'delete' to Confirm&nbsp;&nbsp;
+                                  <input type="text" class="cdr-delete-input" formControlName="deleteNow" #deleteNow />
+                                  <div class="mt-3">
+                                  <button type="button" data-dismiss="modal" class="btn btn-primary"
+                                    [disabled]="!(deleteFormNow.valid && deleteNow.value == 'delete')"
+                                    (click)="deleteDataroomNow(data?.dataroom_id)">
+                                    Confirm Delete
+                                  </button>
+                                </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td *ngIf="!(is_request_for_deletion || data?.dataroom__is_request_for_deletion) && !(is_request_for_archive || data?.dataroom__is_request_for_archive) && data?.dataroom__is_deleted===false">
+            <mat-icon aria-hidden="false" aria-label="Example home icon"   style="color:green;font-size: 18px!important;" data-toggle="tooltip" data-placement="top" title="Active">circle</mat-icon>
+          </td>
+          <td *ngIf="(is_request_for_archive || data?.dataroom__is_request_for_archive) && !(is_request_for_deletion || data?.dataroom__is_request_for_deletion) && data?.dataroom__is_deleted===false">
+            <mat-icon aria-hidden="false" aria-label="Example home icon"   style="color:yellow;font-size: 18px!important;" data-toggle="tooltip" data-placement="top" title="Archived">circle</mat-icon>
+          </td>
+          <td *ngIf="is_request_for_deletion || data?.dataroom__is_request_for_deletion && data?.dataroom__is_deleted===false">
+            <mat-icon aria-hidden="false" aria-label="Example home icon"  style="color:orange;font-size: 18px!important;"  data-toggle="tooltip" data-placement="top" title="Deletion Requested" >circle</mat-icon>
+          </td>
+          <td *ngIf="data?.dataroom__is_deleted===true" style="color:red;font-size: 18px!important;" >
+            <mat-icon aria-hidden="false" aria-label="Example home icon"   data-toggle="tooltip" data-placement="top" title="Permanently Deleted">circle</mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Edit Dataroom -->
+<div class="modal fade" id="editDataroom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md cr-n-dataroom" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c" style="background-color: #cbb26a!important;">
+        <h5 class="modal-title" id="exampleModalLabel" style="color:white!important;">Edit Data Room</h5>
+        <button type="button" class="close" data-dismiss="modal" style="color: white!important;" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <form [formGroup]="editOnlineDataroomForm" (ngSubmit)="editDataroom(editOnlineDataroomForm.value)">
+              <div class="dr-tab-content">
+                <div class="row">
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Dataroom Name</label>
+                    <input type="text" class="form-control" placeholder="Enter Dataroom Name" name="team"
+                      formControlName="dataroom_nameFront" required />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                          editOnlineDataroomForm.get('dataroom_nameFront')?.errors &&
+                          (editOnlineDataroomForm.get('dataroom_nameFront').dirty ||
+                            editOnlineDataroomForm.get('dataroom_nameFront').touched)
+                        ">
+                    <p *ngIf="
+                            editOnlineDataroomForm.get('dataroom_nameFront')?.errors
+                              .required
+                          " class="alert-danger">
+                      Dataroom Name is required
+                    </p>
+                  </div>
+                  <!-- add an dataroom storage limit here -->
+                  <div class="col-sm-9 col-md-4">
+                    <label for="inputDataroom" class="col-form-label">Permitted Storage</label>
+                    <input type="number" min="0" class="form-control" placeholder="Dataroom storage in GB"
+                      name="dataroom_storage_allocated" formControlName="dataroom_storage_allocated" maxlength="4" />
+                      <div class="form-control-feedback" *ngIf="
+                      editOnlineDataroomForm.get('dataroom_storage_allocated')
+                        ?.errors &&
+                      (editOnlineDataroomForm.get('dataroom_storage_allocated')
+                        .dirty ||
+                        editOnlineDataroomForm.get(
+                          'dataroom_storage_allocated'
+                        ).touched)
+                    ">
+                <p *ngIf="
+                        editOnlineDataroomForm.get(
+                          'dataroom_storage_allocated'
+                        )?.errors.required
+                      " class="alert-danger">
+                  Permitted storage is required
+                </p>
+                <p *ngIf="
+                        editOnlineDataroomForm.get(
+                          'dataroom_storage_allocated'
+                        )?.errors.minlength
+                      " class="alert-danger">
+                  Permitted storage must be atleast 1 characters long
+                </p>
+                <p *ngIf="
+                        editOnlineDataroomForm.get(
+                          'dataroom_storage_allocated'
+                        )?.errors.maxlength
+                      " class="alert-danger">
+                  Permitted storage maximum 4 characters allowed
+                </p>
+              </div>
+                    </div>
+                  
+
+                  <div class="col-sm-9 col-md-4">
+                    <label for="" class="col-form-label">Expiry Date</label>
+                    <input type="date" class="form-control" placeholder="Select Date" formControlName="end_date" />
+                  </div>
+                  <div class="form-control-feedback" *ngIf="
+                  editOnlineDataroomForm.get('end_date')?.errors &&
+                  (editOnlineDataroomForm.get('end_date').dirty ||
+                    editOnlineDataroomForm.get('end_date').touched)">
+                    <p *ngIf="
+                    editOnlineDataroomForm.get('end_date')?.errors
+                      .required" class="alert-danger">
+                      Expiry Date is required
+                    </p>
+                  </div>
+
+                  <div class="col-sm-9 col-md-4 mb-4 mt-2">
+                    <label for="" class="col-form-label">Auto renewal</label>
+                    <div class="d-flex align-items-center">
+                      <span class="mr-2">Inactive</span>
+                      <mat-slide-toggle formControlName="auto_renewal"></mat-slide-toggle>
+                      <span class="ml-2">Active</span>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cancel
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer cdr-md-footer"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,126 @@
+<app-header></app-header>
+<section id="cdr-body" *ngIf="user?.member?.is_dataroom_admin">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <div class="search-box p-0 ad-shadow">
+              <div class="seach-inner-bx">
+                <input type="text" class="form-control srch-tx-bx" placeholder="Search Vote by title"
+                  [(ngModel)]="filterQuery">
+                <i class="material-icons ser-ico">&#xE8B6;</i>
+              </div>
+            </div>
+
+            <span fxFlex></span>
+            <div class="cdr-buttons">
+              <button mat-raised-button class="cdr-btn big-btn orange-btn mr-2"
+                routerLink="/group-setting">Back</button>
+              <button mat-raised-button class="cdr-btn big-btn blue-btn" style="margin-left: 10px;" data-toggle="modal" data-target="#addMember"
+                (click)="filtermember()" data-backdrop="static" data-keyboard="false">Add Voters</button>
+            </div>
+            <!-- <button mat-raised-button class="cdr-btn big-btn blue-btn">Back</button> -->
+          </mat-toolbar>
+          <table class="table dl-table" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+              <tr>
+                <th>
+                  Sr. No.
+                </th>
+                <th>Member Name</th>
+                <th>Join Date</th>
+                <th>Status</th>
+                <th>Action</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let member of voter_group_members | voteSearch : filterQuery; let i = index;">
+
+                <td>{{ i+1 }}</td>
+                <td>{{ member.title }}</td>
+                <td>
+                  {{ member.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'('
+                  +usertimezone['time_zone__abbreviation'] +')'}}
+                </td>
+                <td>
+                  <span *ngIf="member.status">Active</span>
+                  <span *ngIf="!member.status">Deactive</span>
+                </td>
+                <td>
+                  <button class="tb-actb" mat-button [matMenuTriggerFor]="menu"><i
+                      class="material-icons">&#xE5D4;</i></button>
+
+                  <mat-menu #menu="matMenu" class="cdr-actbtn animated flipInX">
+
+                    <button mat-menu-item *ngIf="member.status" (click)="deleteMember(member.id)">Remove</button>
+                    <button mat-menu-item *ngIf="!member.status" (click)="deleteMember(member.id)">Restore</button>
+                  </mat-menu>
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </mat-card>
+      </div>
+
+      <!--End Disclaimer Status-->
+
+    </div>
+  </div>
+
+</section>
+
+
+<section *ngIf="!user.member.is_dataroom_admin">
+  No Permission For This Page
+</section>
+
+<!-- Add Voters-->
+
+<div class="modal fade" id="addMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" *ngIf="user.member.is_dataroom_admin">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Add Voters</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr">
+        <form action="">
+          <div class="form-group mt-2">
+            <label style="width: 100%">Add Voters</label>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let member of members;let indx=index;" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(member,indx)">
+                {{member}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip>
+              <input style="width: 100%;" placeholder="Type a name or email id to select voters" #MemberManageGroupInput
+                [formControl]="fruitCtrl" [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                (matChipInputTokenEnd)="add($event)" name="member" (focus)="focusFunction()">
+            </mat-chip-list>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+              <mat-option *ngFor="let member of filteredMembers | async" [value]="member">
+                {{member}}
+              </mat-option>
+            </mat-autocomplete>
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="addVoterGroupMember()">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

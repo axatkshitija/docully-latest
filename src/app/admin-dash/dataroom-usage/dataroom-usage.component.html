@@ -1,0 +1,10 @@
+<mat-card class="rounded mb-10 p-0">
+  <mat-toolbar class="cdr-toolbar">
+    <span>Data Rooms Allocated</span>
+    <span class="spacer "></span>
+    <button mat-button class="minimise-btn ico-bnt " (click)="getAllDataroomsUsage()"><i class="fa fa-refresh "></i></button>
+  </mat-toolbar>
+  <div class="half-chart chart-one text-center">
+    <div [chart]="chart" class="piechart"></div>
+  </div>
+</mat-card>

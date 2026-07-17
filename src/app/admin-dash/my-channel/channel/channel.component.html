@@ -1,0 +1,790 @@
+<app-header></app-header>
+<section id="cdr-body" *ngIf="user_obj">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar></app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+            <span
+              *ngIf="showChannelList == true && showTeamsList == false && buttonVisibility?.Channels == true">Channels<span
+                class="no-dr"></span></span>
+            <span
+              *ngIf="showChannelList == false && showTeamsList == true && buttonVisibility?.myteams == true">Teams<span
+                class="no-dr"></span></span>
+            <span fxFlex></span>
+            <span *ngIf="current_user.is_superadmin == true">
+              <a style="color: #3352ea; padding-left: 10px;" data-toggle="modal" data-target="#create-new-channel"
+                data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> New Channel</a>
+            </span>
+          </mat-toolbar>
+
+          <div class="mem-list-sr">
+            <div class="row m-0">
+              <div class="col-md-3 rtborder"
+                *ngIf="showChannelList == true && showTeamsList == false && buttonVisibility?.Channels == true">
+                <div class="All-listdetails">
+                  <ul class="mem-list m-team-list">
+                    <div *ngFor="let channel of all_channels; let i = index">
+                      <li class="mem-item alactive d-flex justify-content-between" *ngIf="channel.select">
+                        <a (click)="getSingleChannel(channel.id, i)" routerLinkActive="active-link"><i
+                            class="fa fa-user-o"></i> {{ channel.chanel_name }}</a>
+                        <button data-toggle="modal" [attr.data-target]="'#editChannel' + i" data-backdrop="static"
+                          data-keyboard="false">
+                          <i class="fa fa-edit" *ngIf="current_user.is_superadmin == true"></i>
+                        </button>
+                      </li>
+                      <li class="mem-item d-flex justify-content-between" *ngIf="!channel.select">
+                        <a (click)="getSingleChannel(channel.id, i)" routerLinkActive="active-link"><i
+                            class="fa fa-user-o"></i> {{ channel.chanel_name }}
+                        </a>
+                        <button data-toggle="modal" [attr.data-target]="'#editChannel' + i" data-backdrop="static"
+                          data-keyboard="false">
+                          <i class="fa fa-edit" *ngIf="current_user.is_superadmin == true"></i>
+                        </button>
+                      </li>
+                      <div class="modal fade" id="editChannel{{ i }}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header cdr-modal cdr-h-c">
+                              <h5 class="modal-title">Edit Channel</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="material-icons">&#xE5CD;</i>
+                              </button>
+                            </div>
+                            <div class="modal-body cr-n-dr edrnl">
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label>Channel names</label>
+                                    <input type="text" class="form-control" placeholder="Give a Channel Name"
+                                      [(ngModel)]="channel.chanel_name" specialIsAlphaNumeric maxlength="50" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label for="">Permitted Datarooms</label>
+                                    <input type="number" min="0" class="form-control" placeholder="Number of datarooms"
+                                      [(ngModel)]="channel.dataroom_allowed" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label for="">Permitted Storage</label>
+                                    <input type="number" min="0" class="form-control"
+                                      placeholder="Storage permitted in GB"
+                                      [(ngModel)]="channel.dataroom_storage_allowed" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label for="">Permitted Members</label>
+                                    <input type="number" min="0" class="form-control"
+                                      placeholder="Members who can create dataroom"
+                                      [(ngModel)]="channel.dataroom_admin_allowed" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label>Usage Alerts</label>
+                                    <input type="text" class="form-control"
+                                      placeholder="A valid email to receive usage alerts"
+                                      [(ngModel)]="channel.usage_alertemail" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group d-flex flex-column align-items-start">
+                                    <label>Usage Alerts 2</label>
+                                    <input type="text" class="form-control"
+                                      placeholder="A valid email to receive usage alerts"
+                                      [(ngModel)]="channel.usage_alertemailtwo" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-3 mt-2">
+                                <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit"
+                                  (click)="editChannel(channel, i)">
+                                  Edit Channel
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="col-md-3 rtborder"
+                *ngIf="showTeamsList == true && showChannelList == false && buttonVisibility?.Channels == false && buttonVisibility?.myteams == true">
+                <div class="All-listdetails">
+                  <ul class="mem-list m-team-list">
+                    <div class="seach-inner-bx mb-3 col-12">
+                      <input type="text" class="form-control srch-tx-bx" placeholder="Search by Team name"
+                        (input)="searchTeamsList($event)" />
+                    </div>
+                    <div *ngFor="let team of all_my_teams; let i = index">
+                      <li class="mem-item alactive d-flex justify-content-between" *ngIf="team.select">
+                        <a (click)="getSingleTeam(team.id, i)" routerLinkActive="active-link"><i
+                            class="fa fa-user-o"></i> {{ team.team_name }}</a>
+                        <button data-toggle="modal" [attr.data-target]="'#editTeam' + i" data-backdrop="static"
+                          data-keyboard="false">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </li>
+                      <li class="mem-item d-flex justify-content-between" *ngIf="!team.select">
+                        <a (click)="getSingleTeam(team.id, i)" routerLinkActive="active-link"><i
+                            class="fa fa-user-o"></i> {{ team.team_name }}
+                        </a>
+                        <button data-toggle="modal" [attr.data-target]="'#editTeam' + i" data-backdrop="static"
+                          data-keyboard="false">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </li>
+
+                      <div class="modal fade" id="editTeam{{ i }}" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header cdr-modal cdr-h-c">
+                              <h5 class="modal-title">Edit Team</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <i class="material-icons">&#xE5CD;</i>
+                              </button>
+                            </div>
+                            <div class="modal-body cr-n-dr edrnl">
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label>Team name</label>
+                                    <input type="text" class="form-control" placeholder="Give a Team Name"
+                                      [(ngModel)]="team.team_name" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="">Permitted Datarooms</label>
+                                    <input type="number" min="0" class="form-control" placeholder="Number of datarooms"
+                                      [(ngModel)]="team.dataroom_allowed" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="">Permitted Storage</label>
+                                    <input type="number" min="0" class="form-control"
+                                      placeholder="Storage permitted in GB"
+                                      [(ngModel)]="team.dataroom_storage_allowed" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="">Permitted Members</label>
+                                    <input type="number" min="0" class="form-control"
+                                      placeholder="Members who can create dataroom"
+                                      [(ngModel)]="team.dataroom_admin_allowed" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="d-flex justify-content-between">
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label>Usage Alerts</label>
+                                    <input type="text" class="form-control"
+                                      placeholder="A valid email to receive usage alerts"
+                                      [(ngModel)]="team.usage_alertemail" />
+                                  </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label>Usage Alerts 2</label>
+                                    <input type="text" class="form-control"
+                                      placeholder="A valid email to receive support alerts"
+                                      [(ngModel)]="team.usage_alertemailtwo" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-3 mt-2">
+                                <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit">
+                                  Edit Team
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="col-md-3 rtborder"
+                *ngIf="showTeamsList == true && showChannelList == false && buttonVisibility?.Channels == true && buttonVisibility?.myteams == true">
+                <div class="All-listdetails">
+                  <ul class="mem-list m-team-list">
+                    <div *ngFor="let channel of allChannelsAndTeams; let j = index">
+                      <mat-accordion>
+                        <mat-expansion-panel [expanded]="channel.select">
+                          <mat-expansion-panel-header>
+                            <mat-panel-title *ngIf="channel.select">
+                              <span style="color: #3352ea;">{{channel.chanel_name}}</span>
+                            </mat-panel-title>
+                            <mat-panel-title *ngIf="!channel.select">
+                              <span>{{channel.chanel_name}}</span>
+                            </mat-panel-title>
+                          </mat-expansion-panel-header>
+                          <div>
+                            <div class="seach-inner-bx mb-3 col-12">
+                              <input type="text" class="form-control srch-tx-bx" placeholder="Search by Team name"
+                                (input)="searchChannelAndTeamsList($event, j)" />
+                            </div>
+                            <div *ngFor="let team of channel.teamdata; let i = index">
+                              <li class="mem-item alactive d-flex justify-content-between" *ngIf="team.select">
+                                <a (click)="getSingleChannelAndTeam(team.id, i, j)" routerLinkActive="active-link"><i
+                                    class="fa fa-user-o"></i> {{ team.team_name }}</a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!team.select">
+                                <a (click)="getSingleChannelAndTeam(team.id, i, j)" routerLinkActive="active-link"><i
+                                    class="fa fa-user-o"></i> {{ team.team_name }}
+                                </a>
+                              </li>
+                            </div>
+                          </div>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="col-md-9" *ngIf="buttonVisibility?.Channels">
+                <mat-toolbar class="team-overview justify-content-between">
+                  <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab"
+                        aria-controls="overview" aria-selected="true"
+                        (click)="showChannelList = false; showTeamsList = false">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="channel-tab" data-toggle="tab" href="#channel" role="tab"
+                        aria-controls="channel" aria-selected="false"
+                        (click)="showChannelList = true; showTeamsList = false">Channels</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab"
+                        aria-controls="members" aria-selected="false"
+                        (click)="showChannelList = true; showTeamsList = false">Channel Members</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="allUsers-tab" data-toggle="tab" href="#allUsers" role="tab"
+                        aria-controls="allUsers" aria-selected="false"
+                        (click)="showChannelList = false; showTeamsList = false">All Dataroom Users</a>
+                    </li>
+                  </ul>
+                </mat-toolbar>
+                <!-- End of my team pop up -->
+
+                <!-- tab nav -->
+                <mat-card-content>
+                  <!-- tab start from here -->
+                  <div class="team-overview">
+                    <div class="tab-content">
+                      <!-- overview tab -->
+                      <div class="tab-pane fade show active" id="overview" role="tabpanel"
+                        aria-labelledby="overview-tab">
+                        <div class="overview-cont d-flex" *ngIf="dashboardCounts">
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/channel.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Channels</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Created: {{dashboardCounts.chanelcount}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/dataroom.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Teams</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Total: {{activeTeamsCount}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/dataroom.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Data Rooms</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Total: {{activeDataroomsCount}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/storage.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Storage</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Total: {{storageAllottedCount}} GB</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div class="seach-inner-bx mt-4 mb-4 col-6">
+                            <input type="text" class="form-control srch-tx-bx" placeholder="Search by Channel name"
+                              (input)="searchList($event)" />
+                          </div>
+
+                          <div>
+                            <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+                              <thead>
+                                <tr>
+                                  <th>Sr. No.</th>
+                                  <th>Channel name</th>
+                                  <th>Teams</th>
+                                  <th>Storage</th>
+                                  <th>Datarooms</th>
+                                  <th *ngIf="current_user.is_superadmin == true">Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngIf="dashboardCounts?.data && dashboardCounts?.data.length == 0">
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td>Data not available</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr *ngFor="let channel of dashboardCounts?.data; let i = index;">
+                                  <td>{{ i+1 }}</td>
+                                  <td>{{ channel.chanel_name }}</td>
+                                  <td>{{ channel.myteamscount }}</td>
+                                  <td>{{ channel.dataroom_storage_allowed }} GB</td>
+                                  <td>{{ channel.dataroom_allowed }}</td>
+                                  <td class="text-center" *ngIf="current_user.is_superadmin == true">
+                                    <i class="fa fa-trash" style="cursor: pointer;" aria-hidden="true"
+                                      (click)="deleteChannel(channel.id)"></i>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- </app me team overview> -->
+                      <!-- dataroom Tab -->
+                      <div class="tab-pane fade" id="channel" role="tabpanel" aria-labelledby="channel-tab">
+                        <mat-toolbar class="team-overview justify-content-between">
+                          <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+                            <li class="nav-item">
+                              <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard"
+                                role="tab" aria-controls="dashboard" aria-selected="true"
+                                (click)="showTeamsList = false; showChannelList=true">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" id="teams-tab" data-toggle="tab" href="#teams" role="tab"
+                                aria-controls="teams" aria-selected="false"
+                                (click)="showTeamsList = false; showChannelList=true">Teams</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" id="datarooms-tab" data-toggle="tab" href="#datarooms" role="tab"
+                                aria-controls="datarooms" aria-selected="false"
+                                (click)="showTeamsList = true; showChannelList=false">Datarooms</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" id="teamMembers-tab" data-toggle="tab" href="#teamMembers" role="tab"
+                                aria-controls="teamMembers" aria-selected="false"
+                                (click)="showTeamsList = true; showChannelList=false">Team Members</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab"
+                                aria-controls="users" aria-selected="false"
+                                (click)="showTeamsList = true; showChannelList=false">Dataroom Users</a>
+                            </li>
+                          </ul>
+                        </mat-toolbar>
+
+                        <mat-card-content>
+                          <div class="team-overview">
+                            <div class="tab-content">
+                              <div class="tab-pane fade show active" id="dashboard" role="tabpanel"
+                                aria-labelledby="dashboard-tab">
+                                <div class="overview-cont d-flex">
+                                  <div class="col-3 channel-dashboard">
+                                    <div>
+                                      <img src="../../../assets/images/ICONS_PNG/channel.png" alt="" width="75"
+                                        srcset="">
+                                    </div>
+                                    <div class="ovr-head">
+                                      <h3>Teams</h3>
+                                    </div>
+                                    <div class="dashboard-data">
+                                      <div>
+                                        <span>Created: {{singleDashboardCounts?.myteamscount}} </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-3 channel-dashboard">
+                                    <div>
+                                      <img src="../../../assets/images/ICONS_PNG/dataroom.png" alt="" width="75"
+                                        srcset="">
+                                    </div>
+                                    <div class="ovr-head">
+                                      <h3>Data Rooms</h3>
+                                    </div>
+                                    <div class="dashboard-data">
+                                      <div>
+                                        <span>Created: {{singleDashboardCounts?.dataroomcount}} </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-3 channel-dashboard">
+                                    <div>
+                                      <img src="../../../assets/images/ICONS_PNG/storage.png" alt="" width="75"
+                                        srcset="">
+                                    </div>
+                                    <div class="ovr-head">
+                                      <h3>Storage</h3>
+                                    </div>
+                                    <div class="dashboard-data">
+                                      <div>
+                                        <span>Allocated: {{singleDashboardCounts?.dataroom_storage_allowed | number:
+                                          '1.0-0'}} GB</span>
+                                      </div>
+                                      <div>
+                                        <span>Teams Used : {{singleDashboardCounts?.dataroomstorage1}} GB</span>
+                                      </div>
+                                      <div>
+                                        <span>Datarooms Used : {{singleDashboardCounts?.dataroomstorage}} GB</span>
+                                      </div>
+                                      <div>
+                                        <span>Remaining: {{singleDashboardCounts?.dataroom_storage_allowed -
+                                          singleDashboardCounts?.dataroomstorage1 | number:
+                                          '1.0-0' }} GB</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="teams-tab">
+                                <app-teams (channelAndTeamUpdate)="getAllChannelsAndTeams()"
+                                  [singleDashboardCounts]="singleDashboardCounts" [chanel]="my_channel_id"></app-teams>
+                              </div>
+                              <div class="tab-pane fade" id="datarooms" role="tabpanel" aria-labelledby="datarooms-tab"
+                                *ngIf="my_team_id != undefined">
+                                <app-dataroom [my_team_id]="my_team_id"></app-dataroom>
+                              </div>
+                              <div class="tab-pane fade" id="teamMembers" role="tabpanel"
+                                aria-labelledby="teamMembers-tab" *ngIf="my_team_id">
+                                <app-team-member [my_team_id]="my_team_id"></app-team-member>
+                              </div>
+                              <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab"
+                                *ngIf="my_team_id">
+                                <app-dataroom-members [my_team_id]="my_team_id"></app-dataroom-members>
+                              </div>
+                            </div>
+                          </div>
+                        </mat-card-content>
+                      </div>
+                      <!-- End of dataroom tab -->
+                      <!-- Member Tab -->
+                      <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab"
+                        *ngIf="my_channel_id">
+                        <app-all-members [my_channel_id]="my_channel_id"></app-all-members>
+                      </div>
+                      <!-- End of member tab section -->
+                      <div class="tab-pane fade" id="allUsers" role="tabpanel" aria-labelledby="members-tab">
+                        <app-all-users></app-all-users>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- tab start from here -->
+                </mat-card-content>
+              </div>
+
+              <div class="col-md-9" *ngIf="buttonVisibility?.myteams == true && buttonVisibility?.Channels == false">
+                <mat-toolbar class="team-overview justify-content-between">
+                  <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab"
+                        aria-controls="dashboard" aria-selected="true"
+                        (click)="showTeamsList = false; showChannelList=true">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="teams-tab" data-toggle="tab" href="#teams" role="tab"
+                        aria-controls="teams" aria-selected="false"
+                        (click)="showTeamsList = false; showChannelList=true">Teams</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="datarooms-tab" data-toggle="tab" href="#datarooms" role="tab"
+                        aria-controls="datarooms" aria-selected="false"
+                        (click)="showTeamsList = true; showChannelList=false">Datarooms</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="teamMembers-tab" data-toggle="tab" href="#teamMembers" role="tab"
+                        aria-controls="teamMembers" aria-selected="false"
+                        (click)="showTeamsList = true; showChannelList=false">Team Members</a>
+                    </li>
+                  </ul>
+                </mat-toolbar>
+
+                <mat-card-content>
+                  <div class="team-overview">
+                    <div class="tab-content">
+                      <div class="tab-pane fade show active" id="dashboard" role="tabpanel"
+                        aria-labelledby="dashboard-tab">
+                        <div class="overview-cont d-flex">
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/channel.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Teams</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Created: {{singleDashboardCounts?.myteamscount}} </span>
+                              </div>
+                              <div>
+                                <span>Active: 000</span>
+                              </div>
+                              <div>
+                                <span>Inactive: 000</span>
+                              </div>
+                              <div>
+                                <span>Deleted: 000</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/dataroom.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Data Rooms</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Created: {{singleDashboardCounts?.dataroomcount}} </span>
+                              </div>
+                              <div>
+                                <span>Live: 000</span>
+                              </div>
+                              <div>
+                                <span>Marked for deletion: 000</span>
+                              </div>
+                              <div>
+                                <span>Deleted: 000</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/storage.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Storage</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Allocated: {{singleDashboardCounts?.dataroom_storage_allowed | number:
+                                  '1.0-0'}} GB</span>
+                              </div>
+                              <div>
+                                <span>Used : {{singleDashboardCounts?.dataroomstorage}} GB</span>
+                              </div>
+                              <div>
+                                <span>Remaining: {{singleDashboardCounts?.dataroom_storage_allowed -
+                                  singleDashboardCounts?.dataroomstorage}} GB</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="teams-tab">
+                        <app-teams [chanel]="my_channel_id"></app-teams>
+                      </div>
+                      <div class="tab-pane fade" id="datarooms" role="tabpanel" aria-labelledby="datarooms-tab"
+                        *ngIf="my_team_id != undefined">
+                        <app-dataroom [my_team_id]="my_team_id"></app-dataroom>
+                      </div>
+                      <div class="tab-pane fade" id="teamMembers" role="tabpanel" aria-labelledby="teamMembers-tab"
+                        *ngIf="my_team_id">
+                        <app-team-member [my_team_id]="my_team_id"></app-team-member>
+                      </div>
+                      <!-- <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card-content>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+
+<!-- Create New Channel -->
+<div class="modal fade" id="create-new-channel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <h5 class="modal-title">Create New Channel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl">
+        <form [formGroup]="channelForm" novalidate (ngSubmit)="createChannelForm(channelForm)">
+          <div class="d-flex justify-content-between">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Channel name</label>
+                <input type="text" class="form-control" placeholder="Give a Channel Name"
+                  formControlName="chanel_name" />
+                <small class="alert-danger"
+                  *ngIf="channelForm.controls.chanel_name.touched || channelForm.controls.chanel_name.dirty"
+                  [hidden]="channelForm.controls.chanel_name.valid">
+                  Channel Name is required
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Permitted Datarooms</label>
+                <input type="number" min="0" class="form-control" placeholder="Number of datarooms"
+                  formControlName="dataroom_allowed" />
+                <small class="alert-danger"
+                  *ngIf="channelForm.controls.dataroom_allowed.touched || channelForm.controls.dataroom_allowed.dirty"
+                  [hidden]="channelForm.controls.dataroom_allowed.valid">
+                  Permitted Datarooms field is required
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Permitted Storage</label>
+                <input type="number" min="0" class="form-control" placeholder="Storage permitted in GB"
+                  formControlName="dataroom_storage_allowed" maxlength="3" />
+                <small class="alert-danger"
+                  *ngIf="channelForm.controls.dataroom_storage_allowed.touched || channelForm.controls.dataroom_storage_allowed.dirty"
+                  [hidden]="channelForm.controls.dataroom_storage_allowed.valid">
+                  Permitted Storage field is required
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Permitted Members</label>
+                <input type="number" min="0" class="form-control" placeholder="Members who can create dataroom"
+                  formControlName="dataroom_admin_allowed" />
+                <small class="alert-danger"
+                  *ngIf="channelForm.controls.dataroom_admin_allowed.touched || channelForm.controls.dataroom_admin_allowed.dirty"
+                  [hidden]="channelForm.controls.dataroom_admin_allowed.valid">
+                  Permitted Members field is required
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Usage Alerts</label>
+                <input type="text" class="form-control" placeholder="A valid email to receive usage alerts"
+                  formControlName="usage_alertemail" />
+                <!-- <small class="alert-danger"
+                  *ngIf="channelForm.controls.usage_alertemail.touched || channelForm.controls.usage_alertemail.dirty"
+                  [hidden]="channelForm.controls.usage_alertemail.valid">
+                  Usage Alerts is required
+                </small> -->
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Usage Alerts 2</label>
+                <input type="text" class="form-control" placeholder="A valid email to receive support alerts"
+                  formControlName="usage_alertemailtwo" />
+                <!-- <small class="alert-danger"
+                  *ngIf="channelForm.controls.usage_alertemailtwo.touched || channelForm.controls.usage_alertemailtwo.dirty"
+                  [hidden]="channelForm.controls.usage_alertemailtwo.valid">
+                  Usage Alerts 2 is required
+                </small> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="ml-3 d-flex align-items-center">
+            <input type="checkbox" name="" id="" formControlName="allow_team_edit">
+            <span class="ml-2">Allow Team members to edit the permitted values</span>
+          </div> -->
+
+          <div class="col-md-3 mt-2">
+            <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit"
+              [disabled]="!channelForm.valid">
+              Create Channel
+            </button>
+          </div>
+        </form>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

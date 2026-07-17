@@ -1,0 +1,41 @@
+<div mat-dialog-title *ngIf="data.copy" style="margin: 10px;">
+  Copy<i class="fa fa-times" aria-hidden="true" (click)="onNoClick()"
+    style="float: right !important; cursor: pointer"></i>
+  <p style="font-size: 16px; line-height: 20px">
+    Please select the destination folder where you want to Move this file
+  </p>
+</div>
+
+<div mat-dialog-title *ngIf="data.move" style="margin: 10px;">
+  Move
+  <i class="fa fa-times" aria-hidden="true" (click)="onNoClick()" style="float: right !important; cursor: pointer"></i>
+  <p style="font-size: 16px; line-height: 20px">
+    Please select the destination folder where you want to Move this file
+  </p>
+</div>
+
+<div mat-dialog-content>
+  <ng-scrollbar visibility="hover" class="scroll-section h-170 docu-tree" style="height: 170px;">
+    <tree-root [nodes]="nodes" [options]="options">
+      <ng-template #treeNodeTemplate let-node let-index="index">
+        <button><span>{{ node.data.name }}</span></button>
+        <mat-checkbox class="example-margin" [checked]="selected === node.data.id" [disabled]="node.data.number < 1"
+          (change)="select_destination(node.data.id)"></mat-checkbox>
+      </ng-template>
+    </tree-root>
+  </ng-scrollbar>
+
+  <ng-scrollbar visibility="hover" class="scroll-section h-170 docu-tree" style="height: 170px;"
+    *ngIf="nodes.length===0">
+    <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" style="margin: 0 auto !important">
+    </mat-progress-spinner>
+  </ng-scrollbar>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="selected" class="btn btn-primary" *ngIf="data.copy">
+    Confirm Copy
+  </button>
+  <button mat-button [mat-dialog-close]="selected" class="btn btn-primary" *ngIf="data.move">
+    Confirm Move
+  </button>
+</div>

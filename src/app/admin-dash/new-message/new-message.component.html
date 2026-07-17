@@ -1,0 +1,260 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user"></app-admin-left-side-bar>
+      </aside>
+      <div fxFlex="32" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <!--rt aside component start-->
+        <div class="cdr-rt-sidebar nav-discussions">
+          <mat-card class="rounded mb-10 p-0">
+            <mat-toolbar class="cdr-toolbar">
+              <span>New Messages</span><button data-toggle="modal" data-target="#sendMessage">
+                <i class="fa fa-plus-circle"></i>
+              </button>
+            </mat-toolbar>
+            <mat-list style="border-bottom: 1px solid #c5c5c5;">
+
+              <mat-list-item class="messages messages_auto">
+                <div class="container">
+                  <h5 class="boxm left" style="color: #3377e5 !important;margin: 0px !important;">
+                    Contact
+                  </h5>
+                  <span style="padding: 0px 10px 5px;">|</span>
+                  <h5 class="boxm right" style="color: #3377e5 !important;margin: 0px !important;">  
+                    Subject
+                  </h5>
+                </div>
+
+                <!-- <div class="boxm">
+
+                  <div>
+                    <h5 style="color: #3377e5 !important;">
+                      Contact
+                    </h5>
+                  </div>
+                  <div> </div>
+                  <div>
+                    <h5 style="color: #3377e5 !important;">
+                      Subject
+                    </h5>
+                  </div>
+                </div> -->
+
+
+
+              </mat-list-item>
+            </mat-list>
+            <div *ngFor="let message of all_message">
+              <mat-list *ngIf="
+                  message.user_rec.id != message.user_send.id &&
+                    message.read == true;
+                  else pop" [class.messageHighlight]="message.id === (char_message_list && char_message_list[0].id)">
+                <mat-list-item (click)="chatPage(message.id)" class="messages messages_auto">
+                  <div class="container">
+                  <h5 *ngIf="user.id === message.user_send.id" class="boxm left pointer-message">
+                    {{ message.user_rec.first_name | titlecase }}
+                  </h5>
+                  <h5 *ngIf="user.id === message.user_rec.id" class="boxm left pointer-message">
+                    {{ message.user_send.first_name }}
+                  </h5>
+                  <span style="padding: 0px 10px 5px;">|</span>
+                  <h5 class="pointer-message boxm right">
+                    {{ message.subject | limitTo: 20
+                    }}{{ message.subject.length > 20 ? "..." : "" }}
+                  </h5>
+                  <span *ngIf="message.newmessagecount > 0" class="rounded-circle ntf-no" style="top: 0px">{{
+                    message.newmessagecount
+                    }}</span>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+
+              <ng-template #pop>
+                <div *ngIf="user.id === message.latestsender">
+                  <mat-list class="" *ngIf="message.user_rec.id != message.latestsender"
+                    [class.messageHighlight]="message.id === (char_message_list && char_message_list[0].id)">
+                    <mat-list-item (click)="chatPage(message.id)" class="messages messages_auto">
+                      <div class="container">
+                      <h5 *ngIf="user.id === message.user_send.id" class="pointer-message boxm left">
+                        {{ message.user_rec.first_name | titlecase }}
+                      </h5>
+                      <h5 *ngIf="user.id === message.user_rec.id" class="pointer-message boxm left">
+                        {{ message.user_send.first_name }}
+                      </h5>
+                      <span style="padding: 0px 10px 5px;">|</span>
+                      <h5 class="pointer-message boxm right">
+                        {{ message.subject | limitTo: 20
+                        }}{{ message.subject.length > 20 ? "..." : "" }}
+                      </h5>
+                      <span *ngIf="message.newmessagecount > 0" class="rounded-circle ntf-no" style="top: 0px">{{
+                        message.newmessagecount
+                        }}</span>
+                      </div>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+                <div *ngIf="user.id != message.latestsender">
+                  <mat-list class="pop" *ngIf="message.user_rec.id != message.user_send.id"
+                    [class.messageHighlight]="message.id === (char_message_list && char_message_list[0].id)">
+                    <mat-list-item (click)="chatPage(message.id)" class="messages messages_auto">
+                      <div class="container">
+                      <h5 *ngIf="user.id === message.user_send.id" class="pointer-message boxm left"
+                        style="color: #ffffff !important">
+                        {{ message.user_rec.first_name | titlecase }}
+                      </h5>
+                      <h5 *ngIf="user.id === message.user_rec.id" class="boxm left" style="color: #ffffff !important">
+                        {{ message.user_send.first_name }}
+                      </h5>
+                      <span style="padding: 0px 10px 5px;">|</span>
+                      <h5 style="color: #ffffff !important" class="boxm right">
+                        {{ message.subject | limitTo: 20
+                        }}{{ message.subject.length > 20 ? "..." : "" }}
+                      </h5>
+                      <span *ngIf="message.newmessagecount > 0" class="rounded-circle ntf-no" style="top: 0px">{{
+                        message.newmessagecount
+                        }}</span>
+                        </div>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+              </ng-template>
+              <mat-divider></mat-divider>
+            </div>
+
+          </mat-card>
+        </div>
+        <!--rt aside component end-->
+      </div>
+
+      <div class="modal fade" id="sendMessage" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header cdr-h-c cdr-modal">
+              <h5 class="modal-title">Send Message</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>To</label>
+                <input class="form-control" matInput
+                  placeholder="Start typing an email id from your My Contacts list to send a personal message."
+                  [matAutocomplete]="auto" (keyup)="getUserIdsFirstWay($event)" [(ngModel)]="update.email" />
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getUserBy($event.option.value)">
+                  <mat-option *ngFor="let item of userList" [value]="item">
+                    <!-- <span>{{item.first_name}} {{item.last_name}}</span> -->
+                    <span>{{ item.email }}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+
+              <div class="form-group">
+                <label>Subject</label>
+                <input type="text" class="form-control" placeholder="Type Subject" [(ngModel)]="update.subject" />
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea class="form-control" placeholder="Type message" [(ngModel)]="update.message" rows="5" cols="5"
+                  name="message"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendMessageToUser()">
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div fxFlex="65" fxFlex.xs="100" fxFlexOrder.xs="2" *ngIf="char_message_list; else elseDiv">
+        <!-- <perfect-scrollbar class="scroll-section h-301" [config]="config"> -->
+        <mat-card class="mat-card p0">
+          <div class="new-sms-title">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; height: 50px; padding: 0px 16px; border-bottom: 1px solid #ddd;">
+              <span style="font-size: 18px;">{{ char_message_list[0].user_rec.first_name | titlecase }}</span>
+              <span style="font-size: 18px;">{{ char_message_list[0].subject | limitTo: 25}}
+                {{ char_message_list[0].subject.length > 25 ? "..." : "" }}</span>
+              <span></span>
+            </div>
+            <hr />
+            <div class="chat-wrapper">
+              <ul *ngFor="let char_message of char_message_list">
+                <li class="even">
+                  <div class="content" *ngIf="char_message.user_send.id === user.id">
+                    <div class="message">
+                      <div class="bluelist">
+                        <p>{{ char_message.send_message }}</p>
+                      </div>
+                    </div>
+                    <span>{{ char_message.user_send.first_name }}
+                      {{ char_message.user_send.last_name }}</span>
+                    <span>
+                      {{ char_message.received_at | date: 'dd-MM-yyyy hh:mm:ss' : usertimezone['time_zone__offset'] }}
+                      {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                  </div>
+                </li>
+                <li class="odd">
+                  <div class="content" *ngIf="char_message.user_send.id != user.id">
+                    <div class="message">
+                      <div class="greylist">
+                        <p>{{ char_message.send_message }}</p>
+                      </div>
+                    </div>
+                    <span>{{ char_message.user_send.first_name }}
+                      {{ char_message.user_send.last_name }}</span>
+                    <span>
+                      {{ char_message.received_at | date: 'dd-MM-yyyy hh:mm:ss' : usertimezone['time_zone__offset'] }}
+                      {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="chat-bottom">
+              <textarea type="text" rows="1" class="msginput" id="pwd" placeholder="Type message"
+                [(ngModel)]="update.message" name="message"></textarea>
+              <button class="btn-reply" (click)="sendMessage(char_message_list[0])" *ngIf="update.message.length > 0">
+                Reply
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-content document-table" id="pills-tabContent">
+            <!-- list view start from here.. -->
+            <div class="tab-pane fade show active" id="listViewDr" role="tabpanel" aria-labelledby="pills-home-tab"
+              *ngIf="!is_upload_file"></div>
+            <!-- Upload page -->
+            <div class="doc-tool" *ngIf="is_upload_file">
+              <app-upload-files></app-upload-files>
+            </div>
+            <!-- End of upload page  -->
+            <!-- grid view start from here.. -->
+            <div class="tab-pane fade" id="gridViewDr" role="tabpanel" aria-labelledby="pills-home-tab">
+              Coming soon..
+            </div>
+          </div>
+          <!-- Add an tree menu -->
+          <!-- End of tree -->
+        </mat-card>
+        <!-- </perfect-scrollbar> -->
+      </div>
+      <ng-template #elseDiv>
+        <div fxFlex="65" fxFlex.xs="100" fxFlexOrder.xs="2">
+          <mat-card class="mat-card p0 chatbox no-msg-block">
+            No Message Selected
+          </mat-card>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- Add dataroom Model here -->
+<!-- add all pop ups here -->

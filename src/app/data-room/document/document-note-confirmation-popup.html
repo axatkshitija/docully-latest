@@ -1,0 +1,18 @@
+<div mat-dialog-title>
+  Note<i class="fa fa-times" aria-hidden="true" (click)="onNoClick()"
+    style="float: right !important; cursor: pointer"></i>
+</div>
+
+<div mat-dialog-content>
+  <div class="a-info">
+    Your request for downloading the files is in process and it will begin to
+    download shortly. The processing and downloading time will depend on the
+    data size and your internet download speed. If you need any help, please
+    write to support@docullyvdr.com
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data.ok" class="btn btn-primary">
+    ok
+  </button>
+</div>

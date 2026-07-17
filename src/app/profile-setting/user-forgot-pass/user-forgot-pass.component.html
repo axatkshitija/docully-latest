@@ -1,0 +1,280 @@
+<app-header [user]="user"></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-10 offset-md-1">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="panel panel-card">
+              <div class="cdr-pib">
+                <img
+                  [src]="avatarUrl"
+                  class="img-fluid d-flex mr-3 rounded-circle"
+                  onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'"
+                  style="
+                    height: 100px;
+                    width: 100px;
+                    /* align-items: center; */
+                    display: table;
+                    margin-left: auto;
+                    margin-right: auto !important;
+                  "
+                />
+                <!-- <img src="assets/images/5.jpg" class="img-fluid" alt=""> -->
+              </div>
+              <div class="cdr-list-group rounded-0 border-0">
+                <a
+                  class="cdr-list-group-item"
+                  [routerLink]="['../user-personal-info']"
+                >
+                  <span class="pull-right badge"
+                    ><i class="fa fa-user" aria-hidden="true"></i
+                  ></span>
+                  Profile
+                </a>
+                <a
+                  class="cdr-list-group-item"
+                  [routerLink]="['../changepassword']"
+                >
+                  <span class="pull-right badge"
+                    ><i class="fa fa-key" aria-hidden="true"></i
+                  ></span>
+                  Change Password
+                </a>
+                <a
+                  class="cdr-list-group-item"
+                  [routerLink]="['../email-notification-info']"
+                >
+                  <span class="pull-right badge"
+                    ><i class="fa fa-key" aria-hidden="true"></i
+                  ></span>
+                  Email Notification
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="card profile-right">
+              <div class="card-header">
+                <h4 class="card-title">Change Password</h4>
+                <a
+                  href="javascript:void(0)"
+                  mat-raised-button
+                  (click)="goBack()"
+                  class="cdr-btn big-btn blue-btn"
+                  >Back</a
+                >
+              </div>
+              <div class="card-block">
+                <div class="general-info">
+                  <div class="row" *ngIf="errors">
+                    <div
+                      class="col-md-8 offset-md-1 alert-danger"
+                      *ngIf="is_error"
+                    >
+                      {{ errors.error }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-8 offset-md-1">
+                      <form [formGroup]="passwordForm">
+                        <div
+                          class="form-group row"
+                          [ngClass]="{
+                            'has-danger':
+                              passwordForm.get('current_password')?.invalid &&
+                              (passwordForm.get('current_password')?.dirty ||
+                                passwordForm.get('current_password')?.touched),
+                            'has-success':
+                              passwordForm.get('current_password')?.valid &&
+                              (passwordForm.get('current_password')?.dirty ||
+                                passwordForm.get('current_password')?.touched)
+                          }"
+                        >
+                          <label
+                            for="inputPassword"
+                            class="col-sm-4 col-form-label"
+                            >Current Password</label
+                          >
+                          <div class="col-sm-8">
+                            <input
+                              type="password"
+                              class="form-control has-danger"
+                              id="current_password"
+                              placeholder="Current Password"
+                              formControlName="current_password"
+                              required
+                            />
+                          </div>
+                          <div
+                            class="form-control-feedback"
+                            *ngIf="
+                              passwordForm.get('current_password')?.errors &&
+                              (passwordForm.get('current_password').dirty ||
+                                passwordForm.get('current_password').touched)
+                            "
+                          >
+                            <p
+                              *ngIf="
+                                passwordForm.get('current_password')?.errors
+                                  .required
+                              "
+                              class="alert-danger"
+                            >
+                              Current Password is required
+                            </p>
+                            <p
+                              *ngIf="
+                                passwordForm.get('current_password')?.errors
+                                  .minlength
+                              "
+                              class="alert-danger"
+                            >
+                              Current Password must be 8 characters long, we
+                              need another
+                              {{
+                                passwordForm.get("current_password")?.errors
+                                  .minlength.requiredLength -
+                                  passwordForm.get("current_password")?.errors
+                                    .minlength.actualLength
+                              }}
+                              characters
+                            </p>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label
+                            for="inputPassword"
+                            class="col-sm-4 col-form-label"
+                            >New Password</label
+                          >
+                          <div class="col-sm-8">
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="inputPassword"
+                              placeholder="Password"
+                              formControlName="new_password"
+                              required
+                            />
+                          </div>
+                    
+                          <div
+                            class="form-control-feedback"
+                            *ngIf="
+                              passwordForm.get('new_password')?.errors &&
+                              (passwordForm.get('new_password').dirty ||
+                                passwordForm.get('new_password').touched)
+                            "
+                          >
+                            <p
+                              *ngIf="
+                                passwordForm.get('new_password')?.errors
+                                  .required
+                              "
+                              class="alert-danger"
+                            >
+                              New Password is required
+                            </p>
+                            <span
+                              *ngIf="
+                                passwordForm.get('new_password')?.errors
+                                  .minlength
+                              "
+                              class="alert-danger"
+                            >
+                              New Password must be 8 characters long, we need
+                              another
+                              {{
+                                passwordForm.get("new_password")?.errors
+                                  .minlength.requiredLength -
+                                  passwordForm.get("new_password")?.errors
+                                    .minlength.actualLength
+                              }}
+                              characters.
+                            
+                            </span>
+                            <span *ngIf="passwordForm.get('new_password').hasError('passwordInvalid')"  class="alert-danger">
+                              Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+                            </span>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label
+                            for="inputPassword"
+                            class="col-sm-4 col-form-label"
+                            >Confirm Password</label
+                          >
+                          <div class="col-sm-8">
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="inputPassword"
+                              placeholder="Confirm Password"
+                              formControlName="confirm_new_password"
+                              required
+                            />
+                          </div>
+                          <div
+                            class="form-control-feedback"
+                            *ngIf="
+                              passwordForm.get('confirm_new_password')
+                                ?.errors &&
+                              (passwordForm.get('confirm_new_password').dirty ||
+                                passwordForm.get('confirm_new_password')
+                                  .touched)
+                            "
+                          >
+                            <p
+                              *ngIf="
+                                passwordForm.get('confirm_new_password')?.errors
+                                  .required
+                              "
+                              class="alert-danger"
+                            >
+                              Confirm New Password is required
+                            </p>
+                            <p
+                              *ngIf="
+                                passwordForm.get('confirm_new_password')?.errors
+                                  .minlength
+                              "
+                              class="alert-danger"
+                            >
+                              Confirm New Password must be 8 characters long, we
+                              need another
+                              {{
+                                passwordForm.get("confirm_new_password")?.errors
+                                  .minlength.requiredLength -
+                                  passwordForm.get("confirm_new_password")
+                                    ?.errors.minlength.actualLength
+                              }}
+                              characters
+                            </p>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label"></label>
+                          <div class="col-sm-8">
+                            <button
+                              class="btn btn-default"
+                              (click)="submitNewPassword()"
+                              [disabled]="!passwordForm.valid"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer [user]="user"></app-footer>

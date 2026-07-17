@@ -1,0 +1,57 @@
+<section id="loginFormBx" class="h-100vh d-flex flex-column bg-transparent">
+  <div class="container my-auto">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="col-md-9 col-lg-7 col-xl-5 mx-auto">
+        <div class="subscription-popup">
+          <div class="row">
+            <div>
+              <a [routerLink]="['/']" style="margin-bottom: 20px; margin-left: 15px;">
+                <img style="margin-left: 35%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+              </a>
+              <span style="margin-bottom: 20px; margin-left: 15px;float: right;background-color: blue;padding: 5px;top: 0px; right: 18px;position: absolute;"  *ngIf="verify && !error" >OTP verified Successfully</span>
+            </div>
+            <div class="col-md-12 text-center">
+              <h5 mat-dialog-title>Enter the One Time Password</h5>
+              <span>
+                <p style="font-size: 12px;font-weight: 500;">OTP is sent to your registered email Id and is valid for 01 Minute.</p>
+              </span>
+            </div>
+          </div>
+          <form (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+            <div class="row">
+              <div class="col-md-12 pb-3">
+                <input type="number" name="otp" onKeyPress="if(this.value.length==6) return false" oninput="this.value = this.valueAsNumber" placeholder="Enter OTP" class="form-control" [(ngModel)]="model.otp"
+                  required />
+                <div>
+           
+                  <div *ngIf="verify && error" style="color: red;">
+                    {{msg}} 
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="d-flex justify-content-between">
+                  <button mat-raised-button class="btn btn-light" style="width: 48%;" (click)="goBack()">
+                    Back
+                  </button>
+                  <button mat-raised-button style="width: 48%;background-color: #cbb26a;color: #fff;" type="Submit">
+                    Submit
+                  </button>
+                </div>
+                <span>
+                  <p style="color: #cbb26a; font-weight: bold;text-align: center;margin: 10px; cursor: pointer;" (click)="getDataroomOtp()">Click here to generate a new
+                    OTP</p>
+                </span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<router-outlet></router-outlet>
+

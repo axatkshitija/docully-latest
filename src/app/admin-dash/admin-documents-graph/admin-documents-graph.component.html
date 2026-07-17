@@ -1,0 +1,12 @@
+<mat-card class="rounded mb-10 p-0 ">
+  <mat-toolbar class="cdr-toolbar ">
+    <span>Current Usage</span>
+    <span class="spacer "></span>
+    <button mat-button class="minimise-btn ico-bnt " (click)="getAllDataroomsUsage()"><i class="fa fa-refresh "></i></button>
+  </mat-toolbar>
+  <div class="half-chart text-center ">
+    <!--   <img src="assets/images/helf-chart.jpg " class="img-fluid ">
+ -->
+    <div [chart]="chart" class="piechart half-pie-chart"></div>
+  </div>
+</mat-card>

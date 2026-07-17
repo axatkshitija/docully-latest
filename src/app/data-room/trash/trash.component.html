@@ -1,0 +1,451 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <div class="title">
+              <h2>Trash</h2>
+            </div>
+            <span fxFlex></span>
+          </mat-toolbar>
+
+          <div *ngIf="!is_upload_file">
+            <div class="cdr-breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a>All Documents</a></li>
+                <li class="breadcrumb-item active">Trash</li>
+              </ol>
+              <span fxFlex></span>
+            </div>
+            <div class="datatime-status" style="padding: 5px !important;">
+              <div class="datatime-status actus-top">
+                <div class="topbar-af">
+                  <div class="status-us">
+                    <div class="slt-pre">
+                      <div class="date-select addspacebetweendate" style="padding: 0px 4px; display: inline-block;">
+                        <input matInput [matDatepicker]="Frompicker" placeholder="From Date" [(ngModel)]="from_date"
+                          [max]="maxDate" [min]="minDate" name="from_date"
+                          (dateChange)="changeDateWise($event.value, to_date)" />
+                        <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                        <mat-datepicker #Frompicker></mat-datepicker>
+                      </div>
+
+                      <div class="date-select addspacebetweendate" style="display:inline-block;">
+                        <input matInput [matDatepicker]="Topicker" placeholder="To Date" [(ngModel)]="to_date"
+                          name="to_date" [max]="maxDate" [min]="minDate"
+                          (dateChange)="changeDateWise(from_date, $event.value)" />
+                        <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                        <mat-datepicker #Topicker></mat-datepicker>
+                      </div>
+
+                      <div class="topbar-af" style="margin-top: 15px;">
+                        <div class="form-group row marauto">
+                          <input type="text" placeholder="Search Deleted By" class="form-control searchbox"
+                            style="width: 160px !important" [(ngModel)]="deleted_by" (keyup)="SelectBy()" required />
+                        </div>
+                        <div style="flex: 1 1 0%; box-sizing: border-box"></div>
+                        <span *ngIf="showRestore" mat-raised-button class="multi-select-button btn-default"
+                          aria-hidden="true" data-toggle="modal" data-target="#RestoreModel">
+                          <i class="fa fa-window-restore" style="font-size: 11.5px;"></i> Restore
+                        </span>
+                        <span *ngIf="showRestore" mat-raised-button class="multi-select-button  btn-danger"
+                          aria-hidden="true" data-toggle="modal" data-target="#deleteModel" style="color: white;">
+                          <i class="fa fa-trash t-icon" style="color: white;font-size: 11.5px;"></i> Delete
+                        </span>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="deleteModel" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <div class="modal-content cdr-delete-files">
+                  <div class="modal-header">
+                    <h4 class="modal-title cdr-delete-title">
+                      Delete Folders and Files
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                      &times;
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="alert alert-danger">
+                      Are you sure you wish to delete selected files/folders ?
+                    </div>
+                  </div>
+                  <div class="modal-footer cdr-delete-footer">
+                    <div>
+                      <form>
+                        Type 'delete' to Confirm
+                        <input type="text" class="cdr-delete-input" formControlName="delete" [(ngModel)]="deletes"
+                          id="2" (keyup)="onKeyCheckDelete(delete.value)" #delete />
+                        <button type="button" [disabled]="is_disabled_delete_button == false" class="btn btn-primary"
+                          data-dismiss="modal" (click)="bulk_permanant_delete_folder()">
+                          Confirm Delete
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="RestoreModel" class="modal RestoreModel fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content cdr-delete-files">
+                  <div class="modal-header">
+                    <h4 class="modal-title cdr-delete-title">
+                      Restore Folders or Files
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                      &times;
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+                      Are you sure you want to restore the selected files?
+                    </div>
+                  </div>
+                  <div class="modal-footer cdr-delete-footer">
+                    <div>
+                      <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        (click)="restore_selected_folders_file()">
+                        Yes</button>&nbsp;
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        No
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="tab-content document-table minHeight535" id="pills-tabContent">
+
+              <div class="tab-pane fade show active" id="listViewDr" role="tabpanel" aria-labelledby="pills-home-tab"
+                *ngIf="!is_upload_file">
+                <table class="table table-striped">
+                  <thead class="user-per-head">
+                    <tr>
+                      <th>
+                        <mat-checkbox [(ngModel)]="selectAll" name="selectAll"
+                          (change)="selectAllTrash($event)"></mat-checkbox>
+                      </th>
+                      <th>Documents Name</th>
+                      <th>Size</th>
+                      <th>Date & Time</th>
+                      <th>Deleted By</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngIf="show__aspinner === true">
+                      <td colspan="7">
+                        <mat-progress-spinner class="progress-align-center" style="margin: 0 auto !important"
+                          [mode]="'indeterminate'" *ngIf="show__aspinner">
+                        </mat-progress-spinner>
+                      </td>
+                    </tr>
+                    <tr *ngIf="all_root_folder_list?.data?.size == 0&&show_spinner==false">
+                      <td colspan="8">No Data Available in Trash</td>
+                    </tr>
+
+                    <tr *ngFor="
+                    let folder of all_root_folder_list
+                      | paginate
+                        : {
+                            itemsPerPage: 10,
+                            currentPage: p,
+                            totalItems: size
+                          };
+                    let i = index
+                  ">
+
+                      <td>
+                        <mat-checkbox [(ngModel)]="folder.selected" name="selected"
+                          (change)="selectedTrash()"></mat-checkbox>
+                      </td>
+                      <td>
+                        <span class="icon-span"><img [src]="folder.icons" /></span>
+                        <span (click)="showTrashFoldersTree(folder)" class="recent-doc-title"
+                          matTooltip="Click on it to see folder structure" style="cursor: pointer" data-toggle="modal"
+                          data-target="#folderstructure" data-backdrop="static" data-keyboard="false"
+                          *ngIf="folder.is_folder">{{ folder.folder__name?folder.folder__name:folder.name | limitTo: 20
+                          }}
+                        </span>
+                        <div class="modal fade" id="folderstructure" tabindex="-1" role="dialog"
+                          aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header cdr-modal cdr-h-c">
+                                <h5>Folder Structures:</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <i class="material-icons">&#xE5CD;</i>
+                                </button>
+                              </div>
+                              <div class="modal-body cr-n-dr edrnl" *ngIf="data_show">
+                                <tree-root [nodes]="nodes" [options]="options" *ngIf="nodes.length != 0">
+                                  <ng-scrollbar class="scroll-section h-170 docu-tree" *ngIf="nodes.length > 0">
+                                    <ng-template #treeNodeTemplate let-node let-index="index">
+                                      <button>
+
+                                        <span *ngIf="node.data.is_folder" style="cursor: pointer">
+                                          &nbsp;
+                                          <span (click)="
+                                            showTrashFoldersTree(node.data)
+                                          "
+                                            class="toggle-children-wrapper toggle-children-wrapper-collapsed ng-star-inserted toggle-children"></span>
+
+                                          <span>{{ node.data.folder__name?node.data.folder__name:node.data.name |
+                                            limitTo: 45 }}
+
+                                          </span>
+                                        </span>
+                                        <span *ngIf="!node.data.is_folder">
+                                          &nbsp;
+                                          <span>{{ node.data.folder__name?node.data.folder__name:node.data.name |
+                                            limitTo: 45 }}
+
+                                          </span>
+                                        </span>
+                                      </button>
+                                    </ng-template>
+                                  </ng-scrollbar>
+
+                                </tree-root>
+                                <div *ngIf="nodes.length == 0">
+                                  <span style="font-size: 15px;font-weight: 500;color: gray;">No data available.</span>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                        <span class="recent-doc-title" *ngIf="!folder.is_folder">
+                          <span *ngIf="folder.folder__name ">
+                            {{folder.folder__name| limitTo: 20 }}
+                          </span>
+                          <span *ngIf="folder.name">
+                            {{folder.name |limitTo: 20 }}
+                          </span>
+
+                        </span>
+                      </td>
+                      <td>{{ folder.folder__file_size_mb?folder.folder__file_size_mb:folder.file_size_mb}}</td>
+                      <td>
+                        {{ folder.deleted_by_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }}
+                        {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                      </td>
+                      <td>{{
+                        folder.is_deleted_by__first_name?folder.is_deleted_by__first_name:folder.deleted_by__first_name?folder.deleted_by__first_name:folder.deleted_by.first_name}}
+                      </td>
+                      <td>
+                        <button class="tb-actb" mat-button [matMenuTriggerFor]="menu">
+                          <i class="material-icons">&#xE5D4;</i>
+                        </button>
+                        <mat-menu #menu="matMenu" class="cdr-actbtn">
+                          <button mat-menu-item aria-hidden="true" data-toggle="modal"
+                            [attr.data-target]="'#restoreModel' + i">
+                            Restore
+                          </button>
+                          <button mat-menu-item aria-hidden="true" data-toggle="modal"
+                            [attr.data-target]="'#deleteModel' + i">
+                            Permanent Delete
+                          </button>
+                        </mat-menu>
+                      </td>
+
+                      <div id="restoreModel{{ i }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+
+                          <div class="modal-content cdr-delete-files">
+                            <div class="modal-header">
+                              <h4 class="modal-title cdr-delete-title">
+                                Restore Folders or Files
+                              </h4>
+                              <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div>
+                                Are you sure you want to restore this file
+                                <strong>{{ folder.folder__name?folder.folder__name:folder.name }} </strong>?
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <div>
+                                <button type="button" class="btn btn-primary" (click)="restore_folders_file(folder, i)"
+                                  data-dismiss="modal">
+                                  Yes</button>&nbsp;
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                  No
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div id="deleteModel{{ i }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+
+                          <div class="modal-content cdr-delete-files">
+                            <div class="modal-header">
+                              <h4 class="modal-title cdr-delete-title">
+                                Permanently Delete Folders and Files
+                              </h4>
+                              <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Are you sure you want to permanently delete this
+                                file <strong>{{ folder.folder__name?folder.folder__name:folder.name }} </strong>?
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-delete-footer">
+                              <div>
+                                <button type="button" class="btn btn-primary"
+                                  (click)="permanant_delete_folder(folder, i)" data-dismiss="modal">
+                                  Yes</button>&nbsp;
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                  No
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="pagination-sec" *ngIf="show__aspinner==false">
+                  <pagination-controls (pageChange)="getAllTrashedFoldersAndFiles($event)"></pagination-controls>
+                </div>
+                <div style="clear: both"></div>
+              </div>
+
+              <div class="tab-pane fade" id="gridViewDr" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="row">f</div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <div class="cdr-rt-sidebar" *ngIf="user">
+          <mat-card *ngIf="user?.member?.is_dataroom_admin ||user?.member?.is_la_user" class="rounded" style="margin-bottom: 20px;padding: 10px;">
+            <div class="Aligncentre" style="padding: 0px;">
+              <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_progress">
+              </mat-progress-spinner>
+            </div>
+            <ng-scrollbar visibility="hover" track="horizontal" style="overflow-x: auto;height:150px;"
+              *ngIf="storage_data && !show_progress">
+              <div style="min-width: 400px;height: 300px;">
+                <table style="text-align:center;width: 100% !important;height:150px;">
+                  <tr>
+                    <td></td>
+                    <th style="color: #737373;font-weight: 500;">Count </th>
+                    <th style="color: #737373;font-weight: 500;">Storage (MB)</th>
+                    <th style="color: #737373;font-weight: 500;">Pages </th>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left !important;">Documents</td>
+                    <td> {{storage_data.trash_media_storage_count1}} </td>
+                    <td> {{storage_data.trash_media_storage}} </td>
+                    <td> {{storage_data.trash_docx_page_count}} </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left !important;">Media / Other Files</td>
+                    <td> {{storage_data.trash_others_storage_count}} </td>
+                    <td> {{storage_data.trash_others_storage}} </td>
+                    <td> {{storage_data.trash_others_page_count}} </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left !important;">Total</td>
+                    <td> {{storage_data.trash_media_storage_count1 +storage_data.trash_others_storage_count }} </td>
+                    <td> {{storage_data.trash_media_storage + storage_data.trash_others_storage }} </td>
+                    <td> {{storage_data.trash_docx_page_count + storage_data.trash_others_page_count}} </td>
+                  </tr>
+                </table>
+              </div>
+            </ng-scrollbar>
+          </mat-card>
+          <mat-card class="rounded mb-10 p-0">
+            <div class="cdr-tree all-docu-sty" style="margin: 0px !important;">
+              <h6><a>All Documents</a></h6>
+
+              <app-selection-tree></app-selection-tree>
+
+            </div>
+          </mat-card>
+
+          <mat-card class="rounded mb-10 p-0">
+            <ul class="al-doc-opt">
+              <li>
+                <a routerLink="/recent-doc" routerLinkActive="active"><i class="material-icons">note</i> Recent
+                  Documents</a>
+              </li>
+              <li>
+                <a routerLink="/upload-status-documents" routerLinkActive="active"><i
+                    class="material-icons">cloud_upload</i>
+                  Upload Status</a>
+              </li>
+              <li>
+                <a routerLink="/download-status-documents" routerLinkActive="active"><i
+                    class="material-icons">cloud_download</i>
+                  My Downloads</a>
+              </li>
+              <li>
+                <div matTooltip="Favorites is disabled" [matTooltipDisabled]="features?.favourites">
+                  <a routerLink="/favourites" [class.disabled]="!features?.favourites ? true : null"
+                    routerLinkActive="active"><i class="material-icons">star</i>
+                    Favourites</a>
+                </div>
+              </li>
+              <li>
+                <a routerLink="/not-view-documents" routerLinkActive="active"><i class="material-icons">visibility</i>
+                  Not
+                  Viewed / Viewed</a>
+              </li>
+              <li>
+                <a routerLink="/not-download-documents" routerLinkActive="active"><i
+                    class="material-icons">move_to_inbox</i>
+                  Not Downloaded /
+                  Downloaded</a>
+              </li>
+              <li>
+                <a routerLink="/indexes-report" routerLinkActive="active"><i class="material-icons">
+                    format_list_numbered</i>
+                  Index Report</a>
+              </li>
+              <li>
+                <a routerLink="/trash-doc" *ngIf="user?.member?.is_dataroom_admin || user?.member?.is_la_user"
+                  routerLinkActive="active"><i class="material-icons"> delete_outline</i> Trash</a>
+              </li>
+            </ul>
+          </mat-card>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

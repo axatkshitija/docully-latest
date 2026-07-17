@@ -1,0 +1,215 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE6C4;</i>
+
+              <span class="t-text">Usage Report</span>
+            </div>
+          </div>
+          <div class="slt-pre">
+            <div class="date-select" style="display: none">
+              <input matInput [matDatepicker]="Frompicker" placeholder="From Date" [(ngModel)]="from_date"
+                name="from_date" (dateChange)="changeDateWise($event.value, to_date)" />
+              <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+              <mat-datepicker #Frompicker></mat-datepicker>
+            </div>
+            <div class="date-select">
+              <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="Topicker" placeholder="To Date"
+                [(ngModel)]="to_date" name="to_date" (dateChange)="changeDateWise(from_date, $event.value)" />
+              <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+              <mat-datepicker #Topicker></mat-datepicker>
+            </div>
+          </div>
+
+          <div class="usage-report-sec" *ngIf="data">
+            <div class="usage-data">
+              <div class="usage-block">
+                <h3>Quota</h3>
+                <span>{{ data.total_dataroom_storage }} MB</span>
+              </div>
+
+              <div class="usage-block">
+                <h3>Used</h3>
+                <span class="blue-color">{{ data.dataroom_consumed }} MB</span>
+              </div>
+              <div class="usage-block">
+                <h3>Balance</h3>
+                <span>{{ data.dataroom_free }} MB</span>
+              </div>
+            </div>
+            <div class="usage-chart">
+              <div [chart]="chart"></div>
+            </div>
+            <br />
+
+            <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+            </mat-progress-spinner>
+
+
+            <table *ngIf="!show_spinner" class="table dl-table" cellpadding="0" cellspacing="0" border="0"
+              style="border: 1px solid #e5e5e5">
+              <tr>
+                <td colspan="4" style="text-align: center !important;"><b>Total Usage Breakup
+                  </b></td>
+              </tr>
+              <tr>
+                <td style="width: 400px;font-weight: bold;color: black;">Current Documents
+                </td>
+                <td style="width: 200px"><b>Count </b></td>
+                <td style="width: 200px"><b>Storage (MB)</b></td>
+                <td style="width: 200px"><b>Pages </b></td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Documents
+                </td>
+                <td style="width: 200px"> {{data.docx_count}} </td>
+                <td style="width: 200px"> {{data.docx_storage}} </td>
+                <td style="width: 200px"> {{data.docx_page_count}} </td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Media / Other Files
+                </td>
+                <td style="width: 200px"> {{data.others_count}} </td>
+                <td style="width: 200px"> {{data.others_storage}} </td>
+                <td style="width: 200px"> {{data.others_page_count}} </td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Total
+                </td>
+                <td style="width: 200px"> {{data.docx_count + data.others_count}}</td>
+                <td style="width: 200px"> {{data.docx_storage + data.others_storage}} </td>
+                <td style="width: 200px"> {{data.docx_page_count + data.others_page_count}} </td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: center !important;"></td>
+              </tr>
+
+              <tr>
+                <td style="width: 400px;font-weight: bold;color: black;">Trash
+                </td>
+                <td style="width: 200px"><b>Count </b></td>
+                <td style="width: 200px"><b>Storage (MB)</b></td>
+                <td style="width: 200px"><b>Pages </b></td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Documents
+                </td>
+                <td style="width: 200px"> {{data.trash_media_storage_count1}} </td>
+                <td style="width: 200px"> {{data.trash_media_storage}} </td>
+                <td style="width: 200px"> {{data.trash_docx_page_count}} </td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Media / Other Files
+                </td>
+                <td style="width: 200px"> {{data.trash_others_storage_count}} </td>
+                <td style="width: 200px"> {{data.trash_others_storage}} </td>
+                <td style="width: 200px"> {{data.trash_others_page_count}} </td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: center !important;"></td>
+              </tr>
+
+              <tr>
+                <td style="width: 400px;font-weight: bold;color: black;">Disclaimer</td>
+                <td style="width: 200px"><b>Count </b></td>
+                <td style="width: 200px"><b>Storage (MB)</b></td>
+                <td style="width: 200px"><b>Pages </b></td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Documents
+                </td>
+                <td style="width: 200px"> {{data.disc_media_storage_count1}} </td>
+                <td style="width: 200px"> {{data.disc_media_storage}} </td>
+                <td style="width: 200px"> {{data.disc_docx_page_count}} </td>
+              </tr>
+
+              <tr>
+                <td colspan="4" style="text-align: center !important;"></td>
+              </tr>
+
+              <tr>
+                <td style="width: 400px;font-weight: bold;color: black;">Voting</td>
+                <td style="width: 200px"><b>Count </b></td>
+                <td style="width: 200px"><b>Storage (MB)</b></td>
+                <td style="width: 200px"><b>Pages </b></td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Documents
+                </td>
+                <td style="width: 200px"> {{data.vote_docx_count}} </td>
+                <td style="width: 200px"> {{data.vote_docx_storage}} </td>
+                <td style="width: 200px"> {{data.vote_docx_page_count}} </td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Media / Other Files
+                </td>
+                <td style="width: 200px"> {{data.vote_others_storage_count}} </td>
+                <td style="width: 200px"> {{data.vote_others_storage}} </td>
+                <td style="width: 200px"> {{data.vote_others_page_count}} </td>
+              </tr>
+              <tr>
+                <td colspan="4" style="text-align: center !important;"></td>
+              </tr>
+
+              <tr>
+                <td style="width: 400px;font-weight: bold;color: black;">Total Usage
+                </td>
+                <td style="width: 200px"><b>Count </b></td>
+                <td style="width: 200px"><b>Storage (MB)</b></td>
+                <td style="width: 200px"><b>Pages </b></td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Documents
+                </td>
+                <td style="width: 200px"> {{data.docx_count + data.trash_media_storage_count1 + data.disc_media_storage_count1 + data.vote_docx_count}} </td>
+                <td style="width: 200px"> {{data.docx_storage + data.trash_media_storage + data.disc_media_storage + data.vote_docx_storage}} </td>
+                <td style="width: 200px"> {{data.docx_page_count + data.trash_docx_page_count + data.disc_docx_page_count + data.vote_docx_page_count}} </td>
+              </tr>
+              <tr>
+                <td style="width: 200px">Media / Other Files
+                </td>
+                <td style="width: 200px"> {{data.others_count + data.trash_others_storage_count + data.vote_others_storage_count}} </td>
+                <td style="width: 200px"> {{data.others_storage + data.trash_others_storage + data.vote_others_storage}} </td>
+                <td style="width: 200px"> {{data.others_page_count + data.trash_others_page_count + data.vote_others_page_count}} </td>
+              </tr>
+            </table>
+
+            <b>Notes:</b><br>
+            <ul>
+              <li>
+                Documents means the total number/size of PDF, MS Word, MS Excel & MS Powerpoint Files.<br>
+              </li>
+              <li>
+                Other Files means all other file formats except Documents.<br>
+              </li>
+              <li>
+                Each standard A4 printable page is counted as 1 page for Document Formats.<br>
+              </li>
+              <li>
+                For Media / Other File Formats a standard calculation of 1 Page = 65 KB per page.
+              </li>
+            </ul>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

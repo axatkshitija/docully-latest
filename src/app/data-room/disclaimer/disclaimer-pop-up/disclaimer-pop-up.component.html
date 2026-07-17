@@ -1,0 +1,73 @@
+<app-header></app-header>
+<div class="row justify-content-md-center">
+  <section class="cdr-body">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <div
+        fxFlex="100"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="2"
+        style="margin: 0 22% !important"
+      >
+        <div class="pdfvie-head">
+          <h3>
+            Please Read Carefully
+            <span>
+              <button
+                mat-raised-button
+                color="primary"
+                class="blue-btn mx-4 bdr-rad3"
+                type="button"
+                (click)="goToBack()"
+              >
+                Back
+              </button>
+            </span>
+          </h3>
+        </div>
+        <div class="pdfviewmain" *ngIf="this.url">
+          <div class="pdftoolbar" style="text-align: left">
+            <b style="color: #ffffff !important"
+              >{{ disclaimer_name }} Dataroom</b
+            >
+          </div>
+          <div class="pdfviewcon">
+            <iframe [src]="url" class="dr-invoice"> </iframe>
+          </div>
+        </div>
+        <div class="pdfvie-foot">
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <span *ngIf="is_view_disclaimer"
+              ><mat-checkbox (change)="EnableButton($event.checked)"
+                >I Agree!</mat-checkbox
+              ></span
+            >
+            <button
+              *ngIf="is_view_disclaimer"
+              mat-raised-button
+              color="primary"
+              class="blue-btn mx-4 bdr-rad3"
+              type="button"
+              (click)="AgreeDisclaimer()"
+              [disabled]="disable"
+            >
+              Submit
+            </button>
+            <span>
+              <button class="icon-btn" (click)="download_dataroom_disclaimer()">
+                <i class="fa fa-download"></i>
+                <span class="t-text">Download</span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

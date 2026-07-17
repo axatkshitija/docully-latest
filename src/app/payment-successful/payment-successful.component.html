@@ -1,0 +1,43 @@
+<app-header></app-header>
+<section class="h-100vh d-flex flex-column bg-transparent" id="loginFormBx">
+  <div class="container my-auto">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="col-md-9 col-lg-7 col-xl-7 mx-auto">
+        <!-- <div class="row compny-info">
+          <div class="col-md-12 text-center">
+            <a [routerLink]="['/']" style="margin-bottom: 20px">
+              <img alt="" class="m-logo" src="assets/img/docully-logo.png" />
+            </a>
+          </div>
+        </div> -->
+        <!-- <span *ngIf="transactionId != undefined">Your Transaction Id is: <span style="font-weight: bold;">{{transactionId}}</span></span> -->
+        <div class="subscription-popup">
+          <a [routerLink]="['/']" style="margin-bottom: 40px">
+            <img style="margin-left: 40%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+          </a>
+          <h4 *ngIf="transactionId == undefined">Free Trial Activated Successfully.
+          </h4>
+          <h4 *ngIf="transactionId == 'success'">Payment Successful.</h4>
+          <h4 *ngIf="transactionId == 'fail'">Payment failed.</h4>
+          <p *ngIf="transactionId == 'success'">
+            Your payment was successful and the data room has been created. Please refer to your email inbox for your login information.
+          </p>
+          <p *ngIf="transactionId == undefined">
+            Your request for a Free Trial has been successfully completed.
+            Refer to your email inbox for your login information.
+          </p>
+          <p *ngIf="transactionId == 'fail'">
+            Your payment didn’t go through. You may retry making the payment or choose another plan.
+          </p>
+          <div>
+          
+            <button *ngIf="(transactionId == 'success' || transactionId == undefined)" class="btn btn-primary" (click)="goToUrl()" style="float: left;">Data Room Login</button>
+            <button *ngIf="transactionId == 'fail'" class="btn btn-primary" routerLink="/billing-term" style="float: left;">Retry Payment</button>
+            <button *ngIf="transactionId == 'fail'" class="btn btn-primary" routerLink="/billing-term" style="margin:0 7%">Choose Another Plan</button>
+            <a href="https://docullyvdr.com/"><button class="btn btn-primary" style="float:right;">Docully VDR Website</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

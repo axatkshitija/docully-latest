@@ -1,0 +1,87 @@
+<!--rt aside component start-->
+<div class="cdr-rt-sidebar">
+  <div class="report-tabs">
+    <ul>
+      <li class="re-overview">
+        <a routerLink="/report-overview" routerLinkActive="active">
+          Overview Report
+          <i class="fa fa-bar-chart cnr-icon"></i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-byfiles" routerLinkActive="active">
+          Activity by Files Report
+          <i class="fa fa fa-files-o cnr-icon"></i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-usergroups" routerLinkActive="active">
+          Users & Groups Report
+          <i class="material-icons cnr-icon">&#xE7EF;</i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-bydate" routerLinkActive="active">
+          Activity by Date Report
+          <i class="material-icons cnr-icon">&#xE916;</i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-qa" routerLinkActive="active">
+          Q&A Report
+          <i class="material-icons cnr-icon">&#xE8AF;</i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-download" routerLinkActive="active">
+          Download Report
+          <i class="material-icons cnr-icon">&#xE2C0;</i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-userstatus" routerLinkActive="active">
+          Users Status Report
+          <i class="material-icons cnr-icon">&#xE7F2;</i>
+        </a>
+      </li>
+
+      <li class="re-overview">
+        <span matTooltip=" Index report is disabled" [matTooltipDisabled]="features?.index_report_others">
+          <a routerLink="/report-index" routerLinkActive="active"
+            [class.disabled]="!features?.index_report_others ? true : null">
+            Index Report
+            <i class="material-icons cnr-icon">&#xE065;</i>
+          </a>
+        </span>
+      </li>
+
+      <li class="re-overview">
+        <a routerLink="/report-usage" routerLinkActive="active">
+          Usage Report
+          <i class="material-icons cnr-icon">&#xE6C4;</i>
+        </a>
+      </li>
+      <li class="re-overview">
+        <span matTooltip="Voting report is disabled" [matTooltipDisabled]="features?.voting_report_perm">
+          <a routerLink="/voting-report" routerLinkActive="active"
+            [class.disabled]="!features?.voting_report_perm ? true : null">
+            Voting Report
+            <i class="material-icons cnr-icon">
+              how_to_vote
+            </i>
+            <!--  <i class="material-icons cnr-icon">&#xE6C4;</i> -->
+          </a>
+        </span>
+      </li>
+
+
+    </ul>
+  </div>
+</div>
+<!--rt aside component end-->

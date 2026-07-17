@@ -1,0 +1,116 @@
+<!--lf aside component start-->
+
+<div *ngIf="user" class=" justify-content-center" style="margin-bottom: 10px;">
+    <div class="" *ngIf="avatarUrl!=null" style="padding-bottom: 10px;">
+      <img [src]="avatarUrl" class="img-fluid d-flex rounded-circle"
+        onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'" style="
+          height: 100px;
+          width: 100px;
+          /* align-items: center; */
+          display: table;
+        " />
+    </div>
+  
+    <div>
+      <mat-card class="rounded notofi-item msg mat-card mb-10 p-0">
+        <a routerLink="/new-message">
+          <button href="" class="notifi-data" mat-button style="color: white !important;height: 50px !important;">
+            <i class="fa fa-envelope" style="
+            font-size: 22px;
+            padding-left: 20px;
+        "></i>
+  
+            <span class="notify msg-value">{{ msg_count }}
+              <div class="notify-point">
+                <span class="heartbit" style="border-color:#3453eb"></span>
+                <span class="point"></span>
+              </div>
+            </span>
+  
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div>
+      <mat-card class="rounded notofi-item mb-10 p-0" style="height: 50px !important;background: #cbb26a !important;">
+        <a routerLink="/new-notification">
+          <button class="notifi-data" mat-button style="color: white !important;height: 50px !important">
+            <i class="fa fa-bell-o" style="
+            font-size: 22px;
+            padding-left: 20px;
+        "></i>
+  
+            <span class="notify msg-value" style="background-color: #cbb26a;">{{ unreadCount }}
+              <div class="notify-point">
+                <span class="heartbit" style="border-color:#cbb26a"></span>
+                <span class="point"></span>
+              </div>
+            </span>
+  
+          </button>
+        </a>
+      </mat-card>
+    </div>
+  
+  
+    <div class="add-new-contact" class="">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/dashboard">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-id-card" aria-hidden="true"></i>
+            <!-- <span>My Data Rooms</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact" class="">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/my-contacts">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-address-book"></i>
+            <!-- <span>My Contacts</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact "
+      *ngIf="(user?.is_superadmin || user?.is_team || user?.is_team_member) || buttonVisibility?.Channels">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/channel">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-users"></i>
+            <!-- <span>Channels</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact " *ngIf="user?.is_superadmin">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/online-channel">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-people-group"></i>
+            <!-- <span>Online Channels</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact " *ngIf="user?.is_subscriber && buttonVisibility?.subscription">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/subscription">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-sign-in"></i>
+            <!-- <span>Subscription</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact ">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <button mat-button class="us-btn" (click)="location()"
+          style="height: 50px !important;  padding: 0  0 0px !important;">
+          <i class="fa fa-circle-question" style="font-size: 22px;"></i>
+          <!-- Help Desk -->
+        </button>
+      </mat-card>
+    </div>
+  </div>

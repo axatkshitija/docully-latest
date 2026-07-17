@@ -1,0 +1,70 @@
+.form-control {
+    font-size: 0.70rem !important;
+    border: 1px solid #ced4da !important;
+}
+
+.pointer-message-new:hover {
+	font-size: 16px;
+	width: 100%;
+	cursor: pointer;
+
+
+}
+
+mat-list{
+	padding: 0px !important;
+}
+
+mat-list-item{
+	padding: 0px !important;
+	height: 36px !important;
+	width: 100% !important;
+}
+
+
+
+
+.chat-wrapper ul > .even {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    -ms-flex-pack: justify;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+
+.container {
+    display: flex;
+    width: 100%;
+  
+  }
+
+  .left {
+    width: 50% !important;
+  }
+
+  .right {
+    flex-grow: 1;
+    height: 59% !important;
+    word-wrap: break-word;
+  }
+
+  .boxm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+.bluelist> p{
+	color: white !important;
+}
+
+.greylist p{
+	color: #000 !important;
+}
+h5{
+	display: inline !important;
+}

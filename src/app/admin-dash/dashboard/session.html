@@ -1,0 +1,15 @@
+<div mat-dialog-title style="margin: 10px !important;">
+    Note<i class="fa fa-times" aria-hidden="true" (click)="onNoClick()"
+      style="float: right !important; cursor: pointer"></i>
+  </div>
+  
+  <div mat-dialog-content>
+    <div class="a-info">
+    Greetings, {{user.first_name}} {{user.last_name}} <b>({{user.email}})</b>. We want to inform you that there is currently another active session on the platform using your account.
+    </div>
+  </div>
+  <div mat-dialog-actions style="margin: 0px 10px 10px !important;">
+    <button mat-button [mat-dialog-close]="data.ok" class="btn btn-primary" style="color: white !important;">
+      Ok
+    </button>
+  </div>

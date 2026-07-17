@@ -1,0 +1,355 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar style="display: flex; justify-content: space-between;">Reports
+            <button mat-raised-button color="primary" routerLink="/report-usergroups" class="blue-btn bdr-rad3">
+              Back
+            </button>
+          </mat-toolbar>
+
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="fa fa-bar-chart"></i>
+              <span class="t-text">User & Groups</span>
+            </div>
+            <span fxFlex></span>
+            <button class="icon-btn">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text" (click)='exportUserActivitycsv()'>Export</span>
+            </button>
+
+          </div>
+
+
+
+          <div fxLayout="row" fxLayoutAlign="space-between center" class="datatime-status">
+            <div fxFlex="50">
+
+            </div>
+          </div>
+
+          <div class="table-content">
+            <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="user">
+              <div fxFlex="50">
+                <div class="member-name">
+                  {{ user.member.first_name }} {{ user.member.last_name }}
+                  <a href="mailto:{{ user.member.email }}">{{ user.member.email }}
+                  </a>
+                </div>
+              </div>
+              <div fxFlex="50">
+                <div class="user-info-p">
+                  <p>
+                    Invited by
+                    <span class="color-yellow">{{ user.member_added_by.first_name }}
+                      {{ user.member_added_by.last_name }}</span>
+                  </p>
+                  <p>
+                    Joined:
+                    <span>{{ user.invitatation_acceptance_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }}
+                      {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                  </p>
+                  <p>
+                    Last viewed:
+                    <span>{{ last_viewd | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }}
+                      {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="15px" class="mTB20" *ngIf="activity">
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Data Room Views</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-yellow">
+                      {{ activity.warkspace_view_count }}
+                    </p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Files Viewed</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-yellow">{{ activity.folder_view_count }}</p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Files Downloaded</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-blue">
+                      {{ activity.folder_download_count }}
+                    </p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="15px" class="mTB20" *ngIf="activity">
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Total Moved</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-yellow">
+                      {{ activity.folder_move_count }}
+                    </p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Total Copied</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-yellow">{{ activity.folder_copy_count }}</p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div fxFlex="33">
+                <mat-card class="card-item">
+                  <mat-card-header>
+                    <mat-card-title>Total Doculink</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content class="shiv">
+                    <p class="color-blue">
+                      {{ activity.drm_download_count }}
+                    </p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+
+
+            <div>
+              <div>
+                <mat-progress-spinner class="progress-align-center" style="left: 40%;" [mode]="'indeterminate'"
+                  *ngIf="show_spinner">
+                </mat-progress-spinner>
+              </div>
+            </div>
+            <table class="table dl-table filesh-tbl" *ngIf="activity && !show_spinner">
+              <tr>
+                <th>Date</th>
+                <th>Activity</th>
+              </tr>
+              <tr *ngFor="
+                  let act of activitydata
+                    | paginate: { itemsPerPage: 10, currentPage: p }
+                ">
+                <td>
+                  {{act.created_date| date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']   }}
+                  {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                </td>
+                <td *ngIf="act.event === 'file view'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} viewed the
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom }}
+                </td>
+                <td *ngIf="act.event === 'file/folder in batch upload'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} uploaded
+                  the file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom__dataroom_nameFront }}
+                </td>
+                <td *ngIf="act.event === 'redact view'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} view a redacted
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+                <td *ngIf="act.event === 'redact delete'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} deleted version no. {{act.redact__version}} of a redacted
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+                <td *ngIf="act.event === 'redact download'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} downloaded a redacted
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+                <td *ngIf="act.event === 'redact remove current version'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} changed the current version of the
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+                <td *ngIf="act.event === 'redacted'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} redacted a
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+                <td *ngIf="act.event === 'uploaded'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} upload
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom__dataroom_nameFront }}
+                </td>
+
+
+                <td *ngIf="act.event === 'redact set current version'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} saved a new redacted version of
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+              
+                </td>
+
+
+
+                <td *ngIf="act.event === 'file download'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} downloaded
+                  the file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                </td>
+
+                <td *ngIf="act.event === 'Move Folder'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} Moved a
+                  folder
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom }}
+                </td>
+
+                <td *ngIf="act.event === 'Move File'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} Moved a
+                  file
+
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  to {{ act.folder_name }} in {{ act.dataroom }}
+                </td>
+                <td *ngIf="act.event === 'file print'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} Printed a
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom }}
+                </td>
+
+                <td *ngIf="act.event === 'Copy File'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} Copied a
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  to {{ act.folder_name }} in {{ act.dataroom }}
+                </td>
+                <td *ngIf="act.event === 'Copy Folder'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} Copied a
+                  folder
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  to {{ act.folder_name }} in {{ act.dataroom }}
+                </td>
+
+                <td *ngIf="act.event === 'delete'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} deleted a
+                  file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom }}
+                </td>
+
+                <td *ngIf="act.event === 'drm download'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} downloaded
+                  a Doculink to a file
+                  <a href="{{ baseUrl }}/file-view/{{ act.folder_id }}/{{
+                      currentuser.id
+                    }}" (click)="goToViewerPage(folder)" style="color: blue" target="_blank">{{ act.folder__name
+                    }}</a>
+                  in {{ act.dataroom }}
+                </td>
+
+                <td *ngIf="act.event === 'dataroom view'">
+                  {{ act.user__first_name }} {{ act.user__last_name }} viewed this
+                  data Room
+                </td>
+                <td *ngIf="act.event === 'member joined'">
+                  {{ act.member_added_by__first_name }}
+                  {{ act.member_added_by__last_name }} added
+                  {{ act.member.first_name }} {{ act.member.last_name }} to this
+                  workspace
+                </td>
+              </tr>
+            </table>
+            <div class="pagination-sec" *ngIf="activity && !show_spinner">
+              <pagination-controls (pageChange)="p = $event"></pagination-controls>
+            </div>
+
+            <div class="table-pagination" *ngIf="activity">
+              <div class="total-file-no"></div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

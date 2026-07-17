@@ -1,0 +1,228 @@
+<div class="ovr-head">
+</div>
+<div class="ovr-body">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <div class="ovr-head">
+        <h3>All Members List</h3>
+      </div>
+      <div>
+        <span>Total: {{all_members?.team_member_data.length}}</span>
+      </div>
+    </div>
+    <div class="channel-dashboard" *ngIf="current_user.is_superadmin == true">
+      <button mat-raised-button color="primary" class="blue-btn is-icon" data-toggle="modal"
+        data-target="#add-channel-member" data-backdrop="static" data-keyboard="false">
+        <i class="material-icons">&#xE145;</i>&nbsp;Channel Member</button>
+    </div>
+  </div>
+  <div class="seach-inner-bx mt-4 mb-4 row">
+    <div class="col-6">
+      <input type="text" class="form-control srch-tx-bx" placeholder="Search by User First Name"
+        (input)="searchList($event)" />
+    </div>
+  </div>
+
+  <div>
+    <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email Id</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="all_members && all_members.team_member_data.length == 0">
+          <td></td>
+          <td>Data not available</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr *ngFor="let member of all_members?.team_member_data; let i = index;">
+          <td>{{ i+1 }}</td>
+          <td>{{ member.first_name }}</td>
+          <td>{{ member.last_name }}</td>
+          <td>{{ member.email }} </td>
+          <td class="text-center">
+            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
+              [attr.data-target]="'#editChannelMember' + i" data-backdrop="static" (click)="patchMember(member)"></i>
+
+            <div class="modal fade" id="editChannelMember{{ i }}" tabindex="-1" role="dialog"
+              aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                  <div class="modal-header cdr-modal cdr-h-c">
+                    <h5 class="modal-title">Edit Channel Member</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <i class="material-icons">&#xE5CD;</i>
+                    </button>
+                  </div>
+                  <div class="modal-body cr-n-dr edrnl">
+                    <form [formGroup]="channelMemberForm" novalidate (ngSubmit)="editChannelMember(channelMemberForm)">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="">Email ID</label>
+                            <input type="email" class="form-control" placeholder="Type email id"
+                              formControlName="email">
+                            <small class="alert-danger"
+                              *ngIf="channelMemberForm.controls.email.touched || channelMemberForm.controls.email.dirty"
+                              [hidden]="channelMemberForm.controls.email.valid">
+                              Email is required
+                            </small>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="">First Name</label>
+                            <input type="text" class="form-control" placeholder="Type first name"
+                              formControlName="first_name"  maxlength="50">
+                            <small class="alert-danger"
+                              *ngIf="channelMemberForm.controls.first_name.touched || channelMemberForm.controls.first_name.dirty"
+                              [hidden]="channelMemberForm.controls.first_name.valid">
+                              First Name is required
+                            </small>
+                            <small  class="alert-danger" *ngIf="channelMemberForm.get('first_name').hasError('invalidText') && channelMemberForm.get('first_name').touched">
+                              Please enter only letters and spaces.
+                            </small>
+                            
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="">Last Name</label>
+                            <input type="text" class="form-control" placeholder="Type last name"
+                              formControlName="last_name">
+                            <small class="alert-danger"
+                              *ngIf="channelMemberForm.controls.last_name.touched || channelMemberForm.controls.last_name.dirty"
+                              [hidden]="channelMemberForm.controls.last_name.valid">
+                              Last Name is required
+                            </small>
+                            <small  class="alert-danger" *ngIf="channelMemberForm.get('last_name').hasError('invalidText') && channelMemberForm.get('last_name').touched">
+                              Please enter only letters and spaces.
+                            </small>
+                   
+                          </div>
+                        </div>
+                        <div class="col-12 d-flex align-items-center">
+                          <input type="checkbox" name="" id="" formControlName="accesstodataroomusers">
+                          <span class="ml-2">Access to Data Room Users</span>
+                        </div>
+                        <div class="col-12 d-flex align-items-center">
+                          <input type="checkbox" name="" id="" formControlName="allowtoaddnewmember">
+                          <span class="ml-2">Allow to add Channel Member</span>
+                        </div>
+                        <div class="col-12 d-flex align-items-center">
+                          <input type="checkbox" name="" id="" formControlName="allowtoaddnewteam">
+                          <span class="ml-2">Allow to add New Team</span>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <button type="submit" [disabled]="!channelMemberForm.valid"
+                              class="btn btn-primary addmem-Btn">Add
+                              Member</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="text-center"><i class="fa fa-trash" style="cursor: pointer;" aria-hidden="true"
+              (click)="deleteMember(member.id)"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Add new Channel member -->
+<div class="modal fade" id="add-channel-member" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header cdr-modal cdr-h-c">
+        <div class="d-flex align-items-center">
+          <h5 class="modal-title">Add a New Channel Member</h5>
+          <!-- <span class="ml-3">({{my_team_data?.dataroom_admin_allowed - all_members.length}} remaining)</span> -->
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <div class="modal-body cr-n-dr edrnl">
+        <form [formGroup]="channelMemberForm" novalidate (ngSubmit)="createNewChannelMember(channelMemberForm)">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Email ID</label>
+                <input type="email" class="form-control" placeholder="Type email id" formControlName="email">
+                <small class="alert-danger"
+                  *ngIf="channelMemberForm.controls.email.touched || channelMemberForm.controls.email.dirty"
+                  [hidden]="channelMemberForm.controls.email.valid">
+                  Email is required
+                </small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">First Name</label>
+                <input type="text" class="form-control" placeholder="Type first name"  maxlength="50" formControlName="first_name">
+                <small class="alert-danger"
+                  *ngIf="channelMemberForm.controls.first_name.touched || channelMemberForm.controls.first_name.dirty"
+                  [hidden]="channelMemberForm.controls.first_name.valid">
+                  First Name is required
+                </small>
+                <small  class="alert-danger" *ngIf="channelMemberForm.get('first_name').hasError('invalidText') && channelMemberForm.get('first_name').touched">
+                  Please enter only letters and spaces.
+                </small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Last Name</label>
+                <input type="text" class="form-control"  maxlength="50" placeholder="Type last name" formControlName="last_name">
+                <small class="alert-danger"
+                  *ngIf="channelMemberForm.controls.last_name.touched || channelMemberForm.controls.last_name.dirty"
+                  [hidden]="channelMemberForm.controls.last_name.valid">
+                  Last Name is required
+                </small>
+                <small  class="alert-danger" *ngIf="channelMemberForm.get('last_name').hasError('invalidText') && channelMemberForm.get('last_name').touched">
+                  Please enter only letters and spaces.
+                </small>
+              </div>
+            </div>
+            <div class="col-12 d-flex align-items-center">
+              <input type="checkbox" name="" id="" formControlName="accesstodataroomusers">
+              <span class="ml-2">Access to Data Room Users</span>
+            </div>
+            <div class="col-12 d-flex align-items-center">
+              <input type="checkbox" name="" id="" formControlName="allowtoaddnewmember">
+              <span class="ml-2">Allow to add Channel Member</span>
+            </div>
+            <div class="col-12 d-flex align-items-center">
+              <input type="checkbox" name="" id="" formControlName="allowtoaddnewteam">
+              <span class="ml-2">Allow to add New Team</span>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <button type="submit" [disabled]="!channelMemberForm.valid" class="btn btn-primary addmem-Btn">Add
+                  Member</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>

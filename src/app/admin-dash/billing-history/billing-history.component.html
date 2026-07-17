@@ -1,0 +1,97 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user">
+        </app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar>
+            <div class="w-100 float-right">
+              <button class="cdr-btn big-btn blue-btn mat-raised-button sub-exp float-right" (click)="goBack()">Back</button>
+            </div>
+         
+          </mat-toolbar>
+          <div class="table-responsive">
+            <table id="excel-table" class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+              <thead>
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Subscription Name</th>
+                  <th>Fee</th>
+                  <th>Start Date</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                  <th>Invoice</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="invoiceList && invoiceList.length == 0">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>No Data</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr *ngFor="let subscription of invoiceList; let i=index">
+                  <td>{{ i+1 }}</td>
+                  <td *ngIf="subscription.dvd_addon_plans"><a class="title-link">{{ subscription.plan && subscription.plan.name }}</a></td>
+                  <td *ngIf="subscription.dvd_addon_plan"><a class="title-link">{{ subscription.dvd_addon_plan && subscription.dvd_addon_plan.name }}</a></td>
+                  <td *ngIf="subscription.addon_plan"><a class="title-link">{{ subscription.addon_plan && subscription.addon_plan.name }}</a></td>
+
+                  <td *ngIf="subscription.dvd_addon_plans">{{ subscription.total_fee }}</td>
+                  <td *ngIf="subscription.dvd_addon_plan">{{ subscription.dvd_addon_plan && subscription.dvd_addon_plan.cost }}</td>
+                  <td *ngIf="subscription.addon_plan">{{ subscription.addon_plan && subscription.addon_plan.cost }}</td>
+
+                  <td *ngIf="subscription.dvd_addon_plans">{{ subscription.start_date | date:'dd-MM-yyyy' }}</td>
+                  <td *ngIf="subscription.dvd_addon_plan">{{ subscription.dvd_addon_plan && subscription.created_date | date:'dd-MM-yyyy' }}</td>
+                  <td *ngIf="subscription.addon_plan">{{ subscription.addon_plan && subscription.addon_plan.created_date | date:'dd-MM-yyyy' }}</td>
+
+                  <td>{{ subscription.end_date | date:'dd-MM-yyyy' }}</td>
+
+                  <td *ngIf="subscription.dvd_addon_plans">
+                    <span *ngIf="!subscription.is_plan_active">Inactive</span>
+                    <span *ngIf="subscription.is_plan_active">Active</span>
+                  </td>
+                  <td *ngIf="subscription.dvd_addon_plan">
+                    <span *ngIf="!subscription.dvd_addon_plan && subscription.dvd_addon_plan.planstatus">Unpaid</span>
+                    <span *ngIf="subscription.dvd_addon_plan && subscription.dvd_addon_plan.planstatus">Paid</span>
+                  </td>
+                  <td *ngIf="subscription.addon_plan">
+                    <span *ngIf="!subscription.addon_plan && subscription.addon_plan.planstatus">Unpaid</span>
+                    <span *ngIf="subscription.addon_plan && subscription.addon_plan.planstatus">Paid</span>
+                  </td>
+                  <td>
+                    <button *ngIf="subscription.dvd_addon_plans">
+                      <i class="fa fa-download" style="color: #3453eb;" title="Download" aria-hidden="true" (click)="downloadInvoice(subscription.id)"></i>
+                    </button>
+                    <button *ngIf="subscription.dvd_addon_plan">
+                      <i class="fa fa-download" style="color: #3453eb;" title="Download" aria-hidden="true" (click)="downloadAddOnDvdInvoice(subscription.id)"></i>
+                    </button>
+                    <button *ngIf="subscription.addon_plan">
+                      <i class="fa fa-download" style="color: #3453eb;" title="Download" aria-hidden="true" (click)="downloadStorageAddOnInvoice(subscription.id)"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-card>
+      </div>
+      <!--rt aside component start-->
+
+      <!--rt aside component end-->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->

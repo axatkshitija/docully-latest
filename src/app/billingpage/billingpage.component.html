@@ -1,0 +1,121 @@
+<app-header></app-header>
+<section id="loginFormBx" class="d-flex flex-column">
+  <div class="container my-auto">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <div class="row compny-info">
+          <div class="col-md-12 text-center">
+            <a [routerLink]="['/']" style="margin-bottom: 20px">
+              <img alt="" class="m-logo" src="assets/img/docully-logo.png" />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8 billing-plan">
+        <div class="choose-plan">
+          <div *ngIf="trialcheck">
+            <p>
+              It seems you have already taken a one time free trial. You may now
+              choose to sign up for a paid subscription plan or write to our
+              support team at support@docullyvdr.com if you had subscribed for a
+              free trial but can’t sign in.
+            </p>
+          </div>
+          <h5 class="text-center">Click to choose your plan</h5>
+          <div class="row justify-content-center mt-5 mb-2">
+            <div *ngFor="let plan of getplans" class="col-md-6 col-6 col-lg-3">
+              <div class="plan-price mb-3">
+                <div
+                  class="plan-widget"
+                  [ngClass]="{ selected: plan.id == selectedItem }"
+                  (click)="AddPlan(plan.id)"
+                >
+                  <h6>{{ plan.name }}</h6>
+                  <div class="plan-price-inner mb-2 mt-2">${{ plan.cost }}</div>
+                  <hr />
+                  <p>{{ plan.storage }} GB</p>
+                  <p>{{ plan.users }} Users</p>
+                  <p>{{ plan.term }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="btm">
+            <h5 class="text-center">Your Price Plan</h5>
+            <div class="row text-center">
+              <div class="col-md-4 centerAlign">
+                <div class="bill-term3">
+                  <button
+                    class="starter1"
+                    mat-raised-button
+                  >
+                    <div *ngIf="!showcost"><p>$ / Month</p></div>
+                    <div *ngIf="showcost && singleplandata">
+                      <div *ngFor="let singleplan of singleplandata">
+                        <p>$ {{ singleplan.cost }} / Month</p>
+                      </div>
+                    </div>
+                  </button>
+                  <p class="pt-2">Billed Monthly</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="total-usd text-center">
+              <div *ngIf="!showcost"><label> Total: USD </label></div>
+              <div *ngIf="showcost && singleplandata">
+                <div *ngFor="let singleplan of singleplandata">
+                  <label>Total: {{ singleplan.cost }} USD</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="next text-center">
+            <div class="buttns pt-4">
+              <button
+                class="createPW-submit mat-raised-button"
+                (click)="goBack()"
+                mat-raised-button
+              >
+                <span class="mat-button-wrapper">Back</span></button
+              >
+              <button
+                *ngFor="let singleplan of singleplandata"
+                class="createPW-submit mat-raised-button"
+                (click)="billingpage(singleplan.id)"
+                mat-raised-button
+              >
+                <span
+                  *ngIf="showcost && singleplandata"
+                  class="mat-button-wrapper"
+                  >Continue</span
+                >
+              </button>
+
+              <!--               <div *ngIf="showcost && singleplandata">
+                <div *ngFor="let singleplan of singleplandata">
+                  <button
+                    class="createPW-submit mat-raised-button"
+                    (click)="billingpage(singleplan.id)"
+                    mat-raised-button
+                  >
+                    <span class="mat-button-wrapper">Continue</span>
+                  </button>
+                </div>
+              </div> -->
+            </div>
+            <div class="mat-button-focus-overlay"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+</section>

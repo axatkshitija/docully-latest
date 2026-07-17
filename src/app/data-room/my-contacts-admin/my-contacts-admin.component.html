@@ -1,0 +1,252 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch">
+
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-data-room-left></app-data-room-left>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+            <div class="row w-100 m-0">
+              <div class="col-md-8 mp-0">
+                <span>Add New Contact <span class="no-dr">
+                    <!-- (20) --></span></span>
+              </div>
+              <div class="col-md-4 mp-0 text-right">
+                <a class="download-csvfile" (click)="downloadSampleContactCsv()">Download Sample Contact CSV </a>
+              </div>
+            </div>
+          </mat-toolbar>
+          <!-- tab nav -->
+          <mat-card-content>
+            <!-- tab start from here -->
+            <div class="team-overview">
+
+              <div class="mem-list-sr">
+
+                <div class="row">
+                  <div class="col-md-3 rtborder">
+                    <form [formGroup]="contactGroupForm" novalidate (ngSubmit)="saveContactGroupForm(contactGroupForm)">
+                      <div class="row no-gutters">
+                        <div class="col-9 addPdrt">
+                          <input type="text" class="form-control form-control-sm" formControlName="group_name" placeholder="Create Group">
+                          <small class="alert-danger" [hidden]="contactGroupForm.controls.group_name.valid">
+                            Group Name is required
+                          </small>
+                        </div>
+                        <div class="col-3">
+                          <button type="submit" class="btn btn-primary btn-sm adbtn" [disabled]="!contactGroupForm.valid"><i
+                              class="fa fa-plus cdr-bic"></i>
+                            Group</button>
+                        </div>
+                      </div>
+                    </form>
+                    <div class="All-listdetails">
+                      <ul class="mem-list">
+                        <li *ngIf="group_name_all; else contactAll" class="mem-item alactive" (click)="getAllContacts()">All Member</li>
+                  <ng-template #contactAll>
+                    <li class="mem-item" (click)="getAllContacts()">All Member</li>
+                  </ng-template>
+                  <span *ngFor="let group of all_contacts_groups;">
+                    <span *ngIf="group_name111; else contactElse">
+                      <li class="mem-item alactive d-flex justify-content-between" *ngIf="group_name111 == group.group_name; else contactIfElse" >
+                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span>
+                        <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                      <ng-template #contactIfElse>
+                      <li class="mem-item d-flex justify-content-between" >
+                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                    </ng-template>
+                    </span>
+                    <ng-template #contactElse>
+                      <li class="mem-item d-flex justify-content-between" >
+                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                    </ng-template>
+
+<div id="deleteModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content cdr-delete-files">
+      <div class="modal-header">
+        <h4 class="modal-title cdr-delete-title">Delete Folders and Files</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;
+        </button>
+      </div>
+      <div class="modal-body">
+      <div class="alert alert-danger">
+        Are you sure you want to delete {{group.group_name}} group ?
+      </div>
+      </div>
+      <div class="modal-footer cdr-delete-footer">
+        <div>
+            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            (click)="deleteGroup(group.id)" 
+            >Yes</button> &nbsp;
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end of delete model -->
+
+                  </span>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="col-md-9">
+                    <div class="row justify-content-between">
+                      <div class="col-4">
+                     
+                        <div class="form-group">
+                          <input type="text" class="form-control" placeholder="Search Member" [(ngModel)]="searchText">
+                        </div>
+                      </div>
+
+                      <div class="col-5">
+                        <div class="uploadfile">
+                        <form [formGroup]="contactFormCSV" (ngSubmit)="onSubmitContactCSV()" class="row m-0 justify-content-between">
+                            <div  class="form-group row no-gutter">
+                          <div class="form-group mb-2 col-8 p-0">
+                            <input type="file" class="form-control" single placeholder="Upload only .csv" id="fileToUpload" formControlName="csv_upload"
+                              name="csv_upload" (change)="fileEvent($event)" required/>
+                          </div>
+                          <div class="form-group mb-2 col-2 p-0">
+                            <button type="submit" class="btn btn-primary"> Upload</button>
+                          </div>
+                          </div>
+                        </form>
+                        </div>
+                      </div>
+
+                      <div class="col-3 text-right">
+                          <button type="button" class="btn btn-primary" (click)="hideAddNewContactForm()"><i class="fa fa-plus cdr-bic"></i>
+                            Contact</button>
+                        </div>
+                      
+                    </div>
+
+                          <div *ngIf="hideNewContactForm" class="add-contact-panl">
+                            <form [formGroup]="contactForm" novalidate (ngSubmit)="saveContact(contactForm)">
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                    <label for="">First Name</label>
+                                    <input type="text" class="form-control" placeholder="Type first name"  maxlength="50" formControlName="first_name">
+                                    <small class="alert-danger" [hidden]="contactForm.controls.first_name.valid">
+                                      First Name is required
+                                    </small>
+                                    <div  class="alert-danger" *ngIf="contactForm.get('first_name').hasError('invalidText') && contactForm.get('first_name').touched">
+                                      Please enter only letters and spaces.
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                    <label for="">Last Name</label>
+                                    <input type="text" class="form-control" placeholder="Type last name"  maxlength="50" formControlName="last_name">
+                                    <small class="alert-danger" [hidden]="contactForm.controls.last_name.valid">
+                                      Last Name is required
+                                    </small>
+                                    <div  class="alert-danger" *ngIf="contactForm.get('last_name').hasError('invalidText') && contactForm.get('last_name').touched">
+                                      Please enter only letters and spaces.
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                    <label for="">Email ID</label>
+                                    <input type="email" class="form-control" placeholder="Type email id" formControlName="email">
+                                    <small class="alert-danger" [hidden]="contactForm.controls.email.valid">
+                                      Email is required
+                                    </small>
+                                  </div>
+                                </div>
+                                <div class="col-md-2">
+                                  <div class="form-group">
+                                    <button type="submit" [disabled]="!contactForm.valid" class="btn btn-primary addmem-Btn">Add Member</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+
+                    <div class="tbldata wdt100per">
+                      <table class="table" width="100%">
+                        <tr>
+                          <th>
+                            <mat-checkbox class="cdr-checkbt" 
+                                    [checked]="toggle" 
+                                    (change)="onSelectAllContacts()"></mat-checkbox>
+                          </th>
+                          <th>First Name</th>
+                          <th>Last Name</th>
+                          <th>Email ID</th>
+                          <!--                             <th>Visiblity</th>
+-->
+                          <th>Action</th>
+                        </tr>
+                        <!--  <tr *ngIf="all_contacts.length <= 0">
+                                      <td> No Contacts Exist.</td>
+                                  </tr> -->
+                        <tr *ngFor="let contact of all_contacts | contactNameFilter : searchText; let i = index;">
+                          <td>
+                            <mat-checkbox class="cdr-checkbt" [(ngModel)]="contact.selected" (change)="checkIfAllSelected()"></mat-checkbox>
+                          </td>
+                          <td>{{contact.first_name}}
+                            <!--  <span class="dr-chip active">Admin</span> -->
+                          </td>
+                          <td>{{contact.last_name}}
+                          </td>
+                          <td>{{contact.email}}
+                          </td>
+
+                          <td>
+                            <span class="action-btn">
+                              <button mat-button class="ico-bnt" type="button" mdTooltip="Delete" (click)="deleteContact(contact.id, i)"><i
+                                  class="fa fa-trash" aria-hidden="true"></i></button></span>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <div class="select-list">
+                      <div class="row m-0 justify-content-end">
+                        <div class="col-md-4">
+                          <select class="form-control form-control-sm" (change)="addMemberToSelectdGroup($event.target.value)">
+                            <option *ngFor="let group of all_contacts_groups;let i = index" [selected]="0==i" value={{group.id}}>
+                              {{group.group_name}}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="">
+                          <button type="button" class="btn btn-primary btn-sm" (click)="addToContactGroup()">Add to Group</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
+
+            </div>
+            <!-- tab start from here -->
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!--rt aside component start-->
+
+      <!--rt aside component end-->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+<!-- edit data room -->

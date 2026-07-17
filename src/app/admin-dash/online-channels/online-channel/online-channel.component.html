@@ -1,0 +1,284 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <!-- left side content -->
+      <aside fxFlex="15">
+        <app-admin-left-side-bar></app-admin-left-side-bar>
+      </aside>
+      <!-- main content -->
+      <div fxFlex="85" fxFlex.xs="100" fxFlexOrder.xs="2" class="addclass">
+        <mat-card class="mat-card p0">
+          <!-- tab nav -->
+          <mat-toolbar class="cdr-toolbar ad-t-bg main-container">
+            <span>Online Channels</span>
+          </mat-toolbar>
+
+          <div class="mem-list-sr">
+            <div class="container">
+            <button class="btn btn-primary" (click)="backsearchbutton()"  style="background-color: #cbb26a!important;border-color: #cbb26a;position: relative;float: right;margin-right: 5%;font-size: 0.95rem !important;border-radius: 0px!important;" [hidden]="searchActive==false && backbuttonsearch==false">Back</button>
+            <form [formGroup]="searchForm" >
+              <div class="seach-inner-bx mt-4 mb-4 col-6 d-flex" >
+                <input type="text" class="form-control srch-tx-bx"  formControlName="allunisearchtext" placeholder="Search by DID Dataroom Name and Team Name" style="border-radius: 0px!important;"/>
+                <button type="button" class="btn btn-primary" (click)="searchTeamandDatarooms()"  style="background-color: #cbb26a!important;border-color: #cbb26a;margin-left: 5%;border-radius: 0px!important;font-size: 0.95rem !important;">Search</button>
+              </div>
+            </form>
+            </div>
+            <div class="universalteamsanddrms" [hidden]="searchActive==false && backbuttonsearch==false">
+              <mat-card *ngIf="dataroomdata.length>0">
+                <h6 class="mb-3">Datarooms Search Result :</h6>
+                
+                <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+                  <thead>
+                    <tr>
+                      <!-- <th>Sr. No.</th>
+                      <th>Dataroom name</th>
+                      <th>Dataroom Id</th>
+                      <th>Permitted Storage</th>
+                      <th>Current Storage</th> -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let drm of dataroomdata;let i = index">
+                      <app-online-dataroom [data]="drm" class="mt-3"></app-online-dataroom>
+                      <!-- <td>{{i +1}}</td>
+                      <td>{{drm.dataroom.dataroom_name}}</td>
+                      <td>{{drm.dataroom.id}}</td>
+                      <td>{{drm.dataroom.dataroom_storage_allocated}} GB</td>
+                      <td>{{drm.dataroom_consumed}}GB</td> -->
+                    </tr>
+                  </tbody>
+                </table>
+              </mat-card>
+              <mat-card *ngIf="teamsdata.length==0 && dataroomdata.length==0" [hidden]="activenofound==false">
+                <h6>No data found </h6>
+              </mat-card>
+              <mat-card *ngIf="teamsdata.length>0">
+                <h6 class=" mb-3">Teams Search Result</h6>
+                <div class="teamshiddenshow" [hidden]="hiddenteams==true">
+                  <app-online-team [data]="teamsdata" (getDataroomparent)="getDataroomparent($event)" (parentFun)='parentFun()' ></app-online-team>
+                </div>
+                <div class="dataroomshidden" [hidden]="hiddendatarooms==true">
+                  <div class="backbutton btn btn-primary mb-4" (click)="getbacktoteams()" style="position: relative;float: right;background-color: #cbb26a!important;border-radius:0px!important;border-color: #cbb26a!important;">Back</div>
+                  <app-online-dataroom [data]="dataroomData"  (parentFun)='parentFun1()'></app-online-dataroom>
+                </div>
+                
+                <!-- <table class="table dl-table tbl-sub" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                  <tr>
+                    <th>Sr. No.</th>
+                    <th>Team name</th>
+                    <th>Permitted Storage</th>
+                    <th>Current Storage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let teamvars of teamsdata;let i = index">
+                    <td>{{i+1}}</td>
+                    <td>{{teamvars.team_name}}</td>
+                    <td>{{teamvars.dataroom_storage_allowed}} GB</td>
+                    <td>{{teamvars.dataroom_consumed}} GB</td>
+                  </tr>
+                </tbody>
+              </table> -->
+              </mat-card>
+            </div>
+            <div class="row m-0">
+
+              
+
+              <div class="col-md-12" [hidden]="searchActive==true && backbuttonsearch==true">
+                <mat-toolbar class="team-overview justify-content-between">
+                  <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="dashboard-tab" data-toggle="tab" href="#dashboard" role="tab"
+                        aria-controls="dashboard" aria-selected="true"
+                        (click)="showTeamsList = false; showChannelList=true">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="teams-tab" data-toggle="tab" href="#teams" role="tab"
+                        aria-controls="teams" aria-selected="false"
+                        (click)="showTeamsList = false; showChannelList=true">Teams & Datarooms</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                      <a class="nav-link" id="datarooms-tab" data-toggle="tab" href="#datarooms" role="tab"
+                        aria-controls="datarooms" aria-selected="false"
+                        (click)="showTeamsList = true; showChannelList=false">Datarooms</a>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                      <a class="nav-link" id="teamMembers-tab" data-toggle="tab" href="#teamMembers" role="tab"
+                        aria-controls="teamMembers" aria-selected="false"
+                        (click)="showTeamsList = true; showChannelList=false">Team Members</a>
+                    </li> -->
+                    <li class="nav-item">
+                      <a class="nav-link" id="teamMembers-tab" data-toggle="tab" href="#allchannelmembers" role="tab"
+                        aria-controls="teamMembers" aria-selected="false"
+                        (click)="showTeamsList = true; showChannelList=false">All Dataroom Members</a>
+                    </li>
+                  </ul>
+                </mat-toolbar>
+
+                <mat-card-content>
+                  <div class="team-overview">
+                    <div class="tab-content">
+                      <div class="tab-pane fade show active" id="dashboard" role="tabpanel"
+                        aria-labelledby="dashboard-tab">
+                        <div class="overview-cont d-flex mt-5 ml-5">
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/channel.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Teams</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Total - &nbsp;{{dashboardData[0]?.myteamscount}} </span>
+                              </div>
+                              
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/dataroom.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Data Rooms</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <div>
+                                <span>Total - &nbsp;{{dashboardData[0]?.dataroomcount}} </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-3 channel-dashboard">
+                            <div>
+                              <img src="../../../assets/images/ICONS_PNG/storage.png" alt="" width="75" srcset="">
+                            </div>
+                            <div class="ovr-head">
+                              <h3>Storage</h3>
+                            </div>
+                            <div class="dashboard-data">
+                              <span>Total - &nbsp;{{dashboardData[0]?.dataroomstorage}} </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="teams-tab"
+                        *ngIf="listData != undefined">
+                        <div class="col-md-3 " *ngIf="showTeamsList == false && showChannelList == true">
+                          <div class="All-listdetails">
+                            <ul class="mem-list m-team-list" style="display: flex;justify-content: space-between;align-items: center;" [hidden]="hiddenteams==true">
+                              <li class="d-flex justify-content-between" *ngIf="onlineChannels.allonlineplans">
+                                <a (click)="toggleListData()" routerLinkActive="active-link">
+                                  <button class="btn btn-primary" style="background-color: #cbb26a!important;border-color: #cbb26a;border-radius: 0px!important;font-size: 0.95rem !important;">
+                                  <i
+                                    class="fa fa-user-o"></i>&nbsp;&nbsp;All Plans
+                                  </button>
+                                  </a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!onlineChannels.allonlineplans">
+                                <a (click)="toggleChannels('allplans')" routerLinkActive="active-link">
+                                  <button class="btn" style="background-color: #9099a1 ;border-color:#9099a1;border-radius: 0px!important;background-color: #fff!important;border: 2px solid;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i> &nbsp;&nbsp;All Plans
+                                    </button>
+                                  </a>
+                              </li>
+                              <li class="d-flex justify-content-between" *ngIf="onlineChannels.silverSelected">
+                                <a (click)="toggleListData()" routerLinkActive="active-link">
+                                  <button class="btn btn-primary" style="background-color: #cbb26a!important;border-color: #cbb26a;border-radius: 0px!important;font-size: 0.95rem !important;">
+                                  <i
+                                    class="fa fa-user-o"></i>&nbsp;&nbsp;Silver
+                                  </button>
+                                  </a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!onlineChannels.silverSelected">
+                                <a (click)="toggleChannels('silver')" routerLinkActive="active-link">
+                                  <button class="btn" style="background-color: #9099a1 ;border-color:#9099a1;border-radius: 0px!important;background-color: #fff!important;border: 2px solid;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Silver
+                                    </button>
+                                  </a>
+                              </li>
+                              <li class="d-flex justify-content-between" *ngIf="onlineChannels.goldSelected">
+                                <a (click)="toggleListData()" routerLinkActive="active-link">
+                                  <button class="btn btn-primary" style="background-color: #af974d!important;border-color: #cbb26a;border-radius: 0px!important;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Gold
+                                    </button>
+                                </a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!onlineChannels.goldSelected">
+                                <a (click)="toggleChannels('gold')" routerLinkActive="active-link">
+                                  <button class="btn" style="background-color: #9099a1 ;border-color:#9099a1;border-radius: 0px!important;background-color: #fff!important;border: 2px solid;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Gold
+                                    </button>
+                                </a>
+                              </li>
+                              <li class="d-flex justify-content-between"
+                                *ngIf="onlineChannels.platinumSelected">
+                                <a (click)="toggleListData()" routerLinkActive="active-link">
+                                  <button class="btn btn-primary" style="background-color: #cbb26a!important;border-color: #cbb26a;border-radius: 0px!important;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Platinum
+                                    </button>
+                                </a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!onlineChannels.platinumSelected">
+                                <a (click)="toggleChannels('platinum')" routerLinkActive="active-link">
+                                  <button class="btn" style="background-color: #9099a1 ;border-color:#9099a1;border-radius: 0px!important;background-color: #fff!important;border: 2px solid;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Platinum
+                                    </button>
+                                </a>
+                              </li>
+                              <li class="d-flex justify-content-between" *ngIf="onlineChannels.trialSelected">
+                                <a (click)="toggleListData()" routerLinkActive="active-link">
+                                  <button class="btn btn-primary" style="background-color: #cbb26a!important;border-color: #cbb26a;border-radius: 0px!important;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Free Trial
+                                    </button>
+                                </a>
+                              </li>
+                              <li class="mem-item d-flex justify-content-between" *ngIf="!onlineChannels.trialSelected">
+                                <a (click)="toggleChannels('trial')" routerLinkActive="active-link">
+                                  <button class="btn" style="background-color: #9099a1 ;border-color:#9099a1;border-radius: 0px!important;background-color: #fff!important;border: 2px solid;font-size: 0.95rem !important;">
+                                    <i
+                                      class="fa fa-user-o"></i>&nbsp;&nbsp;Free Trial
+                                    </button>
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="teamshiddenshow" [hidden]="hiddenteams==true">
+                          <app-online-team [data]="listData" (getDataroomparent)="getDataroomparent($event)" (parentFun)='parentFun()' ></app-online-team>
+                        </div>
+                        <div class="dataroomshidden" [hidden]="hiddendatarooms==true">
+                          <div class="backbutton btn btn-primary mb-4" (click)="getbacktoteams()" style="position: relative;float: right;background-color: #cbb26a!important;border-color: #cbb26a!important;border-radius: 0px!important;">Back</div>
+                          <app-online-dataroom [data]="dataroomData" ></app-online-dataroom>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="datarooms" role="tabpanel" aria-labelledby="datarooms-tab"
+                        *ngIf="dataroomData != undefined">
+                        <app-online-dataroom [data]="dataroomData"></app-online-dataroom>
+                      </div>
+                      <div class="tab-pane fade" id="allchannelmembers" role="tabpanel" aria-labelledby="datarooms-tab"
+                        *ngIf="allonlineusers.length>0">
+                        <app-all-user-online [data]="allonlineusers"></app-all-user-online>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

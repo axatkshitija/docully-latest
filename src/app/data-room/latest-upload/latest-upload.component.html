@@ -1,0 +1,294 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"></app-data-room-left>
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card *ngIf="single_folder_data">
+          <ol class="breadcrumb" style="background-color: #ffff !important;padding: 0rem 1rem;">
+            <li class="breadcrumb-item">
+              <a routerLink="/documents" style="color:#6c757d !important;">All Documents</a>
+            </li>
+            <li class="breadcrumb-item active" *ngFor="let folder of single_folder_data.parent_folders">
+              <a (click)="goToNextFolder(folder.id)">{{ folder.name }}</a>
+            </li>
+            <li class="breadcrumb-item active">
+              <a (click)="goToNextFolder(single_folder_data.id)">{{
+                single_folder_data.name
+                }}</a>
+            </li>
+          </ol>
+          <span fxFlex></span>
+          <div *ngIf="isActionBar">
+            <span class="show-sl-files">{{ selected_folder_list_count }} file(s)
+              <span *ngIf="selectFolder > 0">and {{ selectFolder }} folder</span>
+              selected</span>
+          </div>
+        </mat-card>
+
+        <mat-card>
+          <h5 style="font-family:'poppins';text-align: center;font-size: 18px;">Upload Files Section</h5>
+        </mat-card>
+        <form novalidate="" class="ng-untouched ng-pristine ng-valid">
+          <div class="hero is-fullheight">
+            <div class="hero-body">
+              <div
+                *ngIf="!features?.['dropbox_upload'] || !features?.['one_drive_upload'] "
+                class="disabled-message">
+                The 
+                <!-- <span *ngIf="!features?.['google_drive_upload']">GoogleDrive </span> -->
+                <span *ngIf="!features?.['one_drive_upload']">OneDrive </span> 
+                <span *ngIf="!features?.['dropbox_upload']">Dropbox </span>
+                <!-- <span *ngIf="!features?.['email_to_dataroom_upload']">Email to Dataroom </span> -->
+                upload currently disabled.
+              </div>
+              <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" style="margin-top: 20px;">
+                <mat-tab>
+                  <ng-template mat-tab-label>
+                    <img src="/assets/images/home.png" style="width: 30px; padding-right: 5px;">
+                    <span>My Computer</span>
+                  </ng-template>
+                  <div class="container">
+                    <div class="columns is-multiline" style="margin: 0px !important;">
+                      <div class="column is-8 is-offset-2" *ngIf="showListOnDrop==false">
+                        <ngx-file-drop dropZoneLabel="Drop Files or Folders here"
+                          (onFileDrop)="startUploadOnclick($event)" (onFileOver)="fileOver($event)"
+                          (onFileLeave)="fileLeave($event)">
+                        </ngx-file-drop>
+
+                        <br />
+                        <span style="color: red;">Please upload maximum 500 files in one batch,
+                          irrespective of the data size.</span>
+                        <br />
+
+                        <div class="or-sec" align="centre">OR</div>
+                        <div class="file-mupload">
+                          <p class="text">Browse to upload.</p>
+                          <label class="upload-button">
+                            <input type="file" (change)="onUploadOutput($event.target.files, $event)" />
+                          </label>
+                        </div>
+                      </div>
+                      <span class="beforeupl" *ngIf="showListOnDrop==true">
+                        <div style="display: flex; align-items: center;justify-content: space-between;"
+                          [hidden]="hideAllAboveUploadStatus==true">
+                          <span style="width: 80%;"><strong>Filename</strong></span>
+                          <span style="text-align:center;width: 20%;">
+                            <strong> Actions</strong>
+                          </span>
+                        </div>
+                        <div *ngFor="let transferFile of clickeventtransferfiles;let i = index"
+                          style="display: flex; align-items: center;justify-content: space-between;"
+                          [hidden]="hideAllAboveUploadStatus==true">
+
+                          <span style="width: 80%;">{{(transferFile.relativePath.length > 40)?
+                            (transferFile.relativePath |
+                            slice : 0 : 40 )+'...':(transferFile.relativePath)}} </span>
+                          <span style="text-align:center;width: 20%;">
+                            <i class="fa fa-trash-o" aria-hidden="true" style="color:red;cursor: pointer;"
+                              (click)="getItemID(i)"></i>
+                          </span>
+                        </div>
+                      </span>
+                      <div class="row text-center d-flex align-items-center justify-content-center mt-4" align="centre"
+                        *ngIf="showListOnDrop==true" [hidden]="hideAllAboveUploadStatus==true">
+                        <button mat-flat-button color="primary" (click)="onclickStart()"
+                          [hidden]="hideAllAboveUploadStatus==true">Start</button>
+                      </div>
+                      <span *ngIf="start_upload">
+                        <div *ngIf="signleFileUpload">
+                          <div class="column is-8 is-offset-2">
+                            <div>
+                              {{ singleFileName }}
+                              <mat-progress-bar mode="determinate" value="{{ percentDone }}"></mat-progress-bar>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="uploadsection-note mt-3 mb-3" *ngIf="signleFileUpload == false"
+                          style="font-family: 'poppins';">
+                          <div class="note1" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">Your files
+                            are
+                            being virus scanned, checked for errors, uploaded on the server & are optimized for viewing
+                            on
+                            the platform...</div>
+                          <div class="note2 mt-2" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">Do
+                            not
+                            click anywhere on this page or close this window until the uploading is finished.</div>
+                          <div class="note2 mt-2" style="font-size: 14px;font-weight: 500;font-family: 'poppins';">The
+                            uploading speed may vary depending on your Internet's uploading speed & the quality of the
+                            files
+                            being uploaded.</div>
+                        </div>
+                        <div *ngIf="signleFileUpload == false">
+                          <span style="display:flex;align-items:center;justify-content:space-between;">
+                            <div style="margin-bottom:20px;width:75%;">
+                              <div style="display: flex; align-items: center; justify-content: space-between;">
+
+                                <span>Upload Status</span>
+                                {{ uploadStatusResponse ? sampleRes : 0 }} / {{ uploadStatusResponse
+                                ?
+                                uploadStatusResponse['totalnumberoffiles'] : 0 }}
+                              </div>
+                              <mat-progress-bar mode="determinate" value="{{ percentDone }}"></mat-progress-bar>
+                            </div>
+                            <span style="width: 20%;">
+                              <button mat-flat-button color="primary" (click)="cancelUploading()">Cancel</button>
+                            </span>
+                          </span>
+                          <div class="column is-8 is-offset-2"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 5px;">
+                            <div style="width: 10%;"><strong>Sr. No.</strong></div>
+                            <div style="width: 80%;"><strong>File Name</strong></div>
+                            <div style="width: 10%;"><strong>Status</strong></div>
+                          </div>
+                          <div class="mt-4 column is-8 is-offset-2"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 5px;"
+                            *ngFor="let file of files;let i = index">
+                            <div style="width: 10%;">{{i+1}}</div>
+                            <div style="width: 80%;">{{(file.relativePath.length > 40) ? (file.relativePath |
+                              slice:0:40)+'...':(file.relativePath)}} </div>
+                            <div style="width: 10%;">
+                              <span *ngIf="file.uploaded == true">Done </span>
+                              <span *ngIf="file.uploaded == false">Pending </span>
+                            </div>
+                          </div>
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </mat-tab>
+                <mat-tab *ngIf="google">
+                  <ng-template mat-tab-label>
+                    <img src="/assets/images/google-drive.png" style="width: 30px; padding-right: 5px;">
+                    <span>GoogleDrive</span>
+                  </ng-template>
+                  <div class="container"
+                    style="background-color: white; width: 100%; height: 200px;text-align: center;">
+                    <h1 style="padding-top: 50px; font-size: 20px ;">Upload files from Google Drive</h1>
+                    <button *ngIf="uploadrestriction==true" id="authorize_button" class="btn-default cloud-btn"
+                      onclick="handleAuthClick()">Connect to
+                      Google
+                      Drive</button>
+                    <button *ngIf="uploadrestriction==false" id="authorize_button" class="btn-default cloud-btn"
+                      (click)="popRestriction()">Connect to
+                      Google
+                      Drive</button>
+                    <button id="signout_button" style="display: none;" onclick="handleSignoutClick()">Logout</button>
+                    <div id="pickedFiles" style="display: none;"></div>
+                  </div>
+                </mat-tab>
+                <mat-tab [disabled]="!features?.['one_drive_upload']">
+                  <ng-template mat-tab-label>
+                    <img src="/assets/images/onedrive.png" style="width: 30px; padding-right: 5px;">
+                    <span>OneDrive</span>
+                  </ng-template>
+                  <div class="container"
+                    style="background-color: white; width: 100%; height: 200px; text-align: center;">
+                    <h1 style="padding-top: 50px; font-size: 20px ;">Upload files from OneDrive</h1>
+                    <button id="launchPicker" class="btn-default cloud-btn" (click)="openDialogOndrive()">Connect to
+                      OneDrive</button>
+                  </div>
+                </mat-tab>
+                <mat-tab [disabled]="!features?.['dropbox_upload']">
+                  <ng-template mat-tab-label>
+                    <img src="/assets/images/dropbox.png" style="width: 30px; padding-right: 5px;">
+                    <span>Dropbox</span>
+                  </ng-template>
+                  <div class="container"
+                    style="background-color: white; width: 100%; height: 200px;text-align: center;">
+                    <h1 style="padding-top: 50px; font-size: 20px ;">Upload files from Dropbox</h1>
+                    <button class="btn-default cloud-btn" (click)="openDialogDropbox()">Connect to Dropbox</button>
+                  </div>
+                </mat-tab>
+                <!-- <mat-tab [disabled]="!features?.['email_to_dataroom_upload']">
+                  <ng-template mat-tab-label>
+                    <img src="/assets/images/ICONS_PNG/mail-icon.png" style="width: 30px; padding-right: 5px;">
+                    <span>Email to Dataroom</span>
+                  </ng-template>
+                  <div class="container" style="background-color: white; width: 100%; height: 600px;padding: 20px;">
+                    <b>Instructions for Using the Email to Data Room Feature</b>
+                    <p> The Email to Data Room feature allows administrators to upload documents to the data room
+                      quickly
+                      and easily via email. This tool is especially useful for ad hoc file uploads when you're traveling
+                      or away from your laptop. Please follow the instructions below to ensure successful uploads:</p>
+                    <p> 1.<b>Send an email to </b><a href="mailto:emailtodataroom@docullyvdr.com">
+                        {{'emailtodataroom@docullyvdr.com'}}</a></p>
+                    2.<b>Subject Line:</b>
+                    <ul>
+                      <li>
+                        Include the exact Data Room Name in the subject line of your email.
+                      </li>
+                      <li>
+                        Ensure that the capitalization and spacing match exactly as it appears on the portal. For
+                        example,
+                        if the data room is named "Project Alpha," the subject line should be exactly "Project Alpha"
+                        (not
+                        "project alpha" or "ProjectAlpha").
+                      </li>
+                    </ul>
+                    3.<b>Attachments:</b>
+                    <ul>
+                      <li>Attach the files you wish to upload directly to the email.</li>
+                      <li>Ensure that the total size of attachments does not exceed 25 MB per email.</li>
+                      <li>Attachment size of more than 25 MB will automatically be rejected.</li>
+                    </ul>
+                    <p>4.<b>No Blank Emails:</b>
+                      Do not send blank emails. The requests will automatically be rejected.</p>
+                    <p> 5.<b>Get Notified</b>
+                      You will be notified via an email once your request is successfully completed.</p>
+
+                    <p> By following these simple steps, you can easily upload documents to the data room on the go. All
+                      the
+                      successful uploaded files will be available in the Email to Data Room folder within the Documents
+                      tab. This folder is accessible only by the administrators & the users with uploading permissions.
+                      You will be required to move the files to the desired folder & setup the permissions on the data
+                      room in order for them to be available for the end users..</p>
+                  </div>
+                </mat-tab> -->
+              </mat-tab-group>
+
+
+            </div>
+          </div>
+        </form>
+      </div>
+      <hr />
+      <div fxFlex="20" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-document-right-side-menu></app-document-right-side-menu>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div [ngStyle]="{ display: display }">
+  <div id="notifyModal" class="modal fade" role="dialog" [ngStyle]="{ display: display }">
+    <div class="modal-dialog">
+      <div class="modal-content cdr-delete-files">
+        <div class="modal-header">
+          <h4 class="modal-title cdr-delete-title">Notify</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">
+            Are you sure you want to notify all permissioned members about new
+            uploaded document/s?
+          </div>
+        </div>
+        <div class="modal-footer cdr-delete-footer">
+          <div>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="NotifyAllMembers()">
+              Yes
+            </button>
+            &nbsp;
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="DontNotifyAllMembers()">
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

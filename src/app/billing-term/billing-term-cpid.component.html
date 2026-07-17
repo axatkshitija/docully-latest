@@ -1,0 +1,103 @@
+<div class="topbar mat-toolbar mat-toolbar-single-row" style="height: auto !important;">
+        <div class="cdr_branding" >
+            <img src="assets/img/docully-logo.png"></div>
+        <div class="cdr-topToolbar">
+                <div class="user-name">
+                    <button data-target="#userProfileCdr" data-toggle="modal">
+                        <!-- <span id="uName">Welcome, Akshay</span> -->
+                        <i class="fa fa-align-left"></i>
+                    </button>
+                </div>
+            </div>
+        
+    </div>
+    
+    <section>
+        <div class="container">
+            <div class="row ">
+               <div class="col-md-2">
+
+               </div>
+
+                <div class="col-md-8 billing-plan">
+                        <div class="choose-plan">
+                                <h5 class="text-center">Choose a Billing Term</h5>
+                                <div class="tble-bill">
+                                    <table class="table  choose_plan_subscription">
+                                    <thead>
+                                        <tr>
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label>Selected Plan</label>
+                                            </td>
+                                            <td>
+                                            {{custom_plan.plan}}
+                                            </td>
+                                        </tr>
+    
+                                        <tr>
+                                            <td>
+                                                <label>Edition</label>
+                                            </td>
+                                            <td>
+                                            {{custom_plan.storage}}
+                                            </td>
+                                        </tr>
+    
+                                 
+                                    </tbody>
+                                    </table>
+                                </div>
+
+                                <h5 class="text-center">Select Billing Term</h5>
+                                <div class="row text-center">
+                                
+                                   
+                                    <div class="col-md-4">
+                                        <div class="bill-term">
+                                            <button class="starter1" mat-raised-button (click)="onClickannually(custom_plan);">${{custom_plan.twelve_month_price}} / Month</button>
+                                            <p class="pt-2">Billed Annually</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="bill-term1">
+                                            <button class="starter1 " mat-raised-button (click)="onClickquarterly(custom_plan);" >${{custom_plan.three_month_price}} / Month</button>
+                                            <p class="pt-2">Billed Quarterly</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="bill-term3">
+                                            <button class="starter1 " mat-raised-button (click)="onClickmonthly(custom_plan);">${{custom_plan.monthly_price}} / Month</button>
+                                            <p class="pt-2">Billed Monthly</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="total-usd text-center">
+                                   <label> Total: USD {{custom_details.Total_fee}}</label>
+                                </div>
+                               
+                                <div class="next text-center">
+                                    
+                                    <div class="buttns pt-4">
+                                            <button class="createPW-submit mat-raised-button" (click)="onSubmit();" mat-raised-button >
+                                                <span class="mat-button-wrapper ">Continue</span>
+                                            </button>
+                                    </div>
+                                    <div class="mat-button-focus-overlay"></div>
+                                </div>
+                                
+                        </div>
+                </div>
+                
+                <div class="col-md-2">
+                </div>
+            </div>
+        </div>
+    </section>
+

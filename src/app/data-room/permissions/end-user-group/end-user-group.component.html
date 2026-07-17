@@ -1,0 +1,918 @@
+<!-- Member Tab -->
+    <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
+      <div class="overview-cont">
+        <div class="user-buttons">
+          <ul class="nav nav-tabs cr-tab1" id="edrTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="members-tab" data-toggle="tab" href="#members" role="tab" aria-controls="members" aria-selected="true">Select Group</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="members-tab5" data-toggle="tab" href="#members5" role="tab" aria-controls="members5" aria-selected="false">Manage Permissioms</a>
+            </li>
+          </ul>
+          <hr>
+        </div>
+        <div class="over-member t-mr">
+          <div class="user-per-new-group">
+            <div class="step">
+              <!--<button mat-raised-button (click)="isLinear = true" id="toggle-linear">Enable linear mode</button>-->
+              <mat-horizontal-stepper [linear]="isLinear" #stepper="matHorizontalStepper">
+                <mat-step [stepControl]="firstFormGroup">
+                  <form [formGroup]="firstFormGroup">
+                    <ng-template matStepLabel>Create Group Name</ng-template>
+                    <form [formGroup]="endUserGroup">
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6 group-name" id="create-grp">
+                          <label for="text">Group Name</label>
+                          <input type="text" class="form-control" id="text" maxlength="50" placeholder="Enter Group Name" name="group name" formControlName="group_name">
+                          <mat-error *ngIf="endUserGroup.controls['group_name'].hasError('invalidName')">
+                            Special characters not allowed!
+                        </mat-error>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                      </div>
+                    </form>
+                    <div>
+                      <button mat-button matStepperNext class="user-next">Next</button>
+                    </div>
+                  </form>
+                </mat-step>
+                <mat-step [stepControl]="secondFormGroup">
+                  <form [formGroup]="secondFormGroup">
+                    <ng-template matStepLabel>Manage Module Permissions</ng-template>
+                    <div class="over-member t-mr">
+                      <div class="user-per-table">
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">Overview</span>
+                        <br>
+                        <br>
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">Q&A</span>
+                        <br>
+                        <br>
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">Document Indexing</span>
+                        <br>
+                        <br>
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">User & Permissions</span>
+                        <br>
+                        <br>
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">Updates</span>
+                        <br>
+                        <br>
+                        <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        <span class="user-texts">Reports</span>
+                      </div>
+                    </div>
+                    <div>
+                      <button mat-button matStepperPrevious class="user-back">Back</button>
+                      <button mat-button matStepperNext class="user-next">Next</button>
+                    </div>
+                  </form>
+                </mat-step>
+                <mat-step [stepControl]="thirdFormGroup">
+                  <form [formGroup]="thirdFormGroup">
+                    <ng-template matStepLabel>Add New Members</ng-template>
+                    <form class="form-horizontal">
+                      <div class="col-md-3 add-members22">
+                        <div class="form-group">
+                          <label class="control-label col-sm-12" for="email">Email Id</label>
+                          <div class="col-sm-12">
+                            <input type="text" class="form-control" id="email" placeholder="Type">
+                            <small class="alert-danger" [hidden]="thirdFormGroup.controls.email.valid">
+                                  Please Enter Valid Email Id
+                              </small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 add-members22">
+                        <div class="form-group">
+                          <label class="control-label col-sm-12" for="email">First Name </label>
+                          <div class="col-sm-12">
+                            <input type="text" class="form-control" id="email" placeholder="Type">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 add-members22">
+                        <div class="form-group">
+                          <label class="control-label col-sm-12" for="email">Last Name </label>
+                          <div class="col-sm-12">
+                            <input type="text" class="form-control" id="email" placeholder="Type">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2 add-members22">
+                        <div class="save-and-continues22">
+                          <div class="col-sm-offset-2 col-sm-4">
+                            <button type="submit" class="add-member22">Add Member</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    <div class="user-per-table">
+                      <table class="table table-striped">
+                        <thead class="user-per-head">
+                          <tr>
+                            <th>Email id</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Resend Invitation</th>
+                            <th>Status of Invitation</th>
+                            <th>Added by</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>satish.t@gmail.com</td>
+                            <td>Satish</td>
+                            <td>Pandya</td>
+                            <td>
+                              <i class="fa fa-share-square-o resent-invi" aria-hidden="true"></i>
+                            </td>
+                            <td>Pending
+                              <button class="btn btn-primary" type="button">Resend
+                              </button>
+                            </td>
+                            <td> Dhananjay (12th April, 2018)</td>
+                            <td>
+                              <button class="btn btn-danger">Delete</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <button mat-button matStepperPrevious class="user-back">Back</button>
+                      <button mat-button matStepperNext class="user-next">Next</button>
+                    </div>
+                  </form>
+                </mat-step>
+                <mat-step [stepControl]="fourthFormGroup">
+                  <form [formGroup]="fourthFormGroup">
+                    <ng-template matStepLabel>Manage Members</ng-template>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-12">
+                        <span class="contacts-6">6 Contacts Selected</span>
+                        <button type="submit" class="user-send">Send Invitation</button>
+                      </div>
+                    </div>
+                    <table class="table table-striped">
+                      <thead class="user-per-head11">
+                        <tr>
+                          <th>
+                            <form action="/action_page.php">
+                              <label>
+                                <mat-checkbox class="user-per-check"></mat-checkbox>
+                              </label>
+                            </form>
+                          </th>
+                          <th>Full Name</th>
+                          <th>Email id</th>
+                          <th>Status</th>
+                          <th>Q&A Submitter</th>
+                          <th>Access FAQs</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>Satish Pandya</td>
+                          <td>satish.t@gmail.com</td>
+                          <td>
+                            <a href="#">
+                              <button class="admin-user">Admin</button>
+                            </a>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>Satish Pandya</td>
+                          <td>satish.t@gmail.com</td>
+                          <td>
+                            <a href="#">
+                              <button class="faq111">Not Active</button>
+                            </a>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>Satish Pandya</td>
+                          <td>satish.t@gmail.com</td>
+                          <td>
+                            <a href="#">
+                              <button class="admin-user">Admin</button>
+                            </a>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>Satish Pandya</td>
+                          <td>satish.t@gmail.com</td>
+                          <td>
+                            <a href="#">
+                              <button class="faq111">Not Active</button>
+                            </a>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                          <td>
+                            <mat-checkbox class="user-per-check"></mat-checkbox>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div>
+                      <button mat-button matStepperPrevious class="user-back">Back</button>
+                      <button mat-button matStepperNext class="user-next">Next</button>
+                    </div>
+                  </form>
+                </mat-step>
+                <mat-step>
+                  <ng-template matStepLabel>Document Permissioms</ng-template>
+                  <table class="table table-striped">
+                    <thead class="user-per-head11">
+                      <tr>
+                        <th>
+                          <i class="fa fa-folder-open all-files" aria-hidden="true"></i>
+                          <span class="all-file-text">All Files</span>
+                        </th>
+                        <th><span class="no-access">No Access</span></th>
+                        <th><span class="no-access">View Only</span></th>
+                        <th><span class="no-access">View & Print</span></th>
+                        <th><span class="no-access">View, Print & Download</span></th>
+                        <th><span class="no-access">Upload</span></th>
+                        <th><span class="no-access">Water mark</span></th>
+                        <th><span class="no-access">Doculink</span></th>
+                        <th><span class="no-access">Editor</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <h4 class="all-doc-file-user">
+                    <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>1 Environmental Issues
+                  </h4>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h4 class="all-doc-file-user">
+                    <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>2 Insurance Coverage
+                  </h4>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <td>
+                          <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                        </td>
+                        <tr>
+                          <td>
+                            <h4 class="all-doc-file-user">
+                    <i class="fa fa-file-text-o all-doc-files-user-drop" aria-hidden="true"></i>3 Organization
+                  </h4>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                        </tr>
+                    </tbody>
+                  </table>
+                  <hr>
+                  <div class="user-per-button">
+                    <a href="#">
+                      <button class="revoke">Revoke Access Now</button>
+                    </a>
+                    <a href="#">
+                      <button class="revoke-drm">Revoke Doculink</button>
+                    </a>
+                    <a href="#">
+                      <button class="copy">Copy</button>
+                    </a>
+                    <a href="#">
+                      <button class="print">Print</button>
+                    </a>
+                    <a href="#">
+                      <button class="watermark">Watermark</button>
+                    </a>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="updates">Update</button>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="copy-per-from-group">
+                    <h3>Copy Permissioms from another Group</h3>
+                    <br>
+                    <form class="copy-per-form">
+                      <div class="form-group">
+                        <select class="form-control" id="sel1">
+                          <option>Select Group</option>
+                          <option>1 Environmental Issues</option>
+                          <option>2 Insurance Coverage</option>
+                          <option>3 Employee Benefits</option>
+                          <option>4 Project Charlie</option>
+                          <option>5 Organization</option>
+                        </select>
+                      </div>
+                    </form>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" class="sme">
+                      <a href="#"><button class="copy-per-buttons">Perview Permissions</button></a>
+                    </a>
+                  </h4>
+                      </div>
+                      <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <table class="table table-striped">
+                            <thead class="user-per-head11">
+                              <tr>
+                                <th>
+                                  <i class="fa fa-folder-open all-files" aria-hidden="true"></i>
+                                  <span class="all-file-text">All Files</span>
+                                </th>
+                                <th><span class="no-access">No Access</span></th>
+                                <th><span class="no-access">View Only</span></th>
+                                <th><span class="no-access">View & Print</span></th>
+                                <th><span class="no-access">View, Print & Download</span></th>
+                                <th><span class="no-access">Upload</span></th>
+                                <th><span class="no-access">Water mark</span></th>
+                                <th><span class="no-access">Doculink</span></th>
+                                <th><span class="no-access">Editor</span></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>1 Environmental Issues
+                            </h4>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>2 Insurance Coverage
+                            </h4>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <td>
+                                  <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                </td>
+                                <tr>
+                                  <td>
+                                    <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>3 Organization
+                            </h4>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                  <td>
+                                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                                  </td>
+                                </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="apply-update">Apply Update</button>
+                    </div>
+                  </div>
+                  <div>
+                    <button mat-button matStepperPrevious class="user-back">Back</button>
+                    <button mat-button matStepperNext class="user-next">Next</button>
+                  </div>
+                </mat-step>
+                <mat-step>
+                  <ng-template matStepLabel>Done</ng-template>
+                  You are now done.
+                  <div>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button (click)="stepper.reset()">Reset</button>
+                  </div>
+                </mat-step>
+              </mat-horizontal-stepper>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of member tab section -->
+
+
+
+    
+    <!--Manage Permissioms Starts-->
+    <div class="tab-pane fade" id="members5" role="tabpanel" aria-labelledby="members-tab5">
+      <div class="overview-cont">
+        <div class="user-buttons">
+          <ul class="nav nav-tabs cr-tab1" id="edrTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab" aria-controls="members" aria-selected="false">Select Group</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" id="members-tab5" data-toggle="tab" href="#members5" role="tab" aria-controls="members5" aria-selected="false">Manage Permissioms</a>
+            </li>
+          </ul>
+          <hr>
+        </div>
+        <div class="over-member t-mr">
+          <form class="copy-per-form22">
+            <div class="form-group">
+              <select class="form-control" id="sel1">
+                <option>Select Group</option>
+                <option>Axat</option>
+                <option>Group1</option>
+                <option>Group2</option>
+                <option>Group3</option>
+                <option>Group4</option>
+              </select>
+            </div>
+          </form>
+          <button class="per-buttons">Perview Permissions</button>
+          <div class="grp-list">
+            <h3>Group Members List</h3>
+            <table class="table table-striped">
+              <thead class="user-per-head">
+                <tr>
+                  <th>Email id</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>satish.t@gmail.com</td>
+                  <td>Satish</td>
+                  <td>Pandya</td>
+                  <td>
+                    <i class="fa fa-trash-o user-delete" aria-hidden="true"></i>
+                  </td>
+                </tr>
+                <tr>
+                  <td>satish.t@gmail.com</td>
+                  <td>Satish</td>
+                  <td>Pandya</td>
+                  <td>
+                    <i class="fa fa-trash-o user-delete" aria-hidden="true"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="user-add-member">
+              <i class="fa fa-plus user-add" aria-hidden="true"></i>Add Member
+            </button>
+          </div>
+          <div class="user-per-table">
+            <table class="table table-striped">
+              <thead class="user-per-head11">
+                <tr>
+                  <th>
+                    <i class="fa fa-folder-open all-files" aria-hidden="true"></i>
+                    <span class="all-file-text">All Files</span>
+                  </th>
+                  <th><span class="no-access">No Access</span></th>
+                  <th><span class="no-access">View Only</span></th>
+                  <th><span class="no-access">View & Print</span></th>
+                  <th><span class="no-access">View, Print & Download</span></th>
+                  <th><span class="no-access">Upload</span></th>
+                  <th><span class="no-access">Water mark</span></th>
+                  <th><span class="no-access">Doculink</span></th>
+                  <th><span class="no-access">Editor</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <h4 class="all-doc-file-user">
+                    <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>1 Environmental Issues
+                  </h4>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <td>
+                    <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                  </td>
+                  <tr>
+                    <td>
+                      <h4 class="all-doc-file-user">
+                    <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>2 Project Charlie
+                  </h4>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h4 class="all-doc-file-user">
+                    <i class="fa fa-file-text-o all-doc-files-user-drop" aria-hidden="true"></i>3 Organization
+                  </h4>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                    <td>
+                      <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+            <hr>
+            <div class="user-per-button">
+              <a href="#">
+                <button class="revoke">Revoke Access Now</button>
+              </a>
+              <a href="#">
+                <button class="revoke-drm">Revoke Doculink</button>
+              </a>
+              <a href="#">
+                <button class="copy">Copy</button>
+              </a>
+              <a href="#">
+                <button class="print">Print</button>
+              </a>
+              <a href="#">
+                <button class="watermark">Watermark</button>
+              </a>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="updates">Update</button>
+              </div>
+            </div>
+            <hr>
+            <div class="copy-per-from-group">
+              <h3>Copy Permissioms from another Group</h3>
+              <br>
+              <form class="copy-per-form">
+                <div class="form-group">
+                  <select class="form-control" id="sel1">
+                    <option>Select Group</option>
+                    <option>1 Environmental Issues</option>
+                    <option>2 Insurance Coverage</option>
+                    <option>3 Employee Benefits</option>
+                    <option>4 Project Charlie</option>
+                    <option>5 Organization</option>
+                  </select>
+                </div>
+              </form>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" class="sme">
+                      <a href="#"><button class="copy-per-buttons">Perview Permissions</button></a>
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <table class="table table-striped">
+                      <thead class="user-per-head11">
+                        <tr>
+                          <th>
+                            <i class="fa fa-folder-open all-files" aria-hidden="true"></i>
+                            <span class="all-file-text">All Files</span>
+                          </th>
+                          <th><span class="no-access">No Access</span></th>
+                          <th><span class="no-access">View Only</span></th>
+                          <th><span class="no-access">View & Print</span></th>
+                          <th><span class="no-access">View, Print & Download</span></th>
+                          <th><span class="no-access">Upload</span></th>
+                          <th><span class="no-access">Water mark</span></th>
+                          <th><span class="no-access">Doculink</span></th>
+                          <th><span class="no-access">Editor</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>1 Environmental Issues
+                            </h4>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>2 Insurance Coverage
+                            </h4>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <td>
+                            <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                          </td>
+                          <tr>
+                            <td>
+                              <h4 class="all-doc-file-user">
+                              <i class="fa fa-folder-open all-doc-files-user-drop" aria-hidden="true"></i>3 Organization
+                            </h4>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                            <td>
+                              <mat-slide-toggle name="is_dataroom_on_live"></mat-slide-toggle>
+                            </td>
+                          </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="apply-update">Apply Update</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- manage permission end here -->

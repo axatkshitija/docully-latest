@@ -1,0 +1,68 @@
+.piechart {
+  height: 200px;
+  width: 200px;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.4;
+}
+
+.size-table td {
+  font-size: 12px !important;
+}
+.size-table > :not(caption) > * > * {
+  padding: 0px !important;
+}
+.doc-space {
+  background-color: #fff;
+  margin: 0 auto;
+  /* margin-bottom:13px; */
+  width: 100%;
+  /* float: right; */
+  /* margin-right: 6px; */
+}
+
+.recent-docu-sty h6 {
+  padding: 10px;
+  margin: 0;
+}
+
+.doc-space h3 {
+  font-size: 14px;
+  text-align: left;
+  padding-top: 10px;
+  color: #5f5d5d;
+  padding-left: 10px;
+  padding-bottom: 5px;
+}
+.borderBottom {
+  padding: 10px !important;
+  border-bottom: 1px solid #eaeef3;
+}
+.doc-space span {
+  font-size: 15px;
+  float: right;
+  padding-right: 10px;
+  font-weight: 600;
+}
+
+.cdr-rt-sidebar .mat-card {
+  display: inline-block;
+  width: 100%;
+}
+.all-documents.ng-star-inserted {
+  display: inline-block;
+  width: 100%;
+}
+.mat-tree {
+  background: transparent !important;
+}
+.Aligncentre {
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

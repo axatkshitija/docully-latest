@@ -1,0 +1,108 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"
+      ></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">how_to_vote</i>
+              <span class="t-text">Voting Report</span>
+            </div>
+            <button class="icon-btn">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text" (click)="downloadStatus()">Export</span>
+            </button>
+          </div>
+
+          <div class="datatime-status">
+            <div class="topbar-af">
+              <div class="slt-pre">
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Frompicker" [max]="maxDate" [min]="minDate" placeholder="From Date"
+                    [(ngModel)]="from_date" name="from_date" 
+                    (dateChange)="changeDateWise($event.value, to_date)">
+                  <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Frompicker></mat-datepicker>
+                </div>
+
+                <div class="date-select">
+                  <input matInput [matDatepicker]="Topicker" [max]="maxDate" [min]="minDate" placeholder="From Date"
+                    [(ngModel)]="to_date" name="to_date"
+                    (dateChange)="changeDateWise(from_date, $event.value)">
+                  <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                  <mat-datepicker #Topicker></mat-datepicker>
+                </div>
+              </div>
+              <!-- <input type="text" placeholder="Search Downloaded by" class="form-control filterSr searchbox full-src"
+                [(ngModel)]="filterQuery" required> -->
+            </div>
+          </div>
+
+          <div class="table-content">
+            <table class="table dl-table filesh-tbl">
+              <tr>
+                <th>Sr. No.</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Due Date & Time</th>
+                <th>Status</th>
+              </tr>
+
+              <tr *ngIf="voteListSize != undefined && voteListSize == 0 ">
+                <td colspan="4">
+                  No Report Available
+                </td>
+              </tr>
+              <tr *ngFor="let vote of voteList; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td style="width: 20% !important;">
+                  <a [routerLink]="['../voting-status', vote.id]" style="color: #007bff;">{{
+                    vote.title
+                  }}</a>
+                </td>
+                <td>{{ vote.description }}</td>
+                <td>{{ vote.end  | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']  }}
+                  {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                </td>
+                
+                <td>
+                  <span class="cdr-badge live-badge" style="background-color: #cbb26a !important;" *ngIf="vote.status">
+                    <i class="fa fa-circle-o"></i> Open
+                  </span>
+                  <span class="cdr-badge hold-badge" style="background-color: #cbb26a !important;"  *ngIf="!vote.status">
+                    <i class="fa fa-circle-o"></i> Closed
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+
+<!-- edit data room -->
+
+<!-- End of dataroom model here -->

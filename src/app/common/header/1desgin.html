@@ -1,0 +1,107 @@
+<!--header component start-->
+<mat-toolbar class="topbar" style="height: auto !important;background: white !important;">
+    <div class="cdr_branding" [routerLink]="['../dashboard']">
+      <img src="assets/images/logo2.png" />
+    </div>
+    <div class="cdr-topToolbar">
+      <div class="user-name">
+  
+        <div class="row">
+          <div class="col-md-2" style="margin-top: 15px;">
+            <div style="width: 80px;">
+              <a routerLink="/new-message">
+                <button href="" class="notifi-data" mat-button style="color: white !important;height: 50px !important;">
+                  <i class="fa fa-envelope" style="
+                  font-size: 20px;
+                  padding-left: 20px;
+            "></i>
+  
+                  <span class="notify msg-value">{{ 1 }}
+                    <div class="notify-point">
+                      <span class="heartbit" style="border:none;height: 20px;width: 20px;"></span>
+                      <span class="point"></span>
+                    </div>
+                  </span>
+  
+                </button>
+              </a>
+            </div>
+  
+          </div>
+          <div class="col-md-2" style="margin-top: 15px;">
+            <div style="width: 80px;">
+              <a routerLink="/new-notification">
+                <button class="notifi-data" mat-button style="color: white !important;height: 50px !important">
+                  <i class="fa fa-bell-o" style="
+                      font-size: 20px;
+                      padding-left: 20px;
+                      color: #cbb26a;
+                  "></i>
+  
+                  <span class="notify msg-value" style="background-color: #cbb26a;right: 10px;">{{ 1 }}
+                    <div class="notify-point">
+                      <span class="heartbit" style="border:none;height: 20px;width: 20px;"></span>
+                      <span class="point"></span>
+                    </div>
+                  </span>
+  
+                </button>
+              </a>
+            </div>
+  
+  
+          </div>
+          <div class="col-md-8 float-right" style="margin-top: 15px;">
+            <button data-toggle="modal" data-target="#userProfileCdr" class="float-right">
+              
+              <span id="uName" *ngIf="user">Welcome, {{ user.first_name }}</span>
+              <i class="fa fa-align-left"></i>
+            </button>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </mat-toolbar>
+  <!--header component End-->
+  
+  <!-- Modal -->
+  <div class="modal md-lf-rt right fade" id="userProfileCdr" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header" *ngIf="user">
+          <div class="media profile-pic-dt" *ngIf="avatarUrl!=null">
+            <img class="d-flex mr-3 rounded-circle" [src]="avatarUrl"
+              onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'" />
+          </div>
+          <div class="media-body">
+            <h5 class="mt-0">{{ user.first_name }} {{ user.last_name }}</h5>
+            {{ user.email }}
+          </div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="material-icons">&#xE5CD;</i>
+          </button>
+        </div>
+        <!-- <div class="upgrade-account">
+                  <span>{{upgrade_msg}}</span>
+              </div> -->
+        <div class="modal-body p-0">
+          <ul class="page-setting-nav">
+            <li>
+              <a href="/#/user-personal-info"><i class="fa fa-cog"></i> Profile</a>
+            </li>
+            <li>
+              <a (click)="goToLink('https://docullyvdr.zohodesk.com/')"><i class="fa fa-commenting-o"></i> Support</a>
+            </li>
+            <li (click)="resetDisclaimerStatus(user.id);">
+              <a><i class="fa fa-sign-out"></i> Sign Out</a>
+            </li>
+          </ul>
+          <!-- <div class="used-space-img text-center">
+                      <img src="assets/images/total-size-used.jpg"></div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--add new data room modal-->

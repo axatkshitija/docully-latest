@@ -1,0 +1,114 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid" *ngIf="user">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+      ></app-data-room-left>
+      <div
+        fxFlex="100"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="2"
+        *ngIf="
+          user.member.is_dataroom_admin ||
+            user.member.is_la_user ||
+            all_disclaimers ||
+            primary_users_disclaimer_status;
+          else primary_users_disclaimer_status_else
+        "
+      >
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <!-- <div class="title"> -->
+            <h1>Recent Updates</h1>
+            <!-- </div> -->
+            <span fxFlex></span>
+            <!-- <div class="cdr-buttons">
+                     <a routerLink="/new-update"><button href="" class="notifi-data" mat-button>
+                    New Updates</button></a>
+                    </div> -->
+            <div class="cdr-buttons">
+              <a
+                routerLink="/new-update"
+                *ngIf="user.member.is_dataroom_admin || user.member.is_la_user"
+                ><button mat-raised-button class="btn btn-default">
+                  Create New Update
+                </button></a
+              >
+            </div>
+          </mat-toolbar>
+          <div
+            class="doc-tool no-updates-sec"
+            style="height: calc(100vh - 72px); text-align: left; padding: 10px;"
+            *ngIf="updates.length <= 0; else updates_available"
+          >
+            No Updates Available
+          </div>
+          <ng-template #updates_available>
+            <div class="doc-tool" *ngFor="let upd of updates; let i = index">
+              <mat-list role="list">
+                <mat-list-item role="listitem" style="height: 180px !important;">
+                  <div class="doc-tool-item">
+                    <h3>
+                      {{ i + 1 }}.&nbsp;{{ upd.subject
+                      }}
+                    </h3>
+                    <small
+                      ><i class="material-icons">create</i> Created on:
+                      {{  upd.created_at | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                      | <i class="material-icons">update</i> Updated on:
+                       {{  upd.modified_at | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                      <span *ngIf="upd.member_details.length > 0"
+                        >[{{ upd.member_details }}]
+                      </span></small
+                    >
+                    <p class="document" *ngIf="upd.file">
+                      Document:
+                      <a
+                        href="{{ baseUrl }}/file-view/{{ upd.file.id }}/{{
+                          user_id
+                        }}" 
+                        (click)="goToViewerPage(upd.file)"
+                        target="_blank"
+                        *ngIf="upd.file.file_view"
+                        >{{ upd.file.name }}</a
+                      >
+                      <a
+                        (click)="NoAccessFile(upd.file)"
+                        style="color: blue"
+                        *ngIf="!upd.file.file_view"
+                        >{{ upd.file.name }}</a
+                      >
+                    </p>
+                    <hr />
+                    <p class="msg-txt">
+                      <strong>Message:</strong> <span>{{ upd.message }}</span>
+                    </p>
+                  </div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </mat-list>
+            </div>
+          </ng-template>
+        </mat-card>
+      </div>
+      <ng-template #primary_users_disclaimer_status_else>
+        <div class="w-100 text-center">
+          You have no access Data Room, Accept Disclaimer
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
+

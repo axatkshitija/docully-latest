@@ -1,0 +1,326 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <aside fxFlex="15">
+        <app-admin-left-side-bar [user]="user"></app-admin-left-side-bar>
+      </aside>
+      <div fxFlex="97" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="rounded mb-10 p-0">
+          <mat-toolbar class="cdr-toolbar cdr-white ad-t-bg main-container">
+            <span style="color: black !important; font-size: 18px !important">New Notifications
+            </span>
+            <span fxFlex></span>
+            <button href="javascript:void(0)" mat-raised-button *ngIf="tab" class="cdr-btn big-btn blue-btn"
+              (click)="BackTab()" style="color: white; font-size: 14px">
+              Back
+            </button>
+          </mat-toolbar>
+          <div class="nw-ntfi-wrap">
+            <ng-scrollbar visibility="hover" class="scroll-section h-501" style="height: 501px;">
+              <div *ngIf="tab">
+                <div class="new-notification" *ngFor="
+                    let item of loop_upload
+                      | paginate: { itemsPerPage: 10, currentPage: p }
+                  ">
+                  <div class="impo-not-items" id="upload">
+                    <h6 *ngIf="item.is_folder; else file_name_view">
+                      <h3>
+                        <i class="fa fa-file-text"></i>
+
+                        <a target="_blank">{{ item.user.first_name
+                          }}{{ item.user.last_name }}</a>
+                        added this
+                        {{ item.folder.name !== "null" && item.folder.name }}
+                        folder in
+                        <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                          item.dataroom.dataroom_nameFront
+                          }}</span>
+                        Data Room
+                        <p>
+                          {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                        </p>
+                      </h3>
+                    </h6>
+                    <ng-template #file_name_view>
+                      <i class="fa fa-file-text"></i>
+                      <h3>
+                        <a target="_blank">{{ item.user.first_name
+                          }}{{ item.user.last_name }}</a>
+                        added this
+                        <a href="{{ baseUrl }}/file-view/{{ item.folder.id }}/{{
+                            user.id
+                          }}" (click)="goToViewerPage(item.folder)" target="_blank">
+                          {{ item.folder.name !== "null" && item.folder.name }}
+                        </a>
+                        file in
+                        <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                          item.dataroom.dataroom_nameFront
+                          }}</span>
+                        Data Room
+                        <p>
+                          {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                        </p>
+                      </h3>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+
+              <div class="new-notification" *ngFor="
+                  let item of allNotification
+                    | paginate
+                      : { itemsPerPage: 10, currentPage: p, totalItems: size }
+                ">
+                <div *ngIf="overview_tab">
+                  <div class="impo-not-items" *ngIf="item.dataroom_member">
+                    <i class="fa fa-user"></i>
+                    <h3 *ngIf="item.permissions">
+                      {{ item.dataroom_member.member.first_name }} was added in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom_member.dataroom.dataroom_nameFront
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+
+                    <h3 *ngIf="!item.permissions">
+                      {{ item.dataroom_member.member.first_name }} was added in
+                      <span>{{
+                        item.dataroom_member.dataroom.dataroom_nameFront
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+
+                  <div class="impo-not-items" id="upload" *ngIf="
+                    item.bulkuploadd &&
+                        item.bulkuploadd.isuploadfail == false &&
+                        item.bulkuploadd.event == 'batch upload'
+                      ">
+                    <i class="fa fa-file-text"></i>
+                    <h3>
+                      <a target="_blank">{{ item.bulkuploadd.user.first_name
+                        }}{{ item.bulkuploadd.user.last_name }}</a>
+                      added {{ item.bulkuploadd.totalnumberoffiles }} files in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.bulkuploadd.dataroom
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}  &nbsp;<a (click)="ViewerMore(item.bulkuploadd)"
+                          style="color: blue">View More</a>
+                      </p>
+                    </h3>
+                  </div>
+
+
+                  <div class="impo-not-items" *ngIf="item.dataroom_groups">
+                    <i class="fa fa-users"></i>
+                    <h3 *ngIf="item.permissions">
+                      <a [routerLink]="['/manage-permission', item.id, 2]">{{
+                        item.dataroom_groups.group_name
+                        }}</a>
+                      group was added in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom_groups.dataroom.dataroom_name
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+
+                    <h3 *ngIf="!item.permissions">
+                      <span>{{ item.dataroom_groups.group_name }}</span> group
+                      was added in
+                      <span>{{
+                        item.dataroom_groups.dataroom.dataroom_name
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+
+                  <div class="impo-not-items" *ngIf="item.dataroom_member_invitation_accept">
+                    <i class="fa fa-envelope"></i>
+                    <h3>
+                      <a target="_blank">{{
+                        item.dataroom_member_invitation_accept.invitiation_receiver.first_name
+                        }} {{item.dataroom_member_invitation_accept.invitiation_receiver.last_name}}</a>
+                      has joined the
+                      <span>{{ item.dataroom.dataroom_name }}
+                      </span>
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+
+                  <div class="impo-not-items" *ngIf="
+                      item.dataroom_folder && item.dataroom_folder.is_folder
+                    ">
+                    <i class="fa fa-folder-open"></i>
+                    <h3 *ngIf="item.permissions">
+                      <a [routerLink]="[
+                          '/folder_detail',
+                          item.dataroom_folder.id
+                        ]">{{ item.name }}</a>
+                      Folder was added in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom.dataroom_nameFront
+                        }}</span>
+                      Data Room
+                      <p>{{ item.group_created }}</p>
+                    </h3>
+                    <h3 *ngIf="!item.permissions">
+                      <span>{{ item.name }}</span> Folder was added in
+                      <span>{{ item.dataroom.dataroom_nameFront }}</span> Data
+                      Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+                  <div class="impo-not-items" *ngIf="
+                      item.dataroom_folder && !item.dataroom_folder.is_folder
+                    ">
+                    <i class="fa fa-file-text"></i>
+                    <h3 *ngIf="item.permissions">
+                      <a href="{{ baseUrl }}/file-view/{{
+                          item.dataroom_folder.id
+                        }}/{{ user.id }}" style="color: blue" (click)="goToViewerPage(item.dataroom_folder)"
+                        target="_blank">{{ item.dataroom_folder.name }}</a>
+                      file was added in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom.dataroom_nameFront
+                        }}</span>
+                      Data Room
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+
+                    <h3 *ngIf="!item.permissions">
+                      <span style="color: blue">{{
+                        item.dataroom_folder.name
+                        }}</span>
+                      file was added by {{ item.dataroom_folder.user}} in 
+                      <span>{{ item.dataroom.dataroom_nameFront }}</span> Data
+                      Room
+                      {{ item.permissions }}
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+                  <div class="impo-not-items" *ngIf="item.dataroom_updates">
+                    <i class="fa fa-envelope"></i>
+                    <h3 *ngIf="item.permissions">
+                      <a (click)="update()" style="cursor: pointer; color: #3352ea">{{ item.dataroom_updates.subject
+                        }}</a>
+                      update is added by
+                      <span>{{ item.dataroom_updates.user.first_name }}
+                        {{ item.dataroom_updates.user.last_name }}</span>
+                      in
+                      <span>{{ item.dataroom.dataroom_nameFront }} Data Room</span>
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+
+                    <h3 *ngIf="!item.permissions">
+                      <a (click)="update()" style="cursor: pointer; color: #3352ea">{{ item.dataroom_updates.subject
+                        }}</a>
+                      update is added by
+                      <span>{{ item.dataroom_updates.user.first_name }}
+                        {{ item.dataroom_updates.user.last_name }}</span>
+                      in
+                      <span>{{ item.dataroom.dataroom_nameFront }} Data Room</span>
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+                  <div class="impo-not-items" *ngIf="item.qna && !item.qna.answer">
+                    <!-- <div *ngIf="!item.qna.answer"> -->
+                    <i class="fa fa-question-circle"></i>
+                    <h3 *ngIf="item.permissions">
+                      {{ item.qna.user.first_name }}
+                      {{ item.qna.user.last }} ask the question
+                      <span (click)="goToQnaPage(item)">{{
+                        item.qna.question
+                        }}</span>
+                      with the {{ item.qna.category.categories_name }} Category
+                      in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom.dataroom_nameFront
+                        }}</span>
+                      Dataroom
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                    <h3 *ngIf="!item.permissions">
+                      {{ item.qna.user.first_name }}
+                      {{ item.qna.user.last }} ask the question
+                      <span>{{ item.qna.question }}</span> with the
+                      {{ item.qna.category.categories_name }} Category in
+                      <span>{{ item.dataroom.dataroom_nameFront }}</span>
+                      Dataroom
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+                  <div class="impo-not-items" *ngIf="item.qna && item.qna.answer">
+                    <i class="fa fa-question-circle"></i>
+                    <h3 *ngIf="item.permissions">
+                      {{ item.qna.user.first_name }}
+                      {{ item.qna.user.last }} answers the question
+                      <span (click)="goToQnaPage(item)">{{ item.qna.question }}
+                      </span>
+                      with the {{ item.qna.category.categories_name }} Category
+                      in
+                      <span (click)="getToDetailedPage(item.dataroom.id)">{{
+                        item.dataroom.dataroom_nameFront
+                        }}</span>
+                      Dataroom
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+
+                    <h3 *ngIf="!item.permissions">
+                      {{ item.qna.user.first_name }}
+                      {{ item.qna.user.last }} answers the question
+                      <span>{{ item.qna.question }} </span> with the
+                      {{ item.qna.category.categories_name }} Category in
+                      <span>{{ item.dataroom.dataroom_nameFront }}</span>
+                      Dataroom
+                      <p>
+                        {{ item.created_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}} 
+                      </p>
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </ng-scrollbar>
+            <div class="pagination-sec">
+              <pagination-controls (pageChange)="getAllNotification($event)"></pagination-controls>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

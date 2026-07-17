@@ -1,0 +1,88 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="space-between start"
+      fxLayoutGap="15px"
+      fxLayout.xs="column"
+      fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch"
+      fxLayoutAlign.sm="center stretch"
+    >
+      <app-data-room-left
+        fxFlex="15"
+        fxFlex.xs="100"
+        fxFlexOrder.xs="1"
+      ></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar class="add-tbpd">
+            <!-- <div class="title"> -->
+            <h1>Signed Disclaimers</h1>
+            <!-- </div> -->
+   
+            <span fxFlex></span>
+            <a
+              href="javascript:void(0)"
+              mat-raised-button
+              class="cdr-btn big-btn blue-btn"
+              (click)="geBack()"
+            >
+              Back</a
+            >
+          </mat-toolbar>
+
+          <mat-card-content style="padding: 0" class="minHeight682">
+            <div class="table-data">
+              <table class="table dl-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Date Signed</th>
+                    <th>Filename</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of dataroom_users_list; let i = index">
+                    <td *ngIf="user.disclaimer_signed_id">
+                      {{ user.first_name }}
+                    </td>
+                    <td *ngIf="user.disclaimer_signed_id">
+                      {{   user.disclaimer_signed_date | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset'] }} {{'(' +usertimezone['time_zone__abbreviation'] +')'}}
+                    </td>
+                    <td *ngIf="user.disclaimer_signed_id">
+                      {{ user.disclaimerdata.dataroom_disclaimer_name }}
+                    </td>
+                    <td *ngIf="user.disclaimer_signed_id">
+                      <i
+                        class="material-icons downld-icon"
+                        style="cursor: pointer"
+                        (click)="
+                          download_dataroom_disclaimer(
+                            user.disclaimer_signed_id,
+                            user.disclaimerdata.dataroom_disclaimer_name
+                          )
+                        "
+                        *ngIf="user.disclaimer_signed_id"
+                        >get_app</i
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-document-right-side-menu></app-document-right-side-menu>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>

@@ -1,0 +1,11 @@
+.sub-exp {
+    float: right;
+}
+.table-responsive{
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+.tbl-sub {
+    white-space: nowrap;
+}

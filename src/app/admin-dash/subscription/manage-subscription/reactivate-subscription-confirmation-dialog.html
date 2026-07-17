@@ -1,0 +1,12 @@
+<div mat-dialog-title>Notify<i class="fa fa-times" aria-hidden="true" (click)="onNoClick()"
+        style="float: right !important;cursor: pointer;"></i></div>
+
+<div mat-dialog-content>
+    <div class="alert alert-danger">
+        Are you sure you want to reactivate subscription? 
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data.yes" class="btn btn-primary">Yes</button>
+    <button mat-button [mat-dialog-close]="data.no" class="btn btn-primary">No</button>
+</div>

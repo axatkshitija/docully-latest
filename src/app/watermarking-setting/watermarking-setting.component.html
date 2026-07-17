@@ -1,0 +1,122 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <div fxFlex="70" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0 text-center" id="image">
+          <!-- heading -->
+
+          <!-- < id="preview"> -->
+          <!-- <img [(src)]="preview"> -->
+        </mat-card>
+        <iframe id="preview" class="iframe-style" style="height: 800px; width: 100%;"></iframe>
+      </div>
+
+      <div fxFlex="30" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <mat-card class="rounded mb-10 p-0">
+          <mat-toolbar class="cdr-toolbar1 docrhsec">
+            <span style="font-size: 18px; font-weight: normal; color: #5a5858;">Edit Watermark Settings</span>
+            <a href="javascript:void(0)" mat-raised-button class="cdr-btn big-btn blue-btn backBtnst"
+              style="color: white;font-size: 15px;" (click)="goBack()">
+              Back</a>
+          </mat-toolbar>
+          <div class="cdr-imfor add-watermark-pdf">
+            <button class="save-btnst" type="button" (click)="SaveWatermarkingSettings()">
+              <i class="fa fa-save"></i> Save Settings
+            </button>
+            <p>
+              <b>Note:</b> Watermarks in the top and/or bottom positions may be
+              partially cut off for PDF documents with irregular dimensions.
+            </p>
+
+            <div class="accordion wt-setting" id="accordionExample">
+              <div class="card" *ngFor="let mark of watermarkingForm; let i = index">
+                <div class="card-header" id="headingOne">
+                  <button class="btn btn-link" type="button" data-toggle="collapse"
+                    [attr.data-target]="'#collapseOne' + i" aria-expanded="false" aria-controls="collapseOne">
+                    {{ mark.name }}
+                  </button>
+                </div>
+
+                <div id="collapseOne{{ i }}" class="collapse" aria-labelledby="headingOne"
+                  data-parent="#accordionExample">
+                  <div class="card-body wt-bodyst">
+                    <div class="form-group">
+                      <label>Font Size</label>
+                      <input type="text" value="16" class="form-control" name="font_size"
+                        [(ngModel)]="mark.font_size" />
+                    </div>
+
+                    <div class="form-group sl-vlue my-4">
+                      <label>Opacity
+                        <!-- <span>(Range is 0 to 1)</span> --></label>
+
+                      <input type="range" min="0" max="1" step="0.1" class="slider-pnl" id="myRange" name="opacity"
+                        [(ngModel)]="mark.opacity" />
+                      <span class="lf-no">0</span>
+                      <span class="cen-no">0.5</span>
+                      <span class="rt-no">1</span>
+                    </div>
+
+                    <div class="form-group sl-vlue my-4">
+                      <label>Rotation</label>
+                      <input type="range" min="-90" max="90" class="slider-pnl" id="myRange" name="rotation"
+                        [(ngModel)]="mark.rotation" />
+                      <span class="lf-no">-90</span>
+                      <span class="cen-no">0</span>
+                      <span class="rt-no">90</span>
+                    </div>
+
+                    <div class="form-group chk-box">
+                      <label class="w-100">Vertical Position</label>
+                      <mat-checkbox name="vtop" [(ngModel)]="mark.vtop"
+                        (change)="clickVertical($event.checked, 'vtop', i)">Top</mat-checkbox>
+                      <mat-checkbox name="vcenter" [(ngModel)]="mark.vcenter"
+                        (change)="clickVertical($event.checked, 'vcenter', i)">Center</mat-checkbox>
+                      <mat-checkbox name="vbottom" [(ngModel)]="mark.vbottom"
+                        (change)="clickVertical($event.checked, 'vbottom', i)">Bottom</mat-checkbox>
+                    </div>
+                    <div class="form-group chk-box">
+                      <label class="w-100">Horizontal Position</label>
+                      <mat-checkbox name="hleft" [(ngModel)]="mark.hleft"
+                        (change)="clickHorizontal($event.checked, 'hleft', i)">Left</mat-checkbox>
+                      <mat-checkbox name="hmiddle" [(ngModel)]="mark.hmiddle"
+                        (change)="clickHorizontal($event.checked, 'hmiddle', i)">Middle</mat-checkbox>
+                      <mat-checkbox name="hright" [(ngModel)]="mark.hright"
+                        (change)="clickHorizontal($event.checked, 'hright', i)">Right</mat-checkbox>
+                    </div>
+                    <div class="form-group chk-box-hor">
+                      <label class="w-100">Watermark Elements</label>
+                      <span matTooltip="Watermark Elements is disabled"
+                      [matTooltipDisabled]="features.custom_watermarking">
+                      <mat-checkbox name="user_ipaddress" [(ngModel)]="mark.user_ipaddress"
+                        [disabled]="!features?.custom_watermarking"    [class.disabled]="!features?.custom_watermarking ? true : null">User IP Address</mat-checkbox>
+                      <mat-checkbox name="user_name" [(ngModel)]="mark.user_name"
+                        [disabled]="!features?.custom_watermarking"    [class.disabled]="!features?.custom_watermarking ? true : null">User Name</mat-checkbox>
+                      <mat-checkbox name="user_email" [(ngModel)]="mark.user_email"
+                        [disabled]="!features?.custom_watermarking"    [class.disabled]="!features?.custom_watermarking ? true : null">User Email</mat-checkbox>
+                      <mat-checkbox name="current_time" [(ngModel)]="mark.current_time"
+                        [disabled]="!features?.custom_watermarking"    [class.disabled]="!features?.custom_watermarking ? true : null">Current Time</mat-checkbox>
+                      <mat-checkbox name="dataroom_name" [(ngModel)]="mark.dataroom_name"
+                        [disabled]="!features?.custom_watermarking"    [class.disabled]="!features?.custom_watermarking ? true : null">Workspace Name</mat-checkbox>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                      <label>Custom Text</label>
+                      <span matTooltip="Custom Watermarking is disabled"
+                        [matTooltipDisabled]="features?.custom_watermarking">
+                        <input type="text" [disabled]="!features?.custom_watermarking" class="form-control"
+                          [(ngModel)]="mark.custom_text" name="custom_text" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</section>

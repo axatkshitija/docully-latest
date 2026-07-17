@@ -1,0 +1,334 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <!-- left side content -->
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1" (onInitEvent)="receiveAutoMsgHandler($event)">
+      </app-data-room-left>
+      <!-- main content -->
+
+      <div fxFlex="84" fxFlex.xs="100" fxFlexOrder.xs="2" *ngIf="(user!=null ||user!=undefined) ">
+     
+        <div class="addclass" *ngIf="
+        user.is_superadmin ||
+          user.is_admin ||
+          user.member.is_la_user ||
+          all_disclaimers ||
+          primary_users_disclaimer_status.disclaimer_status;
+        else primary_users_disclaimer_status_else
+      ">
+   
+          <mat-card class="mat-card p0">
+            
+            <mat-toolbar class="add-tbpd">
+              <!-- <div class="title"> -->
+              <h1>User and Permissions</h1>
+              <!-- </div> -->
+       
+            </mat-toolbar>
+
+           <div style="padding: 0px 20px 20px;">
+            <div class="card blkanc text-center" style="margin-top: 10px;">
+              <div class="card-body" *ngIf="usrs_and_permission_data">
+                <div class="row">
+      
+                  <div class="col-md-4">  <h5 class="card-title" style="float: left;font-size: 17px;">Admins</h5></div>
+                  <div class="col-md-4">
+                    <p class="card-text" style="margin-top: 2px;text-align:left;">
+                      No. Of Users :
+                      <a (click)="goToManageAdminPage((idx = 1))">{{
+                        usrs_and_permission_data.length
+                        }}</a>
+                    </p>
+                  </div>
+                  <div class="col-md-4">
+                        
+                    <button type="button" class="card-link"  (click)="goToManageAdminPage((idx = 0))">
+                      <i class="fa fa-plus" aria-hidden="true" style="color: #0d6efd;"></i> Admin
+                    </button>
+                    <button type="button" class="card-link"  (click)="goToUserListPage()">
+                      <i class="fa fa-list" aria-hidden="true" style="color: #0d6efd;"></i> User List
+                    </button>
+                    <button type="button" class="card-link"  (click)="goToManageAdminPage((idx = 1))">
+                      <i class="fa fa-cog" aria-hidden="true" style="color: #0d6efd;"></i> Manage
+                    </button>
+                      </div>
+            
+                </div>
+          
+        
+              </div>
+<!-- 
+              <div class="card-footer text-muted">
+        
+              </div> -->
+            </div>
+
+
+
+
+            <span matTooltip="LA Admin Group is disabled" [matTooltipDisabled]="features?.la_admin_access">
+            <div [class.disabled]="!features?.la_admin_access ? true : null" >
+              <div class="tbl-block">
+                <button type="button" class="btn btn-link pdgRL" (click)="IsCreateNewLAGroup()">
+                  <i class="fa fa-plus" aria-hidden="true"></i> LA Admin Group
+                </button>
+
+                <div class="col-md-10 p-0">
+                  <div class="card single-field">
+                    <form [formGroup]="laendusergroups">
+                      <div class="row align-items-start m-0" *ngIf="is_la_admin">
+                        <div class="form-group">
+                          <input type="text" placeholder="LA Admin name" class="form-control"
+                            formControlName="group_name" name="group_name" />
+                          <mat-error *ngIf="laendusergroups.controls['group_name'].hasError('invalidName')">
+                            Special characters not allowed!
+                          </mat-error>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" [disabled]="!laendusergroups.valid"
+                          (click)="createLAGroup()">
+                          Create LA Group
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" (click)="IsCreateNewLAGroup()">
+                          Cancel
+                        </button>
+                      </div>
+                      <div *ngIf="
+                      laendusergroups.controls['group_name'].invalid &&
+                      (laendusergroups.controls['group_name'].dirty ||
+                        laendusergroups.controls['group_name'].touched)
+                    " class="alert alert-danger">
+                        <div *ngIf="
+                        laendusergroups.controls['group_name'].errors.required
+                      ">
+                          Limited Enduser Group Name is required.
+                        </div>
+                        <div *ngIf="
+                        laendusergroups.controls['group_name'].errors
+                          ?.minlength
+                      ">
+                          Limited Enduser Group must be at least 3 characters
+                          long.
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Sr NO.</th>
+                      <th>Group Name</th>
+                      <th>No. Of Users</th>
+                      <th width="21%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="
+                    let la_group of all_la_enduser_groups;
+                    let i = index
+                  ">
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        {{ la_group.group_name }}
+                      </td>
+                      <td>{{ la_group.members_length }}</td>
+                      <td>
+                        <button type="button" class="btn btn-link" matTooltip="Add Member" aria-label="Add Member"
+                          (click)="goToManageLAadmin(la_group, (idx = 2))">
+                          <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-link" matTooltip="Manage" aria-label="Manage"
+                          (click)="goToManageLAadmin(la_group, (idx = 3))">
+                          <i class="fa fa-cog" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-link" matTooltip="Delete" aria-label="Delete"
+                          data-toggle="modal" [attr.data-target]="'#deleteLAUserGroupModel' + i">
+                          <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                      </td>
+
+                      <!-- start of copy model -->
+                      <div id="deleteLAUserGroupModel{{ i }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                          <!-- Modal content-->
+                          <div class="modal-content cdr-move-files">
+                            <div class="modal-header">
+                              <h4 class="modal-title cdr-move-title">
+                                Delete LA Admin Group
+                              </h4>
+                              <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="alert alert-danger">
+                                Members would not have access to the data room
+                                unless they are added manually.
+                              </div>
+                            </div>
+                            <div class="modal-footer cdr-move-footer">
+                              <div>
+                                <button type="button" class="btn btn-primary" (click)="deleteLAUserGroup(i, la_group)"
+                                  data-dismiss="modal">
+                                  Confirm delete
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- end of limited accessa admins -->
+            </div>
+            </span>
+            <div>
+              <div class="tbl-block">
+                <button type="button" class="btn btn-link pdgRL" (click)="IsCreateNewEnduserGroup()">
+                  <i class="fa fa-plus" aria-hidden="true"></i> End User Group
+                </button>
+                <div class="card single-field">
+                  <div *ngIf="is_create_new_enduser_group">
+                    <form [formGroup]="endusergroups">
+                      <div class="row align-items-start m-0">
+                        <div class="form-group" style="display: flex;">
+                          <input class="form-control" type="text" placeholder="Enduser group name" name="group_name"
+                            formControlName="group_name" />
+                          <mat-error *ngIf="endusergroups.controls['group_name'].hasError('invalidName')">
+                            Special characters not allowed!
+                          </mat-error>
+
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" (click)="createNewEndUserGroup()"
+                          [disabled]="!endusergroups.valid">
+                          Create Enduser Group
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" (click)="IsCreateNewEnduserGroup()">
+                          Cancel
+                        </button>
+                      </div>
+
+                      <div *ngIf="
+                      endusergroups.controls['group_name'].invalid &&
+                      (endusergroups.controls['group_name'].dirty ||
+                        endusergroups.controls['group_name'].touched)
+                    " class="alert alert-danger">
+                        <div *ngIf="
+                        endusergroups.controls['group_name'].errors.required
+                      ">
+                          Enduser Group Name is required.
+                        </div>
+                        <div *ngIf="
+                        endusergroups.controls['group_name'].errors?.minlength
+                      ">
+                          Enduser Group must be at least 3 characters long.
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <table class="table" *ngIf="usrs_and_permission_data">
+                  <thead>
+                    <tr>
+                      <th>Sr. NO</th>
+                      <th>Group Name</th>
+                      <th>No. Of Users</th>
+                      <th width="21%">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let group of all_end_user_groups; let i = index">
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        {{ group.group_name }}
+                      </td>
+                      <td>{{ group.members_length }}</td>
+                      <td>
+                        <button type="button" class="btn btn-link" matTooltip="Add Member" aria-label="Add Member"
+                          (click)="
+                        goToEnduserManagePermissions(group, (indx = 0))
+                      ">
+                          <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-link" matTooltip="Manage Member" aria-label="Manage Member"
+                          (click)="
+                        goToEnduserManagePermissions(group, (indx = 1))
+                      ">
+                          <i class="fa fa-cog" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-link" matTooltip="Manage Permission"
+                          aria-label="Manage Permission" (click)="
+                      goEnduserManagePermissions(group, (indx = 4))
+                      ">
+                          <i class="fa fa-check" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-link" matTooltip="Delete" aria-label="Delete"
+                          data-toggle="modal" [attr.data-target]="'#deleteEndUserGroupModel' + i">
+                          <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <!-- Click delete button (click)="deleteEndUserGroup(i, group)" -->
+                        <!-- start of copy model -->
+                        <div id="deleteEndUserGroupModel{{ i }}" class="modal fade" role="dialog">
+                          <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content cdr-move-files">
+                              <div class="modal-header">
+                                <h4 class="modal-title cdr-move-title">
+                                  Delete End User Group
+                                </h4>
+                                <button type="button" class="close" data-dismiss="modal">
+                                  &times;
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="alert alert-danger">
+                                  Members would not have access to the data room
+                                  unless they are added manually.
+                                </div>
+                              </div>
+                              <div class="modal-footer cdr-move-footer">
+                                <div>
+                                  <button type="button" class="btn btn-primary" (click)="deleteEndUserGroup(i, group)"
+                                    data-dismiss="modal">
+                                    Confirm delete
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+           </div> 
+        
+          </mat-card>
+
+
+          <ng-template #primary_users_disclaimer_status_else>
+            <div class="w-100 text-center">
+              You have no access Data Room, Accept Disclaimer
+            </div>
+            <!--<app-disclaimer-pop-up [disclaimer]= "disclaimer" [i]="i"></app-disclaimer-pop-up>-->
+            <!--<button (click)="openModal()">Open Modal 2</button>-->
+          </ng-template>
+        </div>
+
+      </div>
+
+
+      <!-- end of main content -->
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

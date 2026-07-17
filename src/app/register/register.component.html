@@ -1,0 +1,189 @@
+<section class="sec-padding" id="loginFormBx" style=" height: 132vh !important">
+  <div class="container h-1pr">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="cr-account-page">
+
+        <div class="login-form-area" style="margin-top: 40vh !important;">
+          <div class="login-form-body">
+            <div class="fr-top-con">
+
+              <div class="subscription-popup" #customLoadingTemplate>
+
+                <div class="row">
+                  <a [routerLink]="['/']" style="margin-bottom: 20px; margin-left: 15px;">
+                    <img style="margin-left: 35%;width: 110px;" alt="" class="m-logo"
+                      src="../../assets/images/logo3.png" />
+                  </a>
+                  <div class="col-md-12 text-center">
+                    <p style="font-size: 18px; font-weight: bold;">Welcome to DocullyVDR,</p>
+                    <p style="font-size: 18px; font-weight: bold;">Since you are a first time user,</p>
+                    <span>
+                      <p style="color: #cbb26a; font-weight: bold;">Please fill the below information before we create
+                        your Docully account.</p>
+                    </span>
+                  </div>
+
+                </div>
+                <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+                  <div class="row">
+                    <div class="col-md-12 pb-3">
+
+                      <input type="text" pattern="^[a-zA-Z ]*$" name="first_name" placeholder="Your First Name"
+                        class="form-control" [(ngModel)]="model.first_name" autocomplete="off" #first_name="ngModel"
+                        [ngClass]="{
+                          'is-invalid': f.submitted && first_name.invalid
+                        }" required />
+                      <div *ngIf="f.submitted && first_name.invalid" class="invalid-feedback">
+                        <div *ngIf="first_name?.errors?.required">
+                          First Name is required
+                        </div>
+                        <div *ngIf="first_name?.errors?.pattern">
+                          First Name only accept alphabetical characters
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12 pb-3">
+
+                      <input type="text" pattern="^[a-zA-Z ]*$" name="last_name" placeholder="Your Last Name"
+                        class="form-control" [(ngModel)]="model.last_name" #last_name="ngModel" autocomplete="off"
+                        [ngClass]="{
+                          'is-invalid': f.submitted && last_name.invalid && last_name.touched
+                        }" required />
+                      <div *ngIf="f.submitted && last_name.invalid" class="invalid-feedback">
+                        <div *ngIf="last_name?.errors?.required">
+                          Last Name is required
+                        </div>
+                        <div *ngIf="last_name?.errors?.pattern">
+                          Last Name only accept alphabetical characters
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12 pb-3">
+
+                      <input type="email_id" name="email_id" placeholder="Your Email ID" class="form-control"
+                        [(ngModel)]="model.email" #email_id="ngModel" autocomplete="off" [ngClass]="{
+                          'is-invalid': f.submitted && email_id.invalid
+                        }" required />
+                      <div *ngIf="f.submitted && email_id.invalid" class="invalid-feedback">
+                        <div *ngIf="email_id?.errors?.required">
+                          Email Name is required
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12 pb-3">
+                      <input class="form-control mt-2" name="contact_no" placeholder="Contact No"
+                        [(ngModel)]="model.contact_no" #contact_no="ngModel"
+                        [ngClass]="{ 'is-invalid': f.submitted && (!contact_no.valid || (model.contact_no && !isValidContactNo())) }"
+                        pattern="[0-9+\-\s\(\)]{7,20}" required>
+                      <div *ngIf="f.submitted && (!contact_no.valid || (model.contact_no && !isValidContactNo()))"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="contact_no?.errors?.required">Contact number is required</div>
+                        <div *ngIf="contact_no?.errors?.pattern">Contact number must be 7-20 digits</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12 pb-3">
+                      <input class="form-control mt-2" name="country" placeholder="Country" [(ngModel)]="model.country"
+                        #country="ngModel"
+                        [ngClass]="{ 'is-invalid': f.submitted && (!country.valid || (model.country && !isValidCountry())) }"
+                        pattern="[a-zA-Z\s\-\.]{2,50}" required>
+                      <div *ngIf="f.submitted && (!country.valid || (model.country && !isValidCountry()))"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="country?.errors?.required">Country is required</div>
+                        <div *ngIf="country?.errors?.pattern">Country must be 2-50 characters</div>
+                      </div>
+                    </div>
+
+
+                    <div class="col-md-12 pb-3">
+                      <input class="form-control mt-2" name="company_name" placeholder="Company Name"
+                        [(ngModel)]="model.company_name" #company_name="ngModel"
+                        [ngClass]="{ 'is-invalid': f.submitted && (!company_name.valid || (model.company_name && !isValidCompanyName())) }"
+                        pattern="[a-zA-Z0-9'@*$/_\-&()\s]{1,50}" maxlength="50" required>
+                      <div *ngIf="f.submitted && (!company_name.valid || (model.company_name && !isValidCompanyName()))"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="company_name?.errors?.required">Company name is required</div>
+                        <div *ngIf="company_name?.errors?.pattern">Company name contains invalid characters</div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-12 pb-3">
+                      <input type="text" class="form-control" name="captcha" [(ngModel)]="model.captcha"
+                        #captcha="ngModel"  maxlength="6" placeholder="Captcha" autocomplete="off" required />
+                      <small *ngIf="captcha.hasError('required') && captcha.touched" class="text-danger">Captcha is
+                        required .
+                      </small>
+                      <small *ngIf="captchaError" class="text-danger">Invalid captcha code!
+                      </small>
+                      <div class="captcha-container">
+                        <div class="captcha-box" (click)="refreshCaptcha()">
+                            <span class="captcha-text">{{ captchaCode }}</span>
+                        </div>
+                    
+                    </div>
+                    </div> -->
+
+
+
+
+
+
+
+                    <div class="col-md-12">
+                      <div class="uniquePW">
+                        <p style="font-size: 12px">
+                          You will be required to verify your email id and
+                          create your unique password to access Docully after
+                          you submit this form. Please refer to your inbox for
+                          the verification link. Once verified, you will be able to start your new subscription
+                        </p>
+                      </div>
+                    </div>
+                    <!-- <div class="col-md-12">
+                      <label><a href="https://docully.com/#/pricing" (click)="closeDialog()">click here to see plan
+                          inclusions</a></label>
+                    </div> -->
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <!-- <button mat-raised-button class="editpage_cancle btn mr-4" (click)="onNoClick()" >Cancel</button> -->
+
+                      <!-- <p class="bottom-txt">By Registering you agree to Docully's <a href="">Terms of Use</a> and <a href="">Privacy Policy</a></p> -->
+                      <p class="bottom-txt">
+                        <mat-checkbox></mat-checkbox>
+                        <span>
+                          I agree to Docully's <a
+                            href="https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#term"> Terms
+                            Of Use </a> and
+                          <a href="https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#privacy">
+                            Privacy Policy</a></span>
+                      </p>
+                      <div class="d-flex justify-content-between">
+                        <button mat-raised-button class="btn btn-light" style="width: 48%;display: flex !important;"
+                          (click)="goBack()">
+                          Back
+                        </button>
+                        <button mat-raised-button class="editpage_export btn" type="submit"
+                          style="width: 48%;display: flex !important;">
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fm-footer">
+          <p>
+            Have an account?
+            <a [routerLink]="['/login']"> Login here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

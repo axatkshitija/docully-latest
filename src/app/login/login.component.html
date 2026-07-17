@@ -1,0 +1,160 @@
+<section id="loginFormBx" class="h-1pr">
+    <div class="container h-1pr">
+        <div class="row justify-content-md-center align-items-center h-1pr">
+            <div class="cr-account-page" style="top: 60% !important;">
+                <!-- <div *ngIf="sessionClosed == 'true'"
+                    style="background-color: lightblue; padding: 20px; margin-bottom: 20px;">
+                    <span>
+                        For your security, you have been signed out due to inactivity.
+                    </span>
+                </div> -->
+
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div class="login-form-area">
+                        <div class="login-form-body">
+                            <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+                                <div class="fr-top-con">
+                                    <a href="/#/"><img style="margin-left: 35%;width: 110px;" class="logo-login mb-4"
+                                            src="assets/images/logo3.png"></a>
+
+                                    <h1 class="lg-heading wow animated-1 fadeInUp mb-3" data-wow-delay="1s">Sign In</h1>
+
+                                    <div class="alert alert-danger" role="alert" *ngIf="isLoginError">
+                                        <strong>Oops !</strong> Email Id/Password is incorrect!!!
+                                        <!-- <strong>System Maintenance is going on.</strong>  Please try again later!!! -->
+                                    </div>
+
+                                    <div [ngClass]="{ 'has-error': f.submitted && !email.valid }" class="form-group">
+                                        <label for="email" class="error-msg dmslb">Email Id</label>
+                                        <input type="text" class="form-control dmsbx" name="email"
+                                            [(ngModel)]="model.email" #email="ngModel" autocomplete="off" required />
+                                        <small *ngIf="email.hasError('required') && email.touched"
+                                            class="text-danger">Email
+                                            is required .
+                                        </small>
+                                    </div>
+
+                                    <div [ngClass]="{ 'has-error': f.submitted && !password.valid }" class="form-group">
+                                        <label for="password" class="error-msg dmslb"> Password </label>
+                                        <input type="password" class="form-control dmsbx" name="password"
+                                            [(ngModel)]="model.password" #password="ngModel" required />
+                                        <span *ngIf="!passwordToggleIcon"
+                                            style="cursor: pointer; float: right; margin-top: -32px; margin-right: 10px;"
+                                            (click)="togglePassword()"><i class="fa fa-eye"
+                                                aria-hidden="true"></i></span>
+                                        <span *ngIf="passwordToggleIcon"
+                                            style="cursor: pointer; float: right; margin-top: -32px; margin-right: 10px;"
+                                            (click)="togglePassword()"><i class="fa fa-eye-slash"
+                                                aria-hidden="true"></i></span>
+                                        <small *ngIf="password.hasError('required') && password.touched"
+                                            class="text-danger">Password is required .
+                                        </small>
+                                    </div>
+
+                                    <!-- <div>
+                                        <label for="captcha" class="error-msg dmslb"> Captcha </label>
+                                        <input type="text" class="form-control dmsbx" name="captcha"
+                                            [(ngModel)]="model.captcha" #captcha="ngModel" autocomplete="off" maxlength="6" required />
+
+                                        <small *ngIf="captcha.hasError('required') && captcha.touched"
+                                            class="text-danger">Captcha is required .
+                                        </small>
+                                        <small *ngIf="captchaError" class="text-danger">Invalid captcha code!
+                                        </small>
+                                        <div class="captcha-container">
+                                            <div class="captcha-box" (click)="refreshCaptcha()">
+                                                <span class="captcha-text">{{ captchaCode }}</span>
+                                            </div>
+                                        
+                                        </div>
+                     
+                                    </div> -->
+
+
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="form-check keepme-s col-6">
+                                                <label class="form-check-label m-0">
+                                                    <input type="checkbox" id="keep-me" class="form-check-input">
+                                                    Keep me signed in
+                                                </label>
+                                            </div>
+
+                                            <div class="col-5 align-self-end text-right p-0"
+                                                style="margin-left: 15px !important;text-align:right !important;">
+                                                <a [routerLink]="['/forget']" class="forgot-pas">Forgot Password?</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center submit-btn-st">
+                                        <button [disabled]="loading" class="btn btn-active dmsbtn cdr-o-btn-golden">Sign
+                                            In</button>
+                                        <img *ngIf="loading"
+                                            src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                    </div>
+                                    <div *ngIf="drmfolderid" style="text-align: center; color: red; font-size: 15px;">
+                                        Please authenticate yourself to proceed
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- <div class="login-form-area" style="margin-left: 20px;">
+                        <div class="login-form-body"
+                            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;">
+                            <div style="color: blue; text-decoration: underline; margin-bottom: 20px; font-size: 18px;">
+                                Scheduled Maintenance Alert</div>
+                            <div>
+                                Start - 28th January 2026 at 5:00 PM IST
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                End - 28th January 2026 at 7:30 PM IST
+                            </div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                As we will update our servers to add new capabilities to our product, the Data Room
+                                access will be restricted during the maintenance period.
+                            </div>
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                We will update this page as soon as your trusted data room platform is ready. We
+                                apologize for any inconvenience caused to you.
+                            </div>
+                            <div style="text-align: center;">
+                                Team
+                            </div>
+                            <div style="text-align: center;">
+                                Docully VDR
+                            </div>
+                        </div>
+                    </div> -->
+
+                </div>
+
+                <div class="fm-footer">
+                    <p>
+                        Don't have an account?
+                        <a [routerLink]="['/signup']"> Register here</a>
+                    </p>
+                    <p><span style="color:#007bff !important; text-decoration: underline; cursor: pointer;"
+                            (click)="goToLink('https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#term')">
+                            Terms of Use
+                        </span>
+                        &nbsp;
+                        <span style="color:#007bff !important; text-decoration: underline; cursor: pointer;"
+                            (click)="goToLink('https://docullyvdr.com/terms-of-use.html?tab=terms-of-use&id=privacy#privacy')">
+                            Privacy Policy
+                        </span>
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!--
+<app-footer></app-footer>
+-->

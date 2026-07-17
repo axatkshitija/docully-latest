@@ -1,0 +1,117 @@
+<app-header></app-header>
+<section id="loginFormBx" class="d-flex flex-column">
+  <div class="container" style="margin-top: 100px;">
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10 billing-plan">
+        <div class="choose-plan">
+          <a [routerLink]="['/']" style="margin-bottom: 20px">
+            <img  style="margin-left: 45%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+          </a>
+          <div *ngIf="trialcheck">
+            <p>
+              It seems you have already taken a one time free trial. You may now
+              choose to sign up for a paid subscription plan or write to our
+              support team at support@docullyvdr.com if you had subscribed for a
+              free trial but can’t sign in.
+            </p>
+          </div>
+          <h5 class="text-center">Click to choose your plan</h5>
+          <div class="row justify-content-center mt-5 mb-2">
+            <div *ngFor="let plan of getplans" class="col-md-6 col-6 col-lg-3">
+              <div class="plan-price mb-3">
+                <div class="plan-widget" [ngClass]="{ selected: plan.id == selectedItem }" (click)="AddPlan(plan.id)">
+                  <h6>{{ plan.name }}</h6>
+                  <div class="plan-price-inner mb-2 mt-2"
+                    *ngIf="!(plan.cost ===1200 || plan.cost===3600 || plan.cost===300 || plan.cost===100000)">${{
+                    plan.cost
+                    }}</div>
+
+                  <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost===100000" style="font-size: 80%;"> Custom
+                  </div>
+                  <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==1200 || plan.cost==300 ">${{ plan.cost/3 }}
+                  </div>
+                  <div class="plan-price-inner mb-2 mt-2" *ngIf="plan.cost==3600">${{ plan.cost/12 }}</div>
+                  <span *ngIf="plan.cost!=100000">
+                    <p>{{plan.cost===0? "":"per month"}}</p>
+                    <hr />
+                    <p>{{ plan.storage == 1000 ?"Unlimited Storage": plan.storage + "GB" }}</p>
+                    <!-- <p>{{ plan.users }} Users</p> -->
+                    <p>{{ plan.cost==0?"Duration " +plan.term:"Billed " + plan.term }}</p>
+
+                  </span>
+
+                  <span *ngIf="plan.cost===100000">
+                    <p>We are here for any Custom requirements you may have.</p>
+
+                  </span>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="btm">
+            <!-- <h5 class="text-center">Your Price Plan</h5> -->
+            <div class="row text-center" style="margin:0 10%;">
+              <ul style="text-align:left;list-style-type: disc;">
+                <li>All plans include 01 Data Room & unlimited administrators and end users.</li>
+
+                <li>You will be redirected to a third-party payment gateway to complete your payment for paid plans.
+                </li>
+
+                <li>DocullyVDR does not store any of your card details.</li>
+
+                <li>The price mentioned above is in USD. You will be charged in equivalent AED on the payment gateway.
+                </li>
+              </ul>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="text-center" style="width: 200px; margin:20px auto" *ngIf="singleplandata.length !=0" >
+            <input class="form-control" name="text" placeholder="Dataroom Name" [(ngModel)]="item.dataroom_name"
+              pattern="^[a-zA-Z0-9_ ]+$" maxlength="50"
+              (input)="validateDataroomName($event)"
+              required>
+            <div *ngIf="dataroomNameError" style="color: red; font-size: 12px; margin-top: 5px;">
+              {{ dataroomNameError }}
+            </div>
+          </div>
+          <div class="next text-center">
+            <div class="buttns pt-4">
+              <button class="createPW-submit mat-raised-button" (click)="goBack()" mat-raised-button>
+                <span class="mat-button-wrapper">Back</span></button>
+
+              <button *ngFor="let singleplan of singleplandata" type="submit" class="createPW-submit mat-raised-button"
+                (click)="billingpage(singleplan.id)" c mat-raised-button>
+                <span *ngIf="showcost && singleplandata" class="mat-button-wrapper">Continue</span>
+              </button>
+
+              <button type="submit" class="createPW-submit mat-raised-button" *ngIf="gotolink===true" (click)="billingpage(9)"  mat-raised-button>
+                <span  class="mat-button-wrapper">Go</span>
+              </button>
+
+
+
+            </div>
+            <div class="mat-button-focus-overlay"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-1"></div>
+    </div>
+  </div>
+</section>

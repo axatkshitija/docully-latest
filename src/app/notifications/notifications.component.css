@@ -1,0 +1,31 @@
+.media.file-list .d-flex {
+    margin-right: 15px;
+    text-align: center;
+    width: 47px;
+}
+
+.media.file-list h6 {
+    margin: 0;
+}
+
+
+.media.file-list .d-flex i {
+    font-size: 40px;
+    color: #17a2b8;
+}
+
+.media.file-list .media-body .tx-inverse {
+    color: #343a40;
+    font-size: 14px;
+    font-weight: 400
+}
+
+.media.file-list .media-body p {
+    font-weight: 300;
+    padding-top: 5px;
+}
+
+.impo-not-items i.fa{
+    color: #17a2b8 !important;
+    font-size: 35px !important;
+  }

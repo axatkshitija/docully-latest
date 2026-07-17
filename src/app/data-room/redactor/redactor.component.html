@@ -1,0 +1,124 @@
+<app-header></app-header>
+<div style="min-height: 83vh;">
+
+  <div id="pdf-main-container" (mousedown)="mouse.event($event)" (mouseup)="mouse.event($event)"
+    (mousemove)="mouse.event($event)">
+    <div id="pdf-contents">
+      <div id="pdf-loader" [style.display]="show && __TOTAL_PAGES!=allPages.length?'block':'none'">
+        <h1>
+          Loading document for Redact ...
+        </h1>
+      </div>
+
+
+      <div class="flex-container">
+        <div id="canvas-container" class="div8" [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'">
+          <div>
+            <button class="btn-default" style="float: right;margin:2px 10px 0px 10px;padding: 10px;border-radius: 5px;"
+              (click)="goBack()">Back</button>
+          </div>
+          <div id="pdf-meta">
+            <div class="pdf-buttons" [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'">
+              <button class="tool-button" style="min-width: 20px !important; padding: 8px;"
+                (click)="zoomIn()">+</button>
+              Zoom
+              <button class="tool-button" style="min-width: 20px !important;padding: 8px" (click)="zoomOut()">-</button>
+              <button id="pdf-undo" style=" padding: 8px;" (click)="undoAction()" class="tool-button"><i
+                  class="material-icons">undo</i>
+                Undo</button>
+              <button id="pdf-redo" style=" padding: 8px;" (click)="redoAction()" class="tool-button">Redo <i
+                  class="material-icons">redo</i></button>
+              <label for="fill-color">&nbsp;&nbsp;&nbsp;Fill Color:&nbsp;&nbsp;&nbsp; </label>
+              <input type="color" id="fill-color" name="fill-color" [(ngModel)]="this.fillColor"
+                style="min-height: auto;" />
+              <label for="fill-opacity" style="margin-left: 15px;">&nbsp;&nbsp;&nbsp;Opacity:&nbsp;&nbsp;&nbsp;</label>
+              <input type="range" id="fill-opacity" name="fill-opacity" [(ngModel)]="this.fillOpacity" min="0" max="1" step="0.1" style="width: 100px;" />
+              <span style="margin-left: 5px;">{{ (fillOpacity * 100) | number:'1.0-0' }}%</span>
+
+
+            </div>
+
+            <div>
+
+              <button id="download-image" style="margin-top: 2px;" mat-menu-item data-toggle="modal"
+                [attr.data-target]="'#saveModel'" class="btn-default cloud-btn"
+                [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'"
+                [disabled]="show && __TOTAL_PAGES!=allPages.length">Save Redacte File
+              </button>
+
+            </div>
+
+            <div id="page-count-container" style="margin-right: 10px;"
+              [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'">
+
+
+
+
+
+              <div class="pdf-buttons" [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'">
+                <button id="pdf-prev" style=" padding: 8px;" class="tool-button" (click)="prevPage()"><i
+                    class="material-icons">keyboard_arrow_left</i> Previous</button>
+                <div id="pdf-current-page"></div>
+                Page {{__CURRENT_PAGE}}
+                <div id="pdf-total-pages"></div>
+                of {{__TOTAL_PAGES}}
+                <button id="pdf-next" style=" padding: 8px;" class="tool-button" (click)="nextPage()">Next <i
+                    class="material-icons">keyboard_arrow_right</i></button>
+              </div>
+            </div>
+
+          </div>
+          <div class="flex-container">
+            <div class="div4">
+
+              <label style="display: block;font-weight: 800;">Notes</label>
+              <textarea rows="12" style="width: 80%;" [(ngModel)]="notes"></textarea>
+            </div>
+            <div class="div8" style="overflow: auto; width:100%;max-height:150vh;">
+
+              <canvas #myCanvas style="overflow: scroll; width: 100%" class="zoomable-content"
+                [style.transform]="'scale(' + scale + ')'"></canvas>
+              <!-- <pdf-viewer [src]="pdfFile" [render-text]="true" style="display: block;"></pdf-viewer> -->
+            </div>
+            <div class="div4"></div>
+          </div>
+
+
+
+          <div id="saveModel" class="modal fade" role="dialog" #saveModel>
+            <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content cdr-delete-files">
+                <div class="modal-header">
+                  <h4 class="modal-title cdr-delete-title">
+                    Save Redact File
+                  </h4>
+                  <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <span class="alert alert-danger">
+                    Do you want to make the redacted version as the current version of the document?
+                    <mat-checkbox [(ngModel)]="isChecked"></mat-checkbox>
+                  </span>
+                </div>
+                <div class="modal-footer cdr-delete-footer">
+                  <button type="button" data-dismiss="modal" class="btn btn-primary">
+                    Continue Edit
+                  </button>
+                  <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="UploadRedactFile()">
+                    Save as New
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

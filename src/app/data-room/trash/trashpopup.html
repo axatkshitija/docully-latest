@@ -1,0 +1,48 @@
+<div mat-dialog-title>
+  Folder structure
+  <i class="fa fa-times" aria-hidden="true" (click)="onNoClick()" style="float: right !important; cursor: pointer"></i>
+  <p style="font-size: 16px; line-height: 20px"></p>
+</div>
+
+<div mat-dialog-content>
+  <ng-scrollbar visibility="hover" class="scroll-section h-170 docu-tree" style="height: 200px;">
+    <tree-root [nodes]="data" [options]="options">
+      <ng-template #treeNodeTemplate let-node let-index="index">
+        <button>
+          <span *ngIf="node.data.is_folder">
+            &nbsp;
+            <span (click)="showTrashFoldersTree(node.data)">{{ node.data.name | limitTo: 45 }} {{ node.data.name.length
+              >
+              45 ? "..." : "" }}</span>
+          </span>
+          <mat-checkbox class="example-margin" [checked]="selected === node.data.id" [disabled]="node.data.number < 1"
+            (change)="select_destination(node.data.id)"></mat-checkbox>
+          <span *ngIf="!node.data.is_folder">
+            &nbsp;
+            <span>{{ node.data.name | limitTo: 45 }} {{ node.data.name.length >
+              45 ? "..." : "" }}</span>
+            <mat-checkbox class="example-margin" [checked]="selected === node.data.id" [disabled]="node.data.number < 1"
+              (change)="select_destination(node.data.id)"></mat-checkbox>
+          </span>
+        </button>
+      </ng-template>
+    </tree-root>
+  </ng-scrollbar>
+
+  <!-- <ng-scrollbar visibility="hover"
+        class="scroll-section h-170 docu-tree"
+        style="height: 170px;"
+        *ngIf="data.copy.length===0"
+      >
+        <mat-progress-spinner
+          class="progress-align-center"
+          [mode]="'indeterminate'"
+          style="margin: 0 auto !important"
+        ></mat-progress-spinner>
+      </ng-scrollbar> -->
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="selected" class="btn btn-primary">
+    Confirm Restore
+  </button>
+</div>

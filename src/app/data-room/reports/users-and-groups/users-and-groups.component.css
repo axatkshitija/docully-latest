@@ -1,0 +1,8 @@
+.progress-align-center {
+    margin: auto !important;
+  }
+  
+
+  .table > :not(caption) > * > * {
+    padding: 0px !important;
+  }

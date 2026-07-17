@@ -1,0 +1,302 @@
+
+<app-header></app-header>
+<section class="d-flex flex-column ">
+  <div class="container ">
+    <div class="row subscription-plan" style="margin-top: 20%;">
+      <div class="col-md-12" style="margin-bottom: 20px;">
+        <a [routerLink]="['/']" class="mb-4">
+          <img style="margin-left: 40%;width: 110px;" alt="" class="m-logo" src="../../assets/images/logo3.png" />
+        </a>
+      </div>
+     
+      <div class="col-md-6">
+        <div class="choose-plan">
+          <h6>Billing Details - will be there on the invoice.</h6>
+          <h6>All Fields are Mandatory</h6>
+          <table class="table choose_plan_subscription">
+            <thead></thead>
+            <tbody>
+              <tr>
+                <td>
+                  <label>Customer Name</label>
+                </td>
+                <td>
+                  {{ user_details.first_name }} {{ user_details.last_name }}
+                
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Company Name (Optional)</label>
+                </td>
+                <td>
+        
+                  <input class="form-control" name="text" placeholder="Company Name" [(ngModel)]="item.company_name">
+                </td>
+              </tr>
+
+   
+
+              <tr>
+                <td>
+                  <label>Dataroom Name</label>
+                </td>
+                <td>
+            
+                  <input class="form-control" name="text" placeholder="Dataroom/Project Name"
+                    [(ngModel)]="item.dataroom_name" required>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Billing Address</label>
+                </td>
+                <td>
+                  <textarea *ngIf="!billing_address" class="form-control" name="text" placeholder="Billing Address"
+                    [(ngModel)]="item.billing_address" required></textarea>
+
+                  <textarea *ngIf="billing_address" class="form-control" name="text"
+                    placeholder="Please enter Billing Address"></textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Billing City</label>
+                </td>
+                <td>
+                  <input *ngIf="!billing_city_empty" class="form-control" name="text" placeholder="Billing City"
+                    [(ngModel)]="item.billing_city" required />
+                  <input *ngIf="billing_city_empty" class="form-control" name="text"
+                    placeholder="Please enter the Billing City" />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Billing State</label>
+                </td>
+                <td>
+                  <input *ngIf="!billing_state_empty" class="form-control" name="text" placeholder="Billing state"
+                    [(ngModel)]="item.billing_state" required />
+                  <input *ngIf="billing_state_empty" class="form-control" name="text"
+                    placeholder="Please enter Billing state" />
+                </td>
+              </tr>
+
+              <tr>
+                <td valign="top">
+                  <label>Billing Country</label>
+                </td>
+                <td>
+                  <input class="form-control" placeholder="Billing Country" [matAutocomplete]="auto"
+                    (keyup)="getCountryOnSearch($event)" [(ngModel)]="item.billing_country" required />
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getCountryName($event.option.value)">
+                    <mat-option *ngFor="let item of countryData" [value]="item.name">
+                      <span>{{ item.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </td>
+             
+              </tr>
+
+              <tr *ngIf="showpoxbox">
+                <td>
+                  <label>PO Box (For UAE)</label>
+                </td>
+                <td>
+                  <input class="form-control" name="text" placeholder="PO Box (For UAE)" [(ngModel)]="item.po_box" />
+               
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="!showresult">
+        <p>It look like you have not selected plan</p>
+      </div>
+      <div class="col-md-6 bdrl">
+        <div *ngIf="showresult" class="choose-plan-sectn">
+          <h6>The amount mentioned here in USD -(United States Dollars)</h6>
+          <table class="table choose_plan_subscription">
+            <thead></thead>
+            <tbody *ngFor="let item of planselectarray">
+              <tr>
+                <td>
+                  <label>Included Plan: </label>
+                </td>
+                <td>
+                  {{ item.name }}
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Included storage</label>
+                </td>
+                <td>
+                  {{ item.storage == 1000 ?"Unlimited Storage": item.storage + "GB" }}
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Included users</label>
+                </td>
+                <td>
+                  {{ item.users }}
+                </td>
+              </tr>
+              <tr></tr>
+              <tr>
+                <td>
+                  <label>Billing frequency</label>
+                </td>
+                <td *ngIf="item.name == 'Free Trial'">30 days</td>
+                <td *ngIf="item.name == 'Max'">365 days</td>
+                <td *ngIf="item.name == 'Silver'">30 days</td>
+                <td *ngIf="item.name == 'Pro'">90 days</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr />
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2">
+                  <strong>Plan Add ons (Billed only when usage is triggered beyond
+                    inclusions)</strong>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>Additional Storage : </label>
+                </td>
+                <td *ngIf="item.name != 'Free Trial'">$100 per GB per billing month</td>
+                <td *ngIf="item.name == 'Free Trial'">Upgrade will be required to a paid plan</td>
+              </tr>
+              <tr>
+                <td>
+                  <label>Data Archive (DVD/Pen Drive) : </label>
+                </td>
+                <td>$200 per copy plus shipping charges</td>
+              </tr>
+
+              <tr>
+                <td colspan="2">
+                  <hr />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Effective price</label>
+                </td>
+                <td *ngIf="!(item.cost ===1200 || item.cost===3600)">
+                  <!-- ${{ billing_details.Effective_price }} -->
+                  ${{ item.cost }}
+                  per month
+                </td>
+                <td *ngIf="item.cost==1200">
+                  <!-- ${{ billing_details.Effective_price }} -->
+                  ${{ item.cost/3 }}
+                  per month
+                </td>
+                <td *ngIf="item.cost==3600">
+                  <!-- ${{ billing_details.Effective_price }} -->
+                  ${{ item.cost/12 }}
+                  per month
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>Total fee</label>
+                </td>
+                <!-- <td>${{ billing_details.Total_fee }}</td> -->
+                <td >
+                  <!-- ${{ billing_details.Effective_price }} -->
+                  ${{ item.cost }}
+                 
+                </td>
+              
+              </tr>
+
+         
+
+              <tr>
+                <td>
+                  <label><strong>Grand Total</strong></label>
+                </td>
+                <td >
+                  <!-- ${{ billing_details.Effective_price }} -->
+                  <strong> ${{ grand_total}}</strong>
+               
+                </td>
+           
+             
+                <td>
+                  
+                
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="text-primary font-weight-bold" *ngIf="paymentSuccessfull == 'show'">Payment has been Successful</p>
+          <p class="text-danger font-weight-bold" *ngIf="paymentSuccessfull == 'hide'">Payment Failed. Please try again.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-12" *ngIf="showresult">
+        <div class="next text-center mt-5 bdfoot">
+          <p *ngIf="!isPaymentRetry">
+            <input type="checkbox" (change)="clickAgree($event)" />&nbsp; I
+            agree to <a href="https://docully.com/#/terms-of-use?tab=terms-of-use&id=5" class="link-yellow">Billing
+              terms</a>
+          </p>
+          <p *ngIf="planselectarray && planselectarray[0].name != 'Free Trial'">
+            You will receive the invoice within 24 hours on your
+            registered email id. There will be no refund for any reason. You
+            will be redirected to the third party payment gateway provider to
+            process the payment.
+            <a href="https://docully.com/#/terms-of-use?tab=terms-of-use&id=5" class="link-yellow">Billing terms</a>
+            can be found here.
+          </p>
+          <div class="mat-button-wrapper" *ngFor="let item of planselectarray">
+            <button class="createPW-submit mat-raised-button mr-2" mat-raised-button *ngIf="!isPaymentRetry" (click)="goBack()">
+              Back
+            </button>
+            <button class="createPW-submit mat-raised-button" *ngIf="item.name != 'Free Trial' && !isPaymentRetry" [disabled]="!checked ||
+                item.dataroom_name == '' ||
+                item.billing_address == '' ||
+                item.billing_city == '' ||
+                item.billing_state == '' ||
+                item.billing_country == ''" type="submit" (click)="onSubmit()" mat-raised-button>
+              Proceed to Pay
+            </button>
+            <button class="createPW-submit mat-raised-button" *ngIf="item.name != 'Free Trial' && isPaymentRetry" type="submit" (click)="onSubmit()"
+              mat-raised-button>
+              Retry Payment
+            </button>
+            <button class="createPW-submit mat-raised-button" *ngIf="item.name == 'Free Trial'" [disabled]="freeTrialClicked == true || (!checked &&
+                item.dataroom_name == null &&
+                item.billing_address == null &&
+                item.billing_city == null &&
+                item.billing_state == null &&
+                item.billing_country == null)" type="submit" (click)="onSubmit()" mat-raised-button>
+              Start Free Trial
+            </button>
+          </div>
+          <div class="mt-2" *ngIf="planselectarray && planselectarray[0].name != 'Free Trial'">
+            Please note - You will be charged in equivalent AED (UAE - Dirhams) on the payment gateway.
+          </div>
+          <div class="mat-button-focus-overlay"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

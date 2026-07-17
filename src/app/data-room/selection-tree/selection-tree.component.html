@@ -1,0 +1,28 @@
+<ng-scrollbar
+  class="scroll-section h-170 docu-tree"
+  *ngIf="nodes.length > 0"
+  style="height: 170px"
+>
+  <tree-root [nodes]="nodes" [options]="options">
+    <ng-template #treeNodeTemplate let-node let-index="index">
+      <button>
+        <span (click)="goToNextFolder(node.id)" style="font-weight: 300;">
+          <span> {{ node.data.number!=0 ? node.data.number + '.': "" }} </span>
+
+          <span></span>{{ node.data.name }}</span>
+      </button>
+    </ng-template>
+  </tree-root>
+</ng-scrollbar>
+
+<ng-scrollbar
+  class="scroll-section h-170 docu-tree"
+  *ngIf="nodes.length === 0"
+  style="height: 170px"
+>
+  <mat-progress-spinner
+    class="progress-align-center"
+    [mode]="'indeterminate'"
+    style="margin: 0 auto !important"
+  ></mat-progress-spinner>
+</ng-scrollbar>

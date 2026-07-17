@@ -1,0 +1,155 @@
+<app-header></app-header>
+
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+
+      <div class="col-md-8 billing-plan">
+        <div class="choose-plan">
+          <h5 class="text-center">Choose a Billing Term</h5>
+          <div class="tble-bill">
+            <table class="table choose_plan_subscription">
+              <thead>
+                <tr></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let plan of getplans;">
+                  <td><button>Click</button></td>
+                  <td>Plan Name - {{ plan.name }}</td>
+                  <td>Term - {{ plan.term }}</td>
+                  <td>Storage - {{ plan.storage }}</td>
+                  <td>Users - {{ plan.users }}</td>
+                  <td>Cost - {{ plan.cost }}</td>
+                  <tr>
+<!--                 <tr>
+                  <td>
+                    <label>Selected Plan</label>
+                  </td>
+                  <td>Standard</td>
+                </tr>
+
+                <tr>
+                  <td style="width: 150px">
+                    <label>Edition</label>
+                  </td>
+                  <td> -->
+                    <!-- {{ plans.edition }}
+                  </td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+
+          <h5 class="text-center">Select Billing Term</h5>
+          <div class="row text-center">
+            <!-- <div class="col-md-4">
+              <div class="bill-term">
+                <button
+                  class="starter1"
+                  mat-raised-button
+                  (click)="onClickannually(plans)"
+                >
+                  ${{ plans.twelve_month_price }} / Month
+                </button>
+                <p class="pt-2">Billed Annually</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="bill-term1">
+                <button
+                  class="starter1"
+                  mat-raised-button
+                  (click)="onClickquarterly(plans)"
+                >
+                  ${{ plans.three_month_price }} / Month
+                </button>
+                <p class="pt-2">Billed Quarterly</p>
+              </div>
+            </div> -->
+            <div class="col-md-4 centerAlign">
+              <div class="bill-term3">
+                <button
+                  class="starter1"
+                  mat-raised-button
+                  (click)="onClickmonthly(plans)"
+                >
+                  $ / Month
+                </button>
+                <p class="pt-2">Billed Monthly</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="total-usd text-center">
+            <label> Total: USD </label>
+          </div>
+
+          <div class="next text-center">
+            <div class="buttns pt-4">
+              <button
+                class="createPW-submit mat-raised-button"
+                (click)="goBack()"
+                mat-raised-button
+              >
+                <span class="mat-button-wrapper">Back</span></button
+              ><button
+                class="createPW-submit mat-raised-button"
+                (click)="onSubmit()"
+                mat-raised-button
+              >
+                <span class="mat-button-wrapper">Continue</span>
+              </button>
+            </div>
+            <div class="mat-button-focus-overlay"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+</section>
+<div
+  class="modal md-lf-rt right fade"
+  id="userProfileCdr"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" *ngIf="user">
+        <div class="media profile-pic-dt">
+          <img class="d-flex mr-3 rounded-circle" [src]="avatarUrl" />
+        </div>
+        <div class="media-body">
+          <h5 class="mt-0">{{ user.first_name }} {{ user.last_name }}</h5>
+          {{ user.email }}
+        </div>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <i class="material-icons">&#xE5CD;</i>
+        </button>
+      </div>
+      <!-- <div class="upgrade-account">
+        <span>{{upgrade_msg}}</span>
+    </div> -->
+      <div class="modal-body p-0">
+        <ul class="page-setting-nav">
+          <li (click)="signout(user.id)">
+            <a href=""><i class="fa fa-sign-out"></i> Sign Out</a>
+          </li>
+        </ul>
+        <!-- <div class="used-space-img text-center">
+            <img src="assets/images/total-size-used.jpg"></div> -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<!--rt aside component start-->
+<div class="cdr-rt-sidebar" *ngIf="user">
+
+
+  <mat-card *ngIf="user?.member?.is_dataroom_admin ||user?.member?.is_la_user" class="rounded" style="margin-bottom: 20px;padding: 10px;">
+    <div class="Aligncentre"  style="padding: 0px;">
+      <mat-progress-spinner class="progress-align-center" [mode]="'indeterminate'" *ngIf="show_spinner">
+      </mat-progress-spinner>
+      </div>
+      <ng-scrollbar  visibility="hover" track="horizontal" style="overflow-x: auto;height:150px;" *ngIf="data && !show_spinner">
+        <div style="min-width: 400px;height: 300px;" >
+          <table style="text-align:center;width: 100% !important;height:150px;">
+            <tr>
+              <td></td>
+              <th style="color: #737373;font-weight: 500;">Count </th>
+              <th style="color: #737373;font-weight: 500;">Storage (MB)</th>
+              <th style="color: #737373;font-weight: 500;">Pages </th>
+            </tr>
+            <tr>
+              <td  style="text-align: left !important;">Documents</td>
+              <td> {{data?.docx_count}} </td>
+              <td> {{data?.docx_storage}} </td>
+              <td> {{data?.docx_page_count}} </td>
+            </tr>
+            <tr>
+              <td style="text-align: left !important;">Media / Other Files</td>
+              <td> {{data?.others_count}} </td>
+              <td> {{data?.others_storage}} </td>
+              <td> {{data?.others_page_count}} </td>
+            </tr>
+            <tr>
+              <td style="text-align: left !important;">Total</td>
+              <td> {{data?.docx_count + data?.others_count}} </td>
+              <td> {{data?.docx_storage + data?.others_storage}} </td>
+              <td> {{data?.docx_page_count + data?.others_page_count}} </td>
+            </tr>
+          </table>
+        </div>
+      </ng-scrollbar>
+  </mat-card>
+
+
+
+
+  <mat-card class="rounded mb-10 p-0">
+    <div class="cdr-tree all-docu-sty" style="margin: 0px !important;">
+      <h6><a>All Documents</a></h6>
+
+      <app-selection-tree></app-selection-tree>
+
+    </div>
+  </mat-card>
+
+  <mat-card class="rounded mb-10 p-0">
+    <ul class="al-doc-opt">
+      <li>
+        <a routerLink="/recent-doc" routerLinkActive="active"><i class="material-icons">note</i> Recent Documents</a>
+      </li>
+      <li>
+        <a routerLink="/upload-status-documents" routerLinkActive="active"><i class="material-icons">cloud_upload</i>
+          Upload Status</a>
+      </li>
+      <li>
+        <a routerLink="/download-status-documents" routerLinkActive="active"><i
+            class="material-icons">cloud_download</i>
+          My Downloads</a>
+      </li>
+      <li>
+        <div matTooltip="Favorites is disabled" [matTooltipDisabled]="features?.favourites">
+        <a routerLink="/favourites" [class.disabled]="!features?.favourites ? true : null" routerLinkActive="active"><i
+            class="material-icons">star</i>
+          Favourites</a>
+          </div>
+      </li>
+      <li>
+        <a routerLink="/not-view-documents" routerLinkActive="active"><i class="material-icons">visibility</i> Not
+          Viewed / Viewed</a>
+      </li>
+      <li>
+        <a routerLink="/not-download-documents" routerLinkActive="active"><i class="material-icons">move_to_inbox</i>
+          Not Downloaded /
+          Downloaded</a>
+      </li>
+      <li>
+        <a routerLink="/indexes-report" routerLinkActive="active"><i class="material-icons"> format_list_numbered</i>
+          Index Report</a>
+      </li>
+      <li>
+        <a routerLink="/trash-doc" *ngIf="user.member.is_dataroom_admin || user.member.is_la_user"
+          routerLinkActive="active"><i class="material-icons"> delete_outline</i> Trash</a>
+      </li>
+    </ul>
+  </mat-card>
+</div>
+<!--rt aside component end-->

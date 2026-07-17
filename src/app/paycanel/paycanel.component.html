@@ -1,0 +1,27 @@
+<app-header></app-header>
+<section class="h-100vh d-flex flex-column bg-transparent" id="loginFormBx">
+  <div class="container my-auto">
+    <div class="row justify-content-md-center align-items-center h-1pr">
+      <div class="col-md-9 col-lg-7 col-xl-5 mx-auto">
+        <div class="row compny-info">
+          <div class="col-md-12 text-center">
+            <a [routerLink]="['/']" style="margin-bottom: 20px">
+              <img alt="" class="m-logo" src="assets/img/docully-logo.png" />
+            </a>
+          </div>
+        </div>
+        <div class="subscription-popup">
+          <p>Your payment has been cancelled</p>
+          <p>
+            <a [routerLink]="['/dashboard']">Back</a>
+          </p>
+<!--           <p>
+            To manage your subscription, please go to My Subscriptions section
+            on your dashboard. If you have any queries, please feel free to
+            write to support@docullyvdr.com
+          </p> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

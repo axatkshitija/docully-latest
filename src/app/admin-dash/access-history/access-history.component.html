@@ -1,0 +1,33 @@
+                <mat-card class="rounded mb-30 p-0">
+                    <mat-toolbar class="cdr-toolbar border-0">
+                        <span>Login History</span>
+                        <span class="spacer"></span>
+                        <!--<button mat-button class="minimise-btn ico-bnt"><i class="material-icons">&#xE15B;</i></button>-->
+                        <button mat-button class="minimise-btn ico-bnt"><i class="fa fa-refresh"></i></button>
+                    </mat-toolbar>
+                    <div class="cdr-table ">
+
+                        <ng-scrollbar visibility="hover" class="scroll-section" class="350px">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Logged in</th>
+                                        <th class="text-right">IP Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let access of access_history;">
+                                        <td>
+                                            <div class="action-items">
+<!--                                                 <strong class="apply-act">Logged in</strong>
+ -->                                                <span class="act-time">{{access.logged_in_time  }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-right"><strong class="dr-ip-add ">{{access.logged_in_ip}}</strong></td>
+                                    </tr>
+                                 
+                                </tbody>
+                            </table>
+                       </ng-scrollbar>
+                    </div>
+                </mat-card>

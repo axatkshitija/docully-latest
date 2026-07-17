@@ -1,0 +1,126 @@
+<app-header></app-header>
+<section id="cdr-body">
+  <div class="container-fluid">
+    <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="15px" fxLayout.xs="column" fxLayout.sm="column"
+      fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+      <app-data-room-left fxFlex="15" fxFlex.xs="100" fxFlexOrder.xs="1"
+        (onInitEvent)="receiveAutoMsgHandler($event)"></app-data-room-left>
+
+      <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2">
+        <mat-card class="mat-card p0">
+          <mat-toolbar>Reports</mat-toolbar>
+          <div class="page-hdname">
+            <div class="title-pg-act">
+              <i class="material-icons cnr-icon">&#xE7F2;</i>
+              <span class="t-text">Users Status Report</span>
+            </div>
+            <button class="icon-btn" (click)="downloadStatus()">
+              <i class="material-icons">&#xE879;</i>
+              <span class="t-text">Export</span>
+            </button>
+          </div>
+
+          <div class="datatime-status actus-top">
+            <div class="topbar-af">
+              <div class="status-us">
+                <div class="slt-pre">
+                  <div class="date-select">
+                    <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="Frompicker" placeholder="From Date"
+                      [(ngModel)]="from_date" name="from_date" (dateChange)="changeDateWise($event.value, to_date)" />
+                    <mat-datepicker-toggle matSuffix [for]="Frompicker"></mat-datepicker-toggle>
+                    <mat-datepicker #Frompicker></mat-datepicker>
+                  </div>
+                  <div class="date-select">
+                    <input matInput [max]="maxDate" [min]="minDate" [matDatepicker]="Topicker" placeholder="To Date"
+                      [(ngModel)]="to_date" name="to_date" (dateChange)="changeDateWise(from_date, $event.value)" />
+                    <mat-datepicker-toggle matSuffix [for]="Topicker"></mat-datepicker-toggle>
+                    <mat-datepicker #Topicker></mat-datepicker>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="datatime-status actus-top" *ngIf="datalist!=undefined">
+            <div class="topbar-af">
+              <div class="status-us">
+                <div class="st-list">
+                  <span>Total Users</span>
+                  <strong>{{ datalist.total_users }}</strong>
+                </div>
+
+                <div class="st-list">
+                  <span>Active Users</span>
+                  <strong class="org-clr">{{ datalist.active_users }}</strong>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-form-label">Select Group</label>
+                <div class="col-7">
+                  <select class="form-control" [(ngModel)]="group" name="group"
+                    (change)="groupType($event.target.value)">
+                    <option value="0">----All----</option>
+                    <option [value]="group.id" *ngFor="let group of groups">
+                      {{ group.group_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-content minHeight425">
+            <div class="users-lists-row" *ngIf="data!=undefined">
+              <div class="usli-3" style="min-width: auto" *ngFor="let item of data; let i = index">
+                <div class="user-items-dt active">
+                  <h4 class="username-txt">
+                    {{ item.member__first_name }} {{ item.member__last_name }}
+                  </h4>
+                  <span>{{ item.member__email }}</span><br *ngIf="item.memberactivestatus" />
+                  <span class="datatime-txt" *ngIf="item.memberactivestatus">{{
+                    item.date_joined | date: 'dd-MM-yyyy, HH:mm a' : usertimezone['time_zone__offset']
+                    }}</span><br />
+                  <span>Invited By: {{ item.member_added_by__first_name}}
+                    {{ item.member_added_by__last_name }}</span><br />
+                  <span>Status:
+                    <span *ngIf="item.memberactivestatus" style="color: green">Active</span><span style="color: red"
+                      *ngIf="!item.memberactivestatus">Inactive</span></span><br />
+                  <span *ngIf="item.last_login">Last Login: {{ item.last_login | date: 'dd-MM-yyyy, HH:mm a' :
+                    usertimezone['time_zone__offset']}}{{'(' +usertimezone['time_zone__abbreviation'] +')'}}</span>
+                  <div class="usli-footer" *ngIf="item.is_dataroom_admin">
+                    <button class="dlbtn-flot">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                    <button class="dr-chip active" style="cursor: auto">
+                      Admin
+                    </button>
+                  </div>
+                  <div class="usli-footer" *ngIf="item.is_la_user">
+                    <button class="dlbtn-flot" (click)="removeSelectedElement(item, i)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                    <button class="dr-chip notactive">
+                      Limited Access User
+                    </button>
+                  </div>
+                  <div class="usli-footer" *ngIf="item.is_end_user">
+                    <button class="dlbtn-flot" (click)="removeSelectedElement(item, i)">
+                      <i class="fa fa-trash-o"></i>
+                    </button>
+                    <button class="dr-chip notactive" style="cursor: auto">
+                      End User
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+      <div fxFlex="23" fxFlex.xs="100" fxFlexOrder.xs="3">
+        <app-report-tab></app-report-tab>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

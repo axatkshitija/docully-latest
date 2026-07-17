@@ -1,0 +1,36 @@
+<section class="cdr-body">
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch" fxLayoutAlign.sm="center stretch">
+        <div fxFlex="64" fxFlex.xs="100" fxFlexOrder.xs="2" style="margin:0 auto">
+            <div class="pdfvie-head">
+                <h3>Please Read Carefully</h3>
+                <span>You must accept these terms to enter the data room</span>
+            </div>
+            <div class="pdfviewmain">
+                <div class="pdftoolbar">
+                    <button mat-mini-fab class="mat-elevation-z0"><i class="material-icons">keyboard_arrow_left</i></button>
+                    <mat-form-field class="example-full-width">
+                        <input matInput placeholder="Page 1 of 2" value="1">
+                    </mat-form-field>
+                    <button mat-mini-fab class="mat-elevation-z0"><i class="material-icons">keyboard_arrow_right</i></button>
+                </div>
+                <ng-scrollbar visibility="hover" class="scroll-section h-500" style="height: 500px;">
+                    <div class="pdfviewcon">
+                        <pdf-viewer [src]="'https://vadimdez.github.io/ng2-pdf-viewer/pdf-test.pdf'" [render-text]="true" style="display: block;"></pdf-viewer>
+                    </div>
+                </ng-scrollbar>
+            </div>
+            <div class="pdfvie-foot">
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <span><mat-checkbox>I Agree!</mat-checkbox></span>
+                    <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button">Submit</button>
+                    <span>
+                      <button class="icon-btn">
+                        <i class="fa fa-download"></i>
+                        <span class="t-text">Download</span>
+                    </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

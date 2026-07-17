@@ -1,0 +1,121 @@
+<!--lf aside component start-->
+
+<div *ngIf="user" class="row justify-content-center" style="margin-bottom: 10px;">
+    <!-- <div class="col-md-1">
+      <mat-card class="user-id text-center rounded mb-10">
+        <div class="user-pic" *ngIf="avatarUrl!=null">
+          <img [src]="avatarUrl" class="img-fluid d-flex mr-3 rounded-circle"
+            onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'" style="
+              height: 100px;
+              width: 100px;
+              /* align-items: center; */
+              display: table;
+              margin-left: auto;
+              margin-right: auto !important;
+            " />
+      
+        </div>
+        <a class="user-title" *ngIf="user" (click)="router.navigate(['user-personal-info'])">
+          {{ user.first_name }}
+        </a>
+        <script src="../admin-left-side-bar/script.js"></script>
+      </mat-card>
+    </div> -->
+    <div class="col-md-1" *ngIf="avatarUrl!=null" style="padding-left: 40px !important;">
+      <img [src]="avatarUrl" class="img-fluid d-flex rounded-circle"
+        onerror="this.src='https://services.docullyvdr.com/assets/images/Profile.png'" style="
+          height: 60px;
+          width: 60px;
+          /* align-items: center; */
+          display: table;
+        " />
+  
+    </div>
+    <div class="col-md-2">
+      <div class="row">
+        <div class="col-md-6">
+          <mat-card class="rounded notofi-item msg mat-card mb-10 p-0">
+            <a routerLink="/new-message">
+              <button href="" class="notifi-data" mat-button
+                style="color: white !important;height: 50px !important; letter-spacing: -0.5px !important;">
+                <i class="fa fa-envelope"></i>
+                <span class="rounded-circle ntf-no">{{ msg_count }}</span>
+              </button>
+            </a>
+          </mat-card>
+        </div>
+        <div class="col-md-6">
+          <mat-card class="rounded notofi-item mb-10 p-0" style="height: 50px !important;background: #cbb26a !important;">
+            <a routerLink="/new-notification">
+              <button class="notifi-data" mat-button
+                style="color: white !important;height: 50px !important;letter-spacing: -0.5px !important;">
+                <i class="fa fa-bell-o"></i>
+                <span class="rounded-circle ntf-no" style="background: #cbb26a;">{{ unreadCount }}</span>
+              </button>
+            </a>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  
+    <div class="add-new-contact" class="col-md-1">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/dashboard">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-id-card" aria-hidden="true"></i>
+            <!-- <span>My Data Rooms</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact" class="col-md-1">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/my-contacts">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-address-book"></i>
+            <!-- <span>My Contacts</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact col-md-1"
+      *ngIf="(user?.is_superadmin || user?.is_team || user?.is_team_member) || buttonVisibility?.Channels">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/channel">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-users"></i>
+            <!-- <span>Channels</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact col-md-1" *ngIf="user?.is_superadmin">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/online-channel">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-people-group"></i>
+            <!-- <span>Online Channels</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact col-md-1" *ngIf="user?.is_subscriber && buttonVisibility?.subscription">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <a routerLink="/subscription">
+          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <i class="fa fa-sign-in"></i>
+            <!-- <span>Subscription</span> -->
+          </button>
+        </a>
+      </mat-card>
+    </div>
+    <div class="add-new-contact col-md-1">
+      <mat-card class="rounded mb-10 us-item p-0">
+        <button mat-button class="us-btn" (click)="location()"
+          style="height: 50px !important;  padding: 0 12px 0 0px !important;">
+          <i class="fa fa-circle-question"></i>
+          <!-- Help Desk -->
+        </button>
+      </mat-card>
+    </div>
+  </div>

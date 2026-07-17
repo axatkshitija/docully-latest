@@ -1,0 +1,163 @@
+<!-- Edit dataroom logo and name-->
+<div class="modal fade" id="editDrLogoName" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header cdr-modal cdr-h-c">
+                <h5 class="modal-title">Edit Data Room Name and Logo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="material-icons">&#xE5CD;</i>
+                </button>
+            </div>
+            <div class="modal-body cr-n-dr edrnl">
+                <form>
+                    <div class="form-group">
+                        <label for="">Data Room Name</label>
+                        <input type="text" class="form-control" placeholder="Google.com">
+                    </div>
+                </form>
+                <div class="drLogo">
+                    <img src="assets/images/dataroom-logos.png" alt="">
+                </div>
+                <div class="slide-toggle-block mt-4">
+                    <button mat-raised-button color="primary" class="blue-text-btn is-icon"><i class="fa fa-edit"
+                            aria-hidden="true"></i> Change Logo</button>
+                    <button mat-raised-button color="primary" class="red-text-btn is-icon m-2"><i class="fa fa-trash-o"
+                            aria-hidden="true"></i> Remove</button>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button mat-raised-button color="primary" class="grey-btn bdr-rad3">Cancel</button>
+                <button mat-raised-button color="primary" class="blue-btn bdr-rad3">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- send new msg-->
+<div class="modal fade" id="newmsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header cdr-modal cdr-h-c">
+                <h5 class="modal-title">New Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="material-icons">&#xE5CD;</i>
+                </button>
+            </div>
+            <div class="modal-body cr-n-dr">
+                <form>
+                    <div class="form-group mt-2">
+                        <label>To:</label>
+                        <input type="text" class="form-control" placeholder="Satish">
+                    </div>
+                    <div class="form-group mt-2">
+                        <label>Subject:</label>
+                        <input type="text" class="form-control" placeholder="">
+                    </div>
+                    <div class="form-group mt-2">
+                        <textarea class="form-control" id="exampleTextarea" rows="5"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button mat-raised-button color="primary" class="grey-btn bdr-rad3">Cancel</button>
+                <button mat-raised-button color="primary" class="blue-btn bdr-rad3">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- dataroom contact-->
+<div class="modal fade" id="DataRoomContact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header cdr-modal cdr-h-c">
+                <h5 class="modal-title">Manage Data Room Contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="material-icons">&#xE5CD;</i>
+                </button>
+            </div>
+            <div class="modal-body cr-n-dr">
+                <div class="dr-contact-list">
+                    <div class="contact-li-item">
+                        <div class="con-pic">
+                            <img src="assets/images/avatar-not.png">
+                        </div>
+                        <div class="con-details">
+                            <div class="con-title">Satish</div>
+                            <span class="dr-chip active">Admin</span>
+                            <mat-slide-toggle class="pull-right">Visible</mat-slide-toggle>
+                        </div>
+                    </div>
+
+                    <div class="contact-li-item">
+                        <div class="con-pic">
+                            <img src="assets/images/user-pic.jpg">
+                        </div>
+                        <div class="con-details">
+                            <div class="con-title">Amit Garg</div>
+                            <span class="dr-chip">Admin</span>
+                            <mat-slide-toggle class="pull-right">Visible</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="contact-li-item">
+                        <div class="con-pic">
+                            <img src="assets/images/user-pic.jpg">
+                        </div>
+                        <div class="con-details">
+                            <div class="con-title">Amit Garg</div>
+                            <span class="dr-chip">Admin</span>
+                            <mat-slide-toggle class="pull-right">Visible</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="contact-li-item">
+                        <div class="con-pic">
+                            <img src="assets/images/user-pic.jpg">
+                        </div>
+                        <div class="con-details">
+                            <div class="con-title">Amit Garg</div>
+                            <span class="dr-chip">Admin</span>
+                            <mat-slide-toggle class="pull-right">Visible</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="contact-li-item">
+                        <div class="con-pic">
+                            <img src="assets/images/user-pic.jpg">
+                        </div>
+                        <div class="con-details">
+                            <div class="con-title">Amit Garg</div>
+                            <span class="dr-chip">Admin</span>
+                            <mat-slide-toggle class="pull-right">Visible</mat-slide-toggle>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button mat-raised-button color="primary" class="grey-btn bdr-rad3">Cancel</button>
+                <button mat-raised-button color="primary" class="blue-btn bdr-rad3">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--content footer-->
+<footer class="content-footer">
+    <div class="footer">
+        <div class="copyright">
+            <span>&copy; 2026 DOCULLYVDR. All rights reserved.</span>
+            <span class="go-right">
+                <a href="mailto:support@docullyvdr.com">support@docullyvdr.com</a>
+            </span>
+        </div>
+    </div>
+</footer>
