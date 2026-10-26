@@ -6,20 +6,19 @@ import {
   Injectable,
   Output,
   EventEmitter,
-} from "@angular/core";
-import { DataRoomService } from "../../services/index";
-import { Router, ActivatedRoute } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
-import { DomSanitizer } from "@angular/platform-browser";
-import { BaseUrlClass, ApiListClass } from "../../common/index";
-import { interval, Subscription } from "rxjs";
-import { SpinnerVisibilityService } from "ng-http-loader";
-
+} from '@angular/core';
+import { DataRoomService } from '../../services/index';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BaseUrlClass, ApiListClass } from '../../common/index';
+import { interval, Subscription } from 'rxjs';
+import { SpinnerVisibilityService } from 'ng-http-loader';
 
 @Component({
-  selector: "app-data-room-left",
-  templateUrl: "./data-room-left.component.html",
-  styleUrls: ["./data-room-left.component.css"],
+  selector: 'app-data-room-left',
+  templateUrl: './data-room-left.component.html',
+  styleUrls: ['./data-room-left.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class DataRoomLeftComponent implements OnInit {
@@ -28,12 +27,12 @@ export class DataRoomLeftComponent implements OnInit {
   public now: Date = new Date();
 
   fileToUpload: File = null;
-  url: any = "";
+  url: any = '';
   msg: any;
   // @Input('dataroom_detail')
   dataroom_detail: any;
   currentDataroomId: any;
-  _base_url: string = "";
+  _base_url: string = '';
   constructor(
     private dataRoomService: DataRoomService,
     private spinner: SpinnerVisibilityService,
@@ -43,7 +42,7 @@ export class DataRoomLeftComponent implements OnInit {
     private router: Router,
   ) {
     this._base_url = this.baseUrlClass.baseUrl;
-    this.currentDataroomId = localStorage.getItem("currentDataroomId");
+    this.currentDataroomId = localStorage.getItem('currentDataroomId');
     console.log(this.currentDataroomId);
     this.getSingleDataroom(this.currentDataroomId);
     this.getFeatures(this.currentDataroomId);
@@ -55,8 +54,6 @@ export class DataRoomLeftComponent implements OnInit {
     this.getUserInfo();
     this.dataroomContact();
     this.getAllPrimaryContect();
-
-
   }
 
   user: any;
@@ -65,15 +62,17 @@ export class DataRoomLeftComponent implements OnInit {
       .getUserProfileDatroom(this.currentDataroomId)
       .subscribe((res) => {
         this.user = res;
-        this.onInitEvent.emit({ singledataroom: this.dataroom_detail, userdetail: res, memberpermission: this.perm });
-        console.log(this.user, this.currentDataroomId, "getUserInfo");
+        this.onInitEvent.emit({
+          singledataroom: this.dataroom_detail,
+          userdetail: res,
+          memberpermission: this.perm,
+        });
+        console.log(this.user, this.currentDataroomId, 'getUserInfo');
         // const source = interval(30000);
-        const text = "Your Text Here";
+        const text = 'Your Text Here';
         this.opensnack(text, this.currentDataroomId);
       });
   }
-
-
 
   notification_count: number = 0;
   msg_count: number = 0;
@@ -91,27 +90,33 @@ export class DataRoomLeftComponent implements OnInit {
           this.user.is_dataroom_admin == true
         ) {
           this.notification_count = res.dataroom_notification_count;
-          console.log("this.notification_count", this.notification_count);
+          console.log('this.notification_count', this.notification_count);
         } else {
           this.notification_count = res.user_datroom_count;
-          console.log("User this.notification_count", res);
+          console.log('User this.notification_count', res);
         }
       });
   }
-  upgrade_msg: any = "";
+  upgrade_msg: any = '';
   avatarUrl: string;
   dataroomname: any;
   auth: any;
   getSingleDataroom(dataroomId) {
     this.dataRoomService.getSingleDataroom(dataroomId).subscribe((res) => {
-      res['dataroom_name'] = res.dataroom_name.replace(/_/g, " ")
-      res['dataroom_nameFront'] = res.dataroom_nameFront.replace(/_/g, " ")
-      this.dataroomname = res.dataroom_nameFront.replace(/_/g, " ");
+      res['dataroom_name'] = res.dataroom_name.replace(/_/g, ' ');
+      res['dataroom_nameFront'] = res.dataroom_nameFront.replace(/_/g, ' ');
+      this.dataroomname = res.dataroom_nameFront.replace(/_/g, ' ');
       this.dataroom_detail = res;
-      localStorage.setItem("get_dataroomname_popup", this.dataroom_detail.dataroom_nameFront)
+      localStorage.setItem(
+        'get_dataroomname_popup',
+        this.dataroom_detail.dataroom_nameFront,
+      );
 
-      console.log("This is popup dataroom name " + localStorage.getItem("get_dataroomname_popup"))
-      console.log(this.dataroom_detail, "datroom_name");
+      console.log(
+        'This is popup dataroom name ' +
+          localStorage.getItem('get_dataroomname_popup'),
+      );
+      console.log(this.dataroom_detail, 'datroom_name');
       // console.log(this.dataroomname, '############');
       this.dataroom_detail.dataroom_logo = res.dataroom_logo;
       // this.auth =
@@ -130,15 +135,13 @@ export class DataRoomLeftComponent implements OnInit {
         if (diff_date <= this.dataroom_detail.trial_days) {
           let rem_date = 16 - diff_date;
           this.upgrade_msg =
-            "Your dataroom trial expires in " + rem_date + " days";
+            'Your dataroom trial expires in ' + rem_date + ' days';
         } else {
-          this.upgrade_msg = "Your dataroom is on extended trial";
+          this.upgrade_msg = 'Your dataroom is on extended trial';
         }
       }
     });
   }
-
-
 
   perm: any;
   getMembersPermission(dataroomId) {
@@ -148,40 +151,38 @@ export class DataRoomLeftComponent implements OnInit {
     });
   }
 
-
   features: any;
   getFeatures(dataroomId) {
     this.dataRoomService.get_dataroom_features(dataroomId).subscribe((res) => {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>features",res)
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>features', res);
       if (res[0] === undefined) {
-
         this.features = {
-          auto_expire:true,
-          bulk_users_upload:true,
-          country_perm:true,
-          custom_external_link:true,
-          custom_logo:true,
-          custom_watermarking:true,
-          desktop_unlimit_upload:true,
-          doculink_perm:true,
-          dropbox_upload:true,
-          email_to_dataroom_upload:true,
-          favourites:true,
-          google_drive_upload:true,
-          id:2,
-          la_admin_access:true,
-          module_perm:true,
-          one_drive_upload:true,
-          proj_management:true,
-          proj_overview:true,
-          proj_updates:true,
-          proj_video_intro:true,
-          qa_submit:true,
-          qa_with_cat:true,
-          redaction:true,
-          sharepoint_upload:true,
-          two_factor_auth:true,
-          voting_perm:true,
+          auto_expire: true,
+          bulk_users_upload: true,
+          country_perm: true,
+          custom_external_link: true,
+          custom_logo: true,
+          custom_watermarking: true,
+          desktop_unlimit_upload: true,
+          doculink_perm: true,
+          dropbox_upload: true,
+          email_to_dataroom_upload: true,
+          favourites: true,
+          google_drive_upload: true,
+          id: 2,
+          la_admin_access: true,
+          module_perm: true,
+          one_drive_upload: true,
+          proj_management: true,
+          proj_overview: true,
+          proj_updates: true,
+          proj_video_intro: true,
+          qa_submit: true,
+          qa_with_cat: true,
+          redaction: true,
+          sharepoint_upload: true,
+          two_factor_auth: true,
+          voting_perm: true,
           auto_logout: true,
           co_current_logins: true,
           voting_report_perm: true,
@@ -193,11 +194,11 @@ export class DataRoomLeftComponent implements OnInit {
           viewer_support: true,
           fence_viewer: true,
           print_screen_perm: true,
-        }
+        };
       } else {
         this.features = res[0];
       }
-      console.log("features>>", this.features)
+      console.log('features>>', this.features);
     });
   }
 
@@ -208,12 +209,16 @@ export class DataRoomLeftComponent implements OnInit {
     // console.log(dataroom_detail.dataroom_name, "these are the file names",dataroom_detail.dataroom_name);
     this.dynamic_name = this.ChangeDataroomName();
     // console.log("dynamic_name",this.dynamic_name);
-    this.dataroom_detail.dataroom_nameFront = this.dynamic_name.replace(/_/g, " ");
-    console.log("check name", this.dataroom_detail.dataroom_nameFront)
+    this.dataroom_detail.dataroom_nameFront = this.dynamic_name.replace(
+      /_/g,
+      ' ',
+    );
+    console.log('check name', this.dataroom_detail.dataroom_nameFront);
     if (dataroom_detail.dataroom_nameFront !== undefined) {
-      this.dataroom_detail.dataroom_name = dataroom_detail.dataroom_nameFront.replace(/_/g, " ");
+      this.dataroom_detail.dataroom_name =
+        dataroom_detail.dataroom_nameFront.replace(/_/g, ' ');
     }
-    console.log(" check dataroom name", this.dataroom_detail.dataroom_name);
+    console.log(' check dataroom name', this.dataroom_detail.dataroom_name);
     // console.log("dynamic onchange -->",this.dynamic_name.replace(/_/,""));
     // console.log("this main name",this.dataroom_detail.dataroom_name);
     if (this.is_file_attached) {
@@ -223,10 +228,12 @@ export class DataRoomLeftComponent implements OnInit {
     this.dataRoomService
       .updateSingleDataroomInformation(dataroom_detail)
       .subscribe((res) => {
-        console.log(res, "this update response");
+        console.log(res, 'this update response');
 
-        this.msg = "Dataroom information successfully updated !";
-        this.showSuccess();
+        if (!this.is_file_attached) {
+          this.msg = 'Dataroom information successfully updated !';
+          this.showSuccess();
+        }
         this.getSingleDataroom(this.currentDataroomId);
 
         this.is_dataroom_updated = true;
@@ -234,12 +241,11 @@ export class DataRoomLeftComponent implements OnInit {
           this.is_dataroom_updated = false;
         }, 5000);
       });
-
   }
 
   updateDataroomStage() {
-    this.dataroom_detail.is_dataroom_on_live = !this.dataroom_detail
-      .is_dataroom_on_live;
+    this.dataroom_detail.is_dataroom_on_live =
+      !this.dataroom_detail.is_dataroom_on_live;
     // console.log(this.dataroom_detail.is_dataroom_on_live);
     // console.log("Dataroom status", is_dataroom_on_live.value);
     // console.log("Dtaroom Name is", this.dataroom_detail);
@@ -247,9 +253,15 @@ export class DataRoomLeftComponent implements OnInit {
       .updateSingleDataroomInformation(this.dataroom_detail)
       .subscribe((res) => {
         if (this.dataroom_detail.is_dataroom_on_live) {
-          this.msg = "Data Room Stage updated successfully to Live.";
+          this.msg = 'Data Room Stage updated successfully to Live.';
           this.dataRoomService
-            .addEndUsers(this.currentDataroomId, undefined, "", "Holdtolive", "")
+            .addEndUsers(
+              this.currentDataroomId,
+              undefined,
+              '',
+              'Holdtolive',
+              '',
+            )
             .subscribe(
               (res) => {
                 // console.log("end_user", res);
@@ -257,28 +269,28 @@ export class DataRoomLeftComponent implements OnInit {
               (error) => {
                 this.msg = error._body;
                 this.showError();
-              }
+              },
             );
           this.dataRoomService
             .add_dataroom_la_user_group(
               this.currentDataroomId,
               undefined,
-              "",
-              "Holdtolive",
-              ""
+              '',
+              'Holdtolive',
+              '',
             )
             .subscribe(
               (res) => {
                 // this.all_admin_list.splice(i, 1);
-                console.log("end_user", res);
+                console.log('end_user', res);
               },
               (error) => {
                 this.msg = error._body;
                 this.showError();
-              }
+              },
             );
         } else {
-          this.msg = "Data Room Stage updated successfully to Hold.";
+          this.msg = 'Data Room Stage updated successfully to Hold.';
         }
 
         this.showSuccess();
@@ -296,7 +308,7 @@ export class DataRoomLeftComponent implements OnInit {
 
   ChangeDataroomName() {
     // console.log("check change name function",this.dataroom_detail.dataroom_nameFront);
-    return this.dataroom_detail.dataroom_nameFront
+    return this.dataroom_detail.dataroom_nameFront;
   }
 
   isUpdateCompanyLogo: boolean = false;
@@ -317,23 +329,24 @@ export class DataRoomLeftComponent implements OnInit {
   }
 
   uploadFileToActivity() {
-
-
     this.dataRoomService
       .postDataroomPic(this.fileToUpload, this.currentDataroomId)
       .subscribe(
         (res) => {
-          console.log(res)
+          console.log(res);
           // do something, if upload success
-          res.data['dataroom_name'] = res.data.dataroom_name.replace(/_/g, " ")
-          res.data['dataroom_nameFront'] = res.data.dataroom_nameFront.replace(/_/g, " ")
+          res.data['dataroom_name'] = res.data.dataroom_name.replace(/_/g, ' ');
+          res.data['dataroom_nameFront'] = res.data.dataroom_nameFront.replace(
+            /_/g,
+            ' ',
+          );
           this.dataroom_detail = res.data;
 
           this.dataroom_detail.dataroom_logo = res.data.dataroom_logo.replace(
-            "//media/",
-            "/media/"
+            '//media/',
+            '/media/',
           );
-          this.msg = "Data room logo updated successfully";
+          this.msg = 'Data room logo updated successfully';
           //  console.log(this.msg, "Dataroom pic");
           this.isUpdateCompanyLogo = false;
           this.is_file_attached = false;
@@ -344,15 +357,12 @@ export class DataRoomLeftComponent implements OnInit {
           this.msg = error.error.msg;
           console.log(error);
           this.showError();
-        }
+        },
       );
   }
 
-
-
-
   setDefaultDataroomLogo() {
-    console.log("set default dataroom logo");
+    console.log('set default dataroom logo');
     let dataroom: any = {
       id: 1,
     };
@@ -360,12 +370,12 @@ export class DataRoomLeftComponent implements OnInit {
       .setDefaultDataroomLogo(this.currentDataroomId, dataroom)
       .subscribe((res) => {
         this.dataroom_detail = res.data;
-        console.log(res.data, "Logg 12");
+        console.log(res.data, 'Logg 12');
         // change by harish 24feb
         // this.dataroom_detail.dataroom_logo = (this.baseUrlClass.baseUrl+res.data.dataroom_logo).replace("//media/","/media/")
         this.dataroom_detail.dataroom_logo = res.data.dataroom_logo.replace(
-          "//media/",
-          "/media/"
+          '//media/',
+          '/media/',
         );
 
         this.msg = res.msg;
@@ -375,8 +385,8 @@ export class DataRoomLeftComponent implements OnInit {
   }
 
   goToDataroomContactPage() {
-    console.log("go to dataroom contact page");
-    this.router.navigate(["manage-admin-group-permission/1/"]);
+    console.log('go to dataroom contact page');
+    this.router.navigate(['manage-admin-group-permission/1/']);
   }
 
   cancelStatus() {
@@ -393,38 +403,35 @@ export class DataRoomLeftComponent implements OnInit {
   }
 
   getUserBy(value) {
-    console.log(value)
+    console.log(value);
     this.update.user = value;
     this.update.email = value.email;
-    this.sendMessage()
+    this.sendMessage();
   }
 
   update: any = {
-    message: "",
-    subject: "",
+    message: '',
+    subject: '',
     user: {},
-    email: "",
+    email: '',
   };
 
   user_dict: any;
   sendMessage() {
-    console.log(this.update)
+    console.log(this.update);
     this.dataRoomService.sendMessageToUser(this.update).subscribe((res) => {
       this.msg = res.data;
       this.showSuccess();
       this.update = {
-        message: "",
-        subject: "",
+        message: '',
+        subject: '',
         user: {},
-        email: "",
+        email: '',
       };
     });
-
-
   }
   location() {
-    window.open(" https://docullyvdr.zohodesk.com/", "_blank");
-
+    window.open(' https://docullyvdr.zohodesk.com/', '_blank');
   }
 
   primary_users: any;
@@ -434,16 +441,15 @@ export class DataRoomLeftComponent implements OnInit {
       .getAllPrimaryUser(this.currentDataroomId)
       .subscribe((res) => {
         this.primary_users = res.data;
-        console.log(this.primary_users, "primary user");
+        console.log(this.primary_users, 'primary user');
       });
   }
 
   CallUs() {
-    window.open("tel:2240907266");
+    window.open('tel:2240907266');
   }
 
   EmailUs() {
-    window.open("mailto:support@docullyvdr.com");
+    window.open('mailto:support@docullyvdr.com');
   }
-
 }

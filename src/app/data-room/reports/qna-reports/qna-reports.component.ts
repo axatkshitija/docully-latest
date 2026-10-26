@@ -3,16 +3,15 @@ import { DataRoomService } from '../../../services/dataroom_service';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 import { TimezoneService } from '../../../services/timezone.service';
-import { SpinnerVisibilityService } from "ng-http-loader";
+import { SpinnerVisibilityService } from 'ng-http-loader';
 import { CookieService } from 'ngx-cookie-service';
 import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-qna-reports',
   templateUrl: './qna-reports.component.html',
-  styleUrls: ['./qna-reports.component.css']
+  styleUrls: ['./qna-reports.component.css'],
 })
 export class QnaReportsComponent implements OnInit {
-
   dataroomId: any;
   timezone: any;
   show_spinner: boolean = true;
@@ -32,45 +31,51 @@ export class QnaReportsComponent implements OnInit {
     private dataRoomService: DataRoomService,
     private spinner: SpinnerVisibilityService,
     private datePipe: DatePipe,
-    private timeZone: TimezoneService) {
+    private timeZone: TimezoneService,
+  ) {
     this.timezone = this.timeZone.userTimeZone;
-    this.dataroomId = (localStorage.getItem("currentDataroomId")).toString();
+    this.dataroomId = localStorage.getItem('currentDataroomId').toString();
     // this.getSingleDataroom(this.dataroomId);
   }
 
   ngOnInit() {
-    this.usertimezone = localStorage.getItem("currentUser")
-    this.usertimezone = JSON.parse(this.usertimezone)
+    this.usertimezone = localStorage.getItem('currentUser');
+    this.usertimezone = JSON.parse(this.usertimezone);
     this.usertimezone = this.usertimezone['user_time_zone'][0];
   }
 
-  
   convertToIST(utcDate) {
     // UTC date string, e.g., '2024-10-30T09:00:00Z'
-    return this.datePipe.transform(utcDate, 'yyyy-MM-dd hh:mm a',this.usertimezone['time_zone__offset']); // 'Asia/Kolkata' offset
+    return this.datePipe.transform(
+      utcDate,
+      'yyyy-MM-dd hh:mm a',
+      this.usertimezone['time_zone__offset'],
+    ); // 'Asia/Kolkata' offset
   }
 
   receiveAutoMsgHandler(p) {
     this.dataroom_detail = p.singledataroom;
-    console.log(p, "overview???????????????????????????????/")
+    console.log(p, 'overview???????????????????????????????/');
     const date_today = new Date();
     const today_ist = this.convertToIST(date_today);
-    const today = new Date(today_ist)
+    const today = new Date(today_ist);
 
     if (p.singledataroom == null || p.singledataroom == undefined) {
-      this.dataRoomService.getSingleDataroom(this.dataroomId).subscribe((res) => {
-        this.dataroom_detail = res;
-        this.minDate = new Date(res.created_date)
-        console.log("dataroom>>>>>>>>>>>>>>>", res)
-      })
+      this.dataRoomService
+        .getSingleDataroom(this.dataroomId)
+        .subscribe((res) => {
+          this.dataroom_detail = res;
+          this.minDate = new Date(res.created_date);
+          console.log('dataroom>>>>>>>>>>>>>>>', res);
+        });
     } else {
-      this.minDate = new Date(this.dataroom_detail.created_date)
+      this.minDate = new Date(this.dataroom_detail.created_date);
     }
     this.getDateWise();
     this.to_date = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
     this.from_date = new Date(today);
     this.from_date.setDate(this.from_date.getDate() - 7);
@@ -78,20 +83,18 @@ export class QnaReportsComponent implements OnInit {
     this.maxDate = new Date();
   }
 
-
   getDateWise() {
     var today = new Date();
     this.to_date = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
     this.from_date = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
-
   }
 
   // firstdate: Date;
@@ -136,7 +139,6 @@ export class QnaReportsComponent implements OnInit {
   //   }
   // }
 
-
   // months: any;
   // monthDiff(d1, d2) {
   //   var da1 = new Date(d1);
@@ -174,11 +176,8 @@ export class QnaReportsComponent implements OnInit {
   //   }
   // }
 
-
-
   Downloadfun() {
-
-    debugger
+    debugger;
     this.str_date = new Date(this.from_date);
     this.str_date2 = new Date(this.from_date);
     this.enddate = new Date(this.to_date);
@@ -189,101 +188,136 @@ export class QnaReportsComponent implements OnInit {
     const end_year = this.enddate.getFullYear();
     const monthDiff = this.enddate.getMonth() - this.str_date.getMonth();
     const yearDiff = this.enddate.getFullYear() - this.str_date.getFullYear();
-    this.months = (monthDiff + yearDiff * 12) + 1;
-
+    this.months = monthDiff + yearDiff * 12 + 1;
 
     for (let i = 0; i < this.months; i++) {
       month = new Date(this.str_date).getMonth() + 1;
       if (month != end_month) {
-        console.log(">>>>>>>>>>>>>>mont != end_month", new Date(this.str_date), ">>>>>>>>>>>>>month", month);
+        console.log(
+          '>>>>>>>>>>>>>>mont != end_month',
+          new Date(this.str_date),
+          '>>>>>>>>>>>>>month',
+          month,
+        );
 
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-          this.enddatesate.setFullYear(year, month - 1, 31)
+        if (
+          month == 1 ||
+          month == 3 ||
+          month == 5 ||
+          month == 7 ||
+          month == 8 ||
+          month == 10 ||
+          month == 12
+        ) {
+          this.enddatesate.setFullYear(year, month - 1, 31);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         } else if (month == 4 || month == 6 || month == 9 || month == 11) {
           this.enddatesate.setFullYear(year, month - 1, 30);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
-        } else if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
+        } else if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
           this.enddatesate.setFullYear(year, month - 1, 29);
-          this.ExportQnaOneA(new Date(this.str_date), this.enddatesate)
+          this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         } else {
           this.enddatesate.setFullYear(year, month - 1, 28);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         }
 
-        this.str_date = this.enddatesate.setDate(this.enddatesate.getDate() + 1);
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>start date", new Date(this.str_date));
+        this.str_date = this.enddatesate.setDate(
+          this.enddatesate.getDate() + 1,
+        );
+        console.log(
+          '>>>>>>>>>>>>>>>>>>>>>>>>>start date',
+          new Date(this.str_date),
+        );
         year = new Date(this.str_date).getFullYear();
-
       } else if (month == end_month && year != end_year) {
+        console.log(
+          '>>>>>>>>>>>>>mont != end_month',
+          new Date(this.str_date),
+          '>>>>>>>>>>>>month',
+          month,
+        );
 
-        console.log(">>>>>>>>>>>>>mont != end_month", new Date(this.str_date), ">>>>>>>>>>>>month", month);
-
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-          this.enddatesate.setFullYear(year, month - 1, 31)
+        if (
+          month == 1 ||
+          month == 3 ||
+          month == 5 ||
+          month == 7 ||
+          month == 8 ||
+          month == 10 ||
+          month == 12
+        ) {
+          this.enddatesate.setFullYear(year, month - 1, 31);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         } else if (month == 4 || month == 6 || month == 9 || month == 11) {
           this.enddatesate.setFullYear(year, month - 1, 30);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
-        } else if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
+        } else if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
           this.enddatesate.setFullYear(year, month - 1, 29);
-          this.ExportQnaOneA(new Date(this.str_date), this.enddatesate)
+          this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         } else {
           this.enddatesate.setFullYear(year, month - 1, 28);
           this.ExportQnaOneA(new Date(this.str_date), this.enddatesate);
         }
 
-        this.str_date = this.enddatesate.setDate(this.enddatesate.getDate() + 1);
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>start date", new Date(this.str_date));
+        this.str_date = this.enddatesate.setDate(
+          this.enddatesate.getDate() + 1,
+        );
+        console.log(
+          '>>>>>>>>>>>>>>>>>>>>>>>>>start date',
+          new Date(this.str_date),
+        );
         year = new Date(this.str_date).getFullYear();
-
       } else if (month == end_month && year == end_year) {
         this.ExportQnaOneA(new Date(this.str_date), new Date(this.enddate));
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>mont == end_month")
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>mont == end_month');
       }
     }
   }
 
   oviewViewStatus: any;
   downloadStatus() {
-    this.dataRoomService.ReportStatus(this.dataroomId, "q_and_a").subscribe(res => {
-      this.oviewViewStatus = res;
-      this.Downloadfun();
-      //this.loopDate();
-      let url = '/#/download-status-documents'
-      console.log('url', url)
-      window.open(url, '_blank');
-      console.log("oviewViewStatus=>", res)
-    })
+    this.dataRoomService
+      .ReportStatus(this.dataroomId, 'q_and_a')
+      .subscribe((res) => {
+        this.oviewViewStatus = res;
+        this.Downloadfun();
+        //this.loopDate();
+        let url = '/#/download-status-documents';
+        console.log('url', url);
+        window.open(url, '_blank');
+        console.log('oviewViewStatus=>', res);
+      });
   }
 
-
-
-  data: any
+  data: any;
   dataSize: any = 0;
   GetQnaReports() {
     var todays =
       new Date(this.to_date).getFullYear() +
-      "-" +
+      '-' +
       (new Date(this.to_date).getMonth() + 1) +
-      "-" +
+      '-' +
       new Date(this.to_date).getDate();
     var first =
       new Date(this.from_date).getFullYear() +
-      "-" +
+      '-' +
       (new Date(this.from_date).getMonth() + 1) +
-      "-" +
+      '-' +
       new Date(this.from_date).getDate();
 
-    this.dataRoomService.GetQnaReport(this.dataroomId, first, todays)
+    this.dataRoomService
+      .GetQnaReport(this.dataroomId, first, todays)
       .subscribe((res) => {
-        this.show_spinner = false
-        this.data = res.data.map((obj, i) => ({ ...obj, created_date: obj.created_date + '+04:00' }));;
-        
-        this.dataSize = res.size;
-        console.log("this.data ", this.data);
+        this.show_spinner = false;
+        this.data = res.data.map((obj, i) => ({
+          ...obj,
+          created_date: obj.created_date + '+04:00',
+        }));
 
-      })
+        this.dataSize = res.size;
+        console.log('this.data ', this.data);
+      });
   }
 
   from_date: any;
@@ -294,27 +328,27 @@ export class QnaReportsComponent implements OnInit {
     this.GetQnaReports();
   }
 
-
   ExportQnaOneA(a, b) {
     this.finalData['statusid'] = this.oviewViewStatus;
     this.finalData['mohthscount'] = this.months;
     var todays =
       new Date(b).getFullYear() +
-      "-" +
+      '-' +
       (new Date(b).getMonth() + 1) +
-      "-" +
+      '-' +
       new Date(b).getDate();
     var first =
       new Date(a).getFullYear() +
-      "-" +
+      '-' +
       (new Date(a).getMonth() + 1) +
-      "-" +
+      '-' +
       new Date(a).getDate();
     this.spinner.show();
-    this.dataRoomService.ExportQNA(this.dataroomId, first, todays, JSON.stringify(this.finalData))
+    this.dataRoomService
+      .ExportQNA(this.dataroomId, first, todays, JSON.stringify(this.finalData))
       .subscribe((res) => {
         this.spinner.hide();
-      })
+      });
   }
 
   finalData: any = {};
@@ -323,26 +357,21 @@ export class QnaReportsComponent implements OnInit {
     this.finalData['mohthscount'] = this.months;
     var todays =
       new Date(this.to_date).getFullYear() +
-      "-" +
+      '-' +
       (new Date(this.to_date).getMonth() + 1) +
-      "-" +
-      (new Date(this.to_date).getDate());
+      '-' +
+      new Date(this.to_date).getDate();
     var first =
       new Date(this.from_date).getFullYear() +
-      "-" +
+      '-' +
       (new Date(this.from_date).getMonth() + 1) +
-      "-" +
-      (new Date(this.from_date).getDate());
+      '-' +
+      new Date(this.from_date).getDate();
     this.spinner.show();
-    this.dataRoomService.ExportQNA(this.dataroomId, first, todays, JSON.stringify(this.finalData))
+    this.dataRoomService
+      .ExportQNA(this.dataroomId, first, todays, JSON.stringify(this.finalData))
       .subscribe((res) => {
         this.spinner.hide();
-      })
+      });
   }
-
-
-
-
-
-
 }

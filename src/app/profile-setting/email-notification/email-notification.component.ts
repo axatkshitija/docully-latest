@@ -54,20 +54,34 @@ export class EmailNotificationComponent implements OnInit {
   goBack() {
     this.location.back();
   }
+  // getUserInfo() {
+  //  // this.dataRoomService.getUserProfile().subscribe((res) => {
+  //     //console.log("res.start_email_notification",res.start_email_notification);
+  //     this.user =  JSON.parse(    localStorage.getItem("currentUser"));
+  //     console.log(this.user, "Personal Info");
+  //     this.avatarUrl = this.user.avatar;
+  //     console.log("this getuser infor ");
+  //     this.avatarUrl = this.avatarUrl.replace("//media/", "/media/");
+  //     this.update = {
+  //       receive_email: this.user.receive_email,
+  //       receive_notification: this.user.start_email_notification,
+  //     };
+  //   //});
+  // }
   getUserInfo() {
-   // this.dataRoomService.getUserProfile().subscribe((res) => {
-      //console.log("res.start_email_notification",res.start_email_notification);
-      this.user =  JSON.parse(    localStorage.getItem("currentUser"));
-      console.log(this.user, "Personal Info");
-      this.avatarUrl = this.user.avatar;
-      console.log("this getuser infor ");
-      this.avatarUrl = this.avatarUrl.replace("//media/", "/media/");
-      this.update = {
-        receive_email: this.user.receive_email,
-        receive_notification: this.user.start_email_notification,
-      };
-    //});
-  }
+  this.dataRoomService.getUserProfile().subscribe((res) => {
+    this.user = res;
+
+    localStorage.setItem("currentUser", JSON.stringify(res));
+
+    this.avatarUrl = this.user.avatar?.replace("//media/", "/media/");
+
+    this.update = {
+      receive_email: this.user.receive_email,
+      receive_notification: this.user.start_email_notification,
+    };
+  });
+}
 
   is_profile_editable: boolean = false;
 

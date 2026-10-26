@@ -1,20 +1,25 @@
-import { DatePipe, Location } from "@angular/common";
-import { Component, Inject, OnInit } from "@angular/core";
+import { DatePipe, Location } from '@angular/common';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   Validators,
   FormBuilder,
   AbstractControl,
-} from "@angular/forms";
-import { ToastrService } from "ngx-toastr";
-import { DataRoomService } from "../../../services/index";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Folder } from "../../../models/folder";
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { ITreeOptions } from "@bugsplat/angular-tree-component";
-import { Injectable } from "@angular/core";
-import { group } from "@angular/animations";
+} from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { DataRoomService } from '../../../services/index';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Folder } from '../../../models/folder';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { ITreeOptions } from '@bugsplat/angular-tree-component';
+import { Injectable } from '@angular/core';
+import { group } from '@angular/animations';
+import * as moment from 'moment';
 
 export interface DialogData {
   yes: string;
@@ -23,9 +28,9 @@ export interface DialogData {
 }
 
 @Component({
-  selector: "app-manage-group-permission",
-  templateUrl: "./manage-group-permission.component.html",
-  styleUrls: ["./manage-group-permission.component.css"],
+  selector: 'app-manage-group-permission',
+  templateUrl: './manage-group-permission.component.html',
+  styleUrls: ['./manage-group-permission.component.css'],
 })
 @Injectable()
 export class ManageGroupPermissionComponent implements OnInit {
@@ -39,7 +44,9 @@ export class ManageGroupPermissionComponent implements OnInit {
   FourthDocumentPermissions: FormGroup;
   FolderSpecificPermissions: FormGroup;
 
-  currentDate;
+  // currentDate;
+  currentDate = moment().startOf('day');
+  accessRevokeDate: moment.Moment | null = null;
   msg: string;
   all_admin_list: any = []; // create new admin
   isLinear: boolean = false;
@@ -62,7 +69,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   selectedIndex: number = 0;
   bulk_checkbox: number = 0;
   checkbox_count: number = 0;
-  item: string = "";
+  item: string = '';
   isManageActionBar: boolean;
   constructor(
     private route: ActivatedRoute,
@@ -74,32 +81,31 @@ export class ManageGroupPermissionComponent implements OnInit {
     private dialog: MatDialog,
     public datepipe: DatePipe,
   ) {
-
-    const id = parseInt(this.route.snapshot.paramMap.get("group_id"));
+    const id = parseInt(this.route.snapshot.paramMap.get('group_id'));
     this.enduser_group_id = id;
-    console.log("group id is", this.enduser_group_id);
-    this.selectedIndex = parseInt(this.route.snapshot.paramMap.get("indx"));
+    console.log('group id is', this.enduser_group_id);
+    this.selectedIndex = parseInt(this.route.snapshot.paramMap.get('indx'));
 
-    console.log("Manage Permission Group Id is:", id);
-    this.currentDataroomId = localStorage.getItem("currentDataroomId");
-    this.getFeatures(this.currentDataroomId)
+    console.log('Manage Permission Group Id is:', id);
+    this.currentDataroomId = localStorage.getItem('currentDataroomId');
+    this.getFeatures(this.currentDataroomId);
     this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ["", Validators.required],
+      firstCtrl: ['', Validators.required],
     });
     this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ["", Validators.required],
+      secondCtrl: ['', Validators.required],
     });
 
     this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ["", Validators.required],
+      thirdCtrl: ['', Validators.required],
     });
 
     this.fourthFormGroup = this._formBuilder.group({
-      fourthCtrl: ["", Validators.required],
+      fourthCtrl: ['', Validators.required],
     });
 
     this.deleteForm = new FormGroup({
-      delete: new FormControl("", [
+      delete: new FormControl('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(6),
@@ -109,8 +115,8 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   user: any;
   ngOnInit() {
-    let today = new Date();
-    this.currentDate = this.datepipe.transform(today, 'yyyy-MM-dd')
+    // let today = new Date();
+    // this.currentDate = this.datepipe.transform(today, 'yyyy-MM-dd');
     //this.getSingleDataroom(this.currentDataroomId);
     this.initializeNewAdminForm();
     this.intializerNewGroupForm();
@@ -130,11 +136,13 @@ export class ManageGroupPermissionComponent implements OnInit {
     this.getAllContactGroups();
     this.addValue();
     //this.irm_group_protection_get();
-    this.dataRoomService.getUserProfileDatroom(this.currentDataroomId).subscribe((res) => {
-      this.user = res.member;
-      console.log(this.user, "user details in manage group permission");
-    });
-    console.log(this.user, "user details in manage group permission");
+    this.dataRoomService
+      .getUserProfileDatroom(this.currentDataroomId)
+      .subscribe((res) => {
+        this.user = res.member;
+        console.log(this.user, 'user details in manage group permission');
+      });
+    console.log(this.user, 'user details in manage group permission');
   }
 
   addValue() {
@@ -143,13 +151,13 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   select: boolean = true;
   yourFn(event) {
-    console.log(event.index, "event check");
+    console.log(event.index, 'event check');
     if (event.index == 3) {
       this.dataRoomService
         .getSingleDataroom(this.currentDataroomId)
         .subscribe((res) => {
           this.dataroom_live = res.is_dataroom_on_live;
-          console.log(this.dataroom_live, "invitation_send_successfully");
+          console.log(this.dataroom_live, 'invitation_send_successfully');
           if (this.dataroom_live) {
             this.getAllAdmins();
           } else {
@@ -162,33 +170,32 @@ export class ManageGroupPermissionComponent implements OnInit {
     }
   }
 
-
   documentUploadRestriction() {
-    this.router.navigate(["/document-upload-restriction/", this.enduser_group_id, 4]);
+    this.router.navigate([
+      '/document-upload-restriction/',
+      this.enduser_group_id,
+      4,
+    ]);
   }
-
 
   activeButton: 'first' | 'second' | null = null;
 
   setActive(button: 'first' | 'second') {
     this.activeButton = button;
-    console.log(this.all_admin_list, "ngAllChecked");
+    console.log(this.all_admin_list, 'ngAllChecked');
     if (this.ngAllChecked == true) {
       this.checkboxAllAddedManageMember(this.activeButton);
       this.ngAllChecked = false;
     }
     this.all_admin_list.filter(function (contact) {
       return (contact.state = false);
-    })
+    });
   }
-
-
 
   features: any;
   getFeatures(dataroomId) {
     this.dataRoomService.get_dataroom_features(dataroomId).subscribe((res) => {
       if (res[0] === undefined) {
-
         this.features = {
           auto_expire: true,
           bulk_users_upload: true,
@@ -230,15 +237,15 @@ export class ManageGroupPermissionComponent implements OnInit {
           viewer_support: true,
           fence_viewer: true,
           print_screen_perm: true,
-        }
+        };
       } else {
         this.features = res[0];
       }
-      console.log("features>>", this.features)
+      console.log('features>>', this.features);
     });
   }
 
-  yourFn1() { }
+  yourFn1() {}
   ProperSelection(value) {
     this.all_contacts;
     if (value == 0) {
@@ -265,8 +272,8 @@ export class ManageGroupPermissionComponent implements OnInit {
       .getAllContactsAssociatedWithGroup(group)
       .subscribe((res) => {
         //
-        console.log("get all contacts related field successfully");
-        console.log("Result is", res);
+        console.log('get all contacts related field successfully');
+        console.log('Result is', res);
         this.all_contacts = res;
         // this.status = !this.status;
       });
@@ -294,13 +301,13 @@ export class ManageGroupPermissionComponent implements OnInit {
       .getFoldersHierarchyPermission(
         this.currentDataroomId,
         this.enduser_group_id,
-        0
+        0,
       )
       .subscribe((res) => {
-        console.log(res, "get APi");
+        console.log(res, 'get APi');
         this.nodes = res;
         this.IndeterminateFuntion(this.nodes);
-        this.show_spinner = false
+        this.show_spinner = false;
       });
   }
 
@@ -326,7 +333,7 @@ export class ManageGroupPermissionComponent implements OnInit {
       .getFoldersHierarchyPermission(
         this.currentDataroomId,
         this.enduser_group_id,
-        id
+        id,
       )
       .subscribe((res) => {
         //
@@ -358,13 +365,13 @@ export class ManageGroupPermissionComponent implements OnInit {
 
     nodes.forEach((res) => {
       permissionObj.forEach((permission) => {
-        if (!res.perm["is_exist"]) {
+        if (!res.perm['is_exist']) {
           console.log(232323);
-          res.perm["" + permission + ""] =
-            parent.data.perm["" + permission + ""];
+          res.perm['' + permission + ''] =
+            parent.data.perm['' + permission + ''];
           this.clickView(
-            { checked: parent.data.perm["" + permission + ""] },
-            res
+            { checked: parent.data.perm['' + permission + ''] },
+            res,
           );
         } else {
           this.checkSameCheck(permission);
@@ -381,12 +388,12 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   IndeterminateFuntion(nodes) {
     nodes.forEach((res) => {
-      console.log(res.children, "IndeterminateFuntion");
+      console.log(res.children, 'IndeterminateFuntion');
 
       if (res.children != undefined) {
         if (res.children.length > 0) {
           var no_access_children = res.children.filter(
-            (res) => res.perm.is_no_access === true
+            (res) => res.perm.is_no_access === true,
           );
           if (no_access_children.length == res.children.length) {
             res.noaccess_indeterminate = false;
@@ -397,7 +404,7 @@ export class ManageGroupPermissionComponent implements OnInit {
             res.noaccess_indeterminate = false;
           }
           var view_children = res.children.filter(
-            (res) => res.perm.is_view_only === true
+            (res) => res.perm.is_view_only === true,
           );
           if (view_children.length == res.children.length) {
             res.view_indeterminate = false;
@@ -408,7 +415,7 @@ export class ManageGroupPermissionComponent implements OnInit {
             res.view_indeterminate = false;
           }
           var vp_children = res.children.filter(
-            (res) => res.perm.is_view_and_print === true
+            (res) => res.perm.is_view_and_print === true,
           );
           if (vp_children.length == res.children.length) {
             res.vp_indeterminate = false;
@@ -419,7 +426,7 @@ export class ManageGroupPermissionComponent implements OnInit {
             res.vp_indeterminate = false;
           }
           var vpd_children = res.children.filter(
-            (res) => res.perm.is_view_and_print_and_download === true
+            (res) => res.perm.is_view_and_print_and_download === true,
           );
           if (vpd_children.length == res.children.length) {
             res.vpd_indeterminate = false;
@@ -427,25 +434,25 @@ export class ManageGroupPermissionComponent implements OnInit {
           } else if (vpd_children.length > 0) {
             res.vpd_indeterminate = true;
             res.perm.is_view_and_print_and_download = true;
-            console.log(res, res.vpd_indeterminate, "testome");
+            console.log(res, res.vpd_indeterminate, 'testome');
           } else {
             res.vpd_indeterminate = false;
             res.perm.is_view_and_print_and_download = false;
-            console.log(res, res.vpd_indeterminate, "testome");
+            console.log(res, res.vpd_indeterminate, 'testome');
           }
 
           var childrens = res.children.filter((res) => res.is_folder === true);
 
           var upload_children = childrens.filter(
-            (res) => res.perm.is_upload === true && res.is_folder == true
+            (res) => res.perm.is_upload === true && res.is_folder == true,
           );
           var upload_children_folder = childrens.filter(
-            (res) => res.is_folder == true
+            (res) => res.is_folder == true,
           );
           console.log(
             upload_children_folder,
             upload_children,
-            "Upload InterMinate"
+            'Upload InterMinate',
           );
 
           if (upload_children.length == upload_children_folder.length) {
@@ -465,7 +472,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           }
 
           var watermarking_children = res.children.filter(
-            (res) => res.perm.is_watermarking === true
+            (res) => res.perm.is_watermarking === true,
           );
           if (watermarking_children.length == res.children.length) {
             res.watermarking_indeterminate = false;
@@ -476,7 +483,7 @@ export class ManageGroupPermissionComponent implements OnInit {
             res.watermarking_indeterminate = false;
           }
           var drm_children = res.children.filter(
-            (res) => res.perm.is_drm === true
+            (res) => res.perm.is_drm === true,
           );
           if (drm_children.length == res.children.length) {
             res.drm_indeterminate = false;
@@ -487,7 +494,7 @@ export class ManageGroupPermissionComponent implements OnInit {
             res.drm_indeterminate = false;
           }
           var editor_children = res.children.filter(
-            (res) => res.perm.is_editor === true
+            (res) => res.perm.is_editor === true,
           );
           if (editor_children.length == res.children.length) {
             res.editor_indeterminate = false;
@@ -499,7 +506,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           }
 
           var shortcut_children = res.children.filter(
-            (res) => res.perm.is_shortcut === true
+            (res) => res.perm.is_shortcut === true,
           );
           if (shortcut_children.length == res.children.length) {
             res.shortcut_indeterminate = false;
@@ -522,12 +529,12 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   AllFilesPermission() {
-    console.log(this.children, "AllFilesPermission");
+    console.log(this.children, 'AllFilesPermission');
     var is_no_access_inder = this.nodes.filter(
-      (res) => res.perm.is_no_access == true
+      (res) => res.perm.is_no_access == true,
     );
     var is_no_access_indert = this.nodes.filter(
-      (res) => res.noaccess_indeterminate == true
+      (res) => res.noaccess_indeterminate == true,
     );
     if (
       (is_no_access_inder.length > 0 &&
@@ -545,9 +552,9 @@ export class ManageGroupPermissionComponent implements OnInit {
 
     var view_inder = this.nodes.filter((res) => res.perm.is_view_only == true);
     var view_indert = this.nodes.filter(
-      (res) => res.view_indeterminate == true
+      (res) => res.view_indeterminate == true,
     );
-    console.log(view_inder, "View Inder");
+    console.log(view_inder, 'View Inder');
     if (
       (view_inder.length > 0 && this.nodes.length > view_inder.length) ||
       view_indert.length > 0
@@ -562,7 +569,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     }
 
     var vp_inder = this.nodes.filter(
-      (res) => res.perm.is_view_and_print == true
+      (res) => res.perm.is_view_and_print == true,
     );
     var vp_indert = this.nodes.filter((res) => res.vp_indeterminate == true);
     if (
@@ -578,7 +585,7 @@ export class ManageGroupPermissionComponent implements OnInit {
       this.is_view_and_print = false;
     }
     var vpd_inder = this.nodes.filter(
-      (res) => res.perm.is_view_and_print_and_download == true
+      (res) => res.perm.is_view_and_print_and_download == true,
     );
     var vpd_indert = this.nodes.filter((res) => res.vpd_indeterminate == true);
     if (
@@ -596,7 +603,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
     var upload_inder = this.nodes.filter((res) => res.perm.is_upload == true);
     var upload_indert = this.nodes.filter(
-      (res) => res.upload_indeterminate == true
+      (res) => res.upload_indeterminate == true,
     );
     if (
       (upload_inder.length > 0 && this.nodes.length > upload_inder.length) ||
@@ -606,9 +613,9 @@ export class ManageGroupPermissionComponent implements OnInit {
     } else if (this.nodes.length == upload_inder.length) {
       console.log(
         this.nodes.length,
-        "Uploadddsa",
+        'Uploadddsa',
         upload_inder.length,
-        upload_indert
+        upload_indert,
       );
 
       this.is_upload = true;
@@ -620,9 +627,9 @@ export class ManageGroupPermissionComponent implements OnInit {
 
     var drm_inder = this.nodes.filter((res) => res.perm.is_shortcut == true);
     var shortcut_indert = this.nodes.filter(
-      (res) => res.shortcut_indeterminate == true
+      (res) => res.shortcut_indeterminate == true,
     );
-    console.log("DRMMMMMM", drm_inder, shortcut_indert);
+    console.log('DRMMMMMM', drm_inder, shortcut_indert);
     if (
       (drm_inder.length > 0 && this.nodes.length > drm_inder.length) ||
       shortcut_indert.length > 0
@@ -651,7 +658,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     if (res.children != undefined) {
       if (res.children.length > 0) {
         var no_access_children = res.children.filter(
-          (res) => res.perm.is_no_access === true
+          (res) => res.perm.is_no_access === true,
         );
         if (no_access_children.length == res.children.length) {
           res.noaccess_indeterminate = false;
@@ -662,7 +669,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.noaccess_indeterminate = false;
         }
         var view_children = res.children.filter(
-          (res) => res.perm.is_view_only === true
+          (res) => res.perm.is_view_only === true,
         );
         if (view_children.length == res.children.length) {
           res.view_indeterminate = false;
@@ -673,7 +680,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.view_indeterminate = false;
         }
         var vp_children = res.children.filter(
-          (res) => res.perm.is_view_and_print === true
+          (res) => res.perm.is_view_and_print === true,
         );
         if (vp_children.length == res.children.length) {
           res.vp_indeterminate = false;
@@ -684,7 +691,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.vp_indeterminate = false;
         }
         var vpd_children = res.children.filter(
-          (res) => res.perm.is_view_and_print_and_download === true
+          (res) => res.perm.is_view_and_print_and_download === true,
         );
 
         if (vpd_children.length == res.children.length) {
@@ -696,10 +703,10 @@ export class ManageGroupPermissionComponent implements OnInit {
         } else {
           res.vpd_indeterminate = false;
           res.perm.is_view_and_print_and_download = false;
-          console.log(res, res.vpd_indeterminate, "testome");
+          console.log(res, res.vpd_indeterminate, 'testome');
         }
         var upload_children = res.children.filter(
-          (res) => res.perm.is_upload === true
+          (res) => res.perm.is_upload === true,
         );
         if (upload_children.length == res.children.length) {
           res.upload_indeterminate = false;
@@ -710,7 +717,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.upload_indeterminate = false;
         }
         var watermarking_children = res.children.filter(
-          (res) => res.perm.is_watermarking === true
+          (res) => res.perm.is_watermarking === true,
         );
         if (watermarking_children.length == res.children.length) {
           res.watermarking_indeterminate = false;
@@ -721,10 +728,10 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.watermarking_indeterminate = false;
         }
         var drm_children = res.children.filter(
-          (res) => res.perm.is_drm === true
+          (res) => res.perm.is_drm === true,
         );
         var shortcut_children = res.children.filter(
-          (res) => res.perm.is_shortcut === true
+          (res) => res.perm.is_shortcut === true,
         );
         if (shortcut_children.length == res.children.length) {
           res.shortcut_indeterminate = false;
@@ -746,7 +753,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           res.drm_indeterminate = false;
         }
         var editor_children = res.children.filter(
-          (res) => res.perm.is_editor === true
+          (res) => res.perm.is_editor === true,
         );
         if (editor_children.length == res.children.length) {
           res.editor_indeterminate = false;
@@ -762,7 +769,6 @@ export class ManageGroupPermissionComponent implements OnInit {
       }
     }
   }
-
 
   all_files: any;
   all_folders: any;
@@ -787,7 +793,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     this.dataRoomService
       .getFoldersHierarchyPermission(this.currentDataroomId, group, 0)
       .subscribe((res) => {
-        console.log(res, "getGroupPermissions");
+        console.log(res, 'getGroupPermissions');
 
         this.group_all_folders = res;
         // this.group_all_folders = this.group_all_files.filter((res)=>res.is_folder == true);
@@ -799,7 +805,7 @@ export class ManageGroupPermissionComponent implements OnInit {
           this.p_permission = true;
         }
         if (this.group_all_folders.length <= 0) {
-          this.msg = "This group doesnt updated the folder permission yet!!";
+          this.msg = 'This group doesnt updated the folder permission yet!!';
           this.showError();
         }
         this.IndeterminateFuntion(this.group_all_folders);
@@ -813,16 +819,16 @@ export class ManageGroupPermissionComponent implements OnInit {
       .createFolderSpecificPermission(
         this.group_all_folders,
         this.currentDataroomId,
-        this.enduser_group_id
+        this.enduser_group_id,
       )
       .subscribe((res) => {
         this.group_all_files = res;
-        console.log(res, "Folder");
-        this.msg = "Folder permissions copied successfully.";
+        console.log(res, 'Folder');
+        this.msg = 'Folder permissions copied successfully.';
         if (res === true) {
           this.showInfo();
           this.getFolderHierarchyPermission();
-          console.log(res, "Folder1");
+          console.log(res, 'Folder1');
         }
         // this.getFilesFolders();
       });
@@ -835,9 +841,9 @@ export class ManageGroupPermissionComponent implements OnInit {
       .subscribe((res) => {
         this.all_dataroom_groups = res.data.filter(
           (res) =>
-            res.id != this.enduser_group_id && res.limited_access == false
+            res.id != this.enduser_group_id && res.limited_access == false,
         );
-        console.log(this.all_dataroom_groups, "all_dataroom_groups");
+        console.log(this.all_dataroom_groups, 'all_dataroom_groups');
         this.apply_update = false;
       });
   }
@@ -847,13 +853,13 @@ export class ManageGroupPermissionComponent implements OnInit {
     this.dataRoomService
       .getEndUserGroup(this.currentDataroomId)
       .subscribe((res) => {
-        console.log(res, this.group_all_files.length, "Preview Permission");
+        console.log(res, this.group_all_files.length, 'Preview Permission');
         this.all_groups = res.data.filter(
-          (res) => res.id != this.enduser_group_id
+          (res) => res.id != this.enduser_group_id,
         );
         this.apply_update = true;
         if (this.group_all_files.length <= 0) {
-          this.msg = "This group doesnt updated the folder permission yet!!";
+          this.msg = 'This group doesnt updated the folder permission yet!!';
           this.showError();
         }
       });
@@ -861,7 +867,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   // initialization Overviewform permission
   initializeOverviewFormPermission() {
-    console.log("initialize overview form permission");
+    console.log('initialize overview form permission');
     this.SecondOverviewFormPermission = new FormGroup({
       is_edit_dataroom_index: new FormControl(false, [Validators.required]),
       is_watermarking: new FormControl(false, [Validators.required]),
@@ -870,40 +876,36 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   removeSelectedElement(member, i) {
-    console.log("delete admin", member, i);
-    var delete_type = "is_deleted_end";
+    console.log('delete admin', member, i);
+    var delete_type = 'is_deleted_end';
     this.dataRoomService
       .delete_dataroom_admin_type(member.id, this.enduser_group_id, delete_type)
       .subscribe((res) => {
         this.all_admin_list.splice(i, 1);
-        console.log(this.all_admin_list, "removeSelectedElement");
-        this.msg = "Delete Member successfully !";
+        console.log(this.all_admin_list, 'removeSelectedElement');
+        this.msg = 'Delete Member successfully !';
         this.showError();
       });
   }
 
-
-
-
-
   emailPattern =
-    "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-    "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@' +
+    '[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
   initializeNewAdminForm() {
     this.adminForm = new FormGroup({
-      first_name: new FormControl("", [
+      first_name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50),
-        this.onlyTextValidator
+        this.onlyTextValidator,
       ]),
-      last_name: new FormControl("", [
+      last_name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50),
-        this.onlyTextValidator
+        this.onlyTextValidator,
       ]),
-      email: new FormControl("", [
+      email: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50),
@@ -914,7 +916,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   intializerNewGroupForm() {
     this.newGroupForm = new FormGroup({
-      group_name: new FormControl("", [
+      group_name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50),
@@ -925,17 +927,17 @@ export class ManageGroupPermissionComponent implements OnInit {
   // initilization member addition form
   all_end_users: any = [];
   intializeMemberAdditionForm() {
-    console.log("member addition form");
+    console.log('member addition form');
     this.ThirdMemberAdditionForm = new FormGroup({
-      first_name: new FormControl("", [
+      first_name: new FormControl('', [
         Validators.minLength(3),
         Validators.maxLength(50),
       ]),
-      last_name: new FormControl("", [
+      last_name: new FormControl('', [
         Validators.minLength(3),
         Validators.maxLength(50),
       ]),
-      email: new FormControl("", [
+      email: new FormControl('', [
         Validators.minLength(3),
         Validators.maxLength(50),
       ]),
@@ -944,7 +946,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   initializeEndUserGroup() {
     this.FirstEndUserGroup = new FormGroup({
-      group_name: new FormControl("", [
+      group_name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50),
@@ -955,22 +957,22 @@ export class ManageGroupPermissionComponent implements OnInit {
   // initialize document and permission module
   initializeDocumentAndPermission() {
     this.FourthDocumentPermissions = new FormGroup({
-      is_donwload_permission: new FormControl(""),
+      is_donwload_permission: new FormControl(''),
       // itemPermissionRow: this._formBuilder.array([this.initPermissionRows()])
     });
   }
 
   initPermissionRows() {
     return this._formBuilder.group({
-      is_no_access: new FormControl("", []),
-      is_view_only: new FormControl("", []),
-      is_view_and_print: new FormControl("", []),
-      is_view_and_print_download: new FormControl("", []),
-      is_upload: new FormControl("", []),
-      is_watermark: new FormControl("", []),
-      is_drm: new FormControl("", []),
-      is_editor: new FormControl("", []),
-      is_shortcut: new FormControl("", []),
+      is_no_access: new FormControl('', []),
+      is_view_only: new FormControl('', []),
+      is_view_and_print: new FormControl('', []),
+      is_view_and_print_download: new FormControl('', []),
+      is_upload: new FormControl('', []),
+      is_watermark: new FormControl('', []),
+      is_drm: new FormControl('', []),
+      is_editor: new FormControl('', []),
+      is_shortcut: new FormControl('', []),
     });
   }
 
@@ -978,33 +980,33 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   initializeEndUserMemberGroup() {
     this.enduser_group_member_form = this._formBuilder.group({
-      first_name: ["", Validators.required],
-      last_name: ["", Validators.required],
-      email: ["", [Validators.required, Validators.pattern(this.emailPattern)]],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
     });
   }
 
   // on submit admin form
   onSubmitAdminForm(adminForm: any) {
-    let custom_message = "Hi";
+    let custom_message = 'Hi';
     this.dataRoomService
       .create_an_dataroom_admin(
         this.currentDataroomId,
         adminForm.value,
-        custom_message
+        custom_message,
       )
       .subscribe(
         (res: any) => {
           this.all_admin_list.push(res);
-          this.msg = "Admin successfully added !";
+          this.msg = 'Admin successfully added !';
           this.showInfo();
           this.adminForm.reset();
         },
         (error: any) => {
-          console.log("error", error);
+          console.log('error', error);
           this.msg = error.error.msg;
           this.showError();
-        }
+        },
       );
   }
 
@@ -1018,7 +1020,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   deleteMemberFromGroup(i) {
     this.all_end_user_group_members.splice(i, 1);
-    this.msg = "Member successfully deleted !";
+    this.msg = 'Member successfully deleted !';
     this.showError();
   }
 
@@ -1026,7 +1028,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   all_groups: any = [];
   newGroupFormSubmit(groupForm: any) {
     this.all_groups.push(groupForm.value);
-    this.msg = "Group successfully added !";
+    this.msg = 'Group successfully added !';
     this.showInfo();
 
     // reset the group form submit
@@ -1048,7 +1050,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   deleteAdmin(i, admin_id) {
     this.dataRoomService.delete_dataroom_admin(admin_id).subscribe((res) => {
       this.all_admin_list.splice(i, 1);
-      this.msg = "Delete Member successfully !";
+      this.msg = 'Delete Member successfully !';
       this.showError();
     });
   }
@@ -1057,16 +1059,16 @@ export class ManageGroupPermissionComponent implements OnInit {
     console.log(member);
     console.log(23232);
     this.getSingleDataroom(this.currentDataroomId);
-    console.log(this.dataroom_detail.is_dataroom_on_live, "live");
+    console.log(this.dataroom_detail.is_dataroom_on_live, 'live');
     if (this.dataroom_detail.is_dataroom_on_live) {
       this.dataRoomService.resendInvitationLink(member).subscribe((res) => {
         this.msg =
-          "End User invitation to join the data room re-sent successfully.";
+          'End User invitation to join the data room re-sent successfully.';
         this.showInfo();
       });
     } else {
       this.msg =
-        "Dataroom is on hold stage. User invitation will be sent once dataroom is on Live stage.";
+        'Dataroom is on hold stage. User invitation will be sent once dataroom is on Live stage.';
       this.showInfo();
     }
   }
@@ -1075,12 +1077,14 @@ export class ManageGroupPermissionComponent implements OnInit {
     console.log(member);
     console.log(23232);
     this.getSingleDataroom(this.currentDataroomId);
-    console.log(this.dataroom_detail.is_dataroom_on_live, "live");
+    console.log(this.dataroom_detail.is_dataroom_on_live, 'live');
     if (this.dataroom_detail.is_dataroom_on_live) {
       this.dataRoomService.resendInvitationLink(member).subscribe((res) => {
-        console.log(this.all_admin_list[this.selectedAll1.length - 1]['id'])
-        if (this.selectedAll1[this.selectedAll1.length - 1]['id'] == member.id) {
-          this.msg = "Invitation resent successfully";
+        console.log(this.all_admin_list[this.selectedAll1.length - 1]['id']);
+        if (
+          this.selectedAll1[this.selectedAll1.length - 1]['id'] == member.id
+        ) {
+          this.msg = 'Invitation resent successfully';
           this.showInfo();
         }
         console.log(res);
@@ -1089,11 +1093,11 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   addNewEndUserMember(ThirdMemberAdditionForm) {
-    console.log("add new end user admin");
-    console.log("admin form value is", ThirdMemberAdditionForm);
+    console.log('add new end user admin');
+    console.log('admin form value is', ThirdMemberAdditionForm);
     this.all_end_users.push(ThirdMemberAdditionForm);
     this.ThirdMemberAdditionForm.reset();
-    this.msg = "Team Member added successfully.";
+    this.msg = 'Team Member added successfully.';
     this.showInfo();
   }
 
@@ -1108,23 +1112,41 @@ export class ManageGroupPermissionComponent implements OnInit {
   // delete member
   deleteMemberSuccessfully(i) {
     this.all_end_users.splice(i, 1);
-    this.msg = "Member successfully deleted !";
+    this.msg = 'Member successfully deleted !';
     this.showError();
   }
 
   // get all end user groups
-  submitEndUserGroup(end_user_group_information: any) {
-    console.log(end_user_group_information)
-    let selectedDate = end_user_group_information['access_revoke'];
-    end_user_group_information['access_revoke'] = this.datepipe.transform(selectedDate, 'yyyy-MM-ddT00:01');
-    console.log(end_user_group_information['access_revoke'])
+  // submitEndUserGroup(end_user_group_information: any) {
+  //   console.log(end_user_group_information);
+  //   let selectedDate = end_user_group_information['access_revoke'];
+  //   end_user_group_information['access_revoke'] = this.datepipe.transform(
+  //     selectedDate,
+  //     'yyyy-MM-ddT00:01',
+  //   );
+  //   console.log(end_user_group_information['access_revoke']);
+
+  //   this.dataRoomService
+  //     .edit_enduser_group_information(end_user_group_information)
+  //     .subscribe((res) => {
+  //       this.msg = 'End User group data updated successfully.';
+  //       this.showInfo();
+  //       //this.selectedIndex = 2;
+  //     });
+  // }
+  submitEndUserGroup(group: any) {
+    const payload = {
+      ...group,
+      access_revoke: this.accessRevokeDate
+        ? this.accessRevokeDate.format('YYYY-MM-DDT00:01')
+        : null,
+    };
 
     this.dataRoomService
-      .edit_enduser_group_information(end_user_group_information)
-      .subscribe((res) => {
-        this.msg = "End User group data updated successfully.";
+      .edit_enduser_group_information(payload)
+      .subscribe(() => {
+        this.msg = 'End User group data updated successfully.';
         this.showInfo();
-        //this.selectedIndex = 2;
       });
   }
 
@@ -1149,7 +1171,6 @@ export class ManageGroupPermissionComponent implements OnInit {
   //     });
   // }
 
-
   //   irm_group_protection_get() {
   //   // const group_data = {
   //   //   is_active: this.irm_protected_files,
@@ -1169,125 +1190,138 @@ export class ManageGroupPermissionComponent implements OnInit {
   //     });
   // }
 
-
   defaultApplyStatus: boolean = false;
   changeApply() {
-    console.error("Apply Has Change")
+    console.error('Apply Has Change');
     this.defaultApplyStatus = true;
   }
 
   q_flag: boolean = false;
   end_user_group_information: any;
+  // getEndUserGroupInformation() {
+  //   this.dataRoomService
+  //     .get_end_user_group_information(this.enduser_group_id)
+  //     .subscribe((res) => {
+  //       this.q_flag = res.is_q_and_a;
+  //       console.log(this.q_flag);
+  //       this.end_user_group_information = res;
+  //       console.log(res, 'end users info');
+
+  //       if (this.end_user_group_information.dataroom_groups.is_active) {
+  //         this.groupStatus = true;
+  //       } else {
+  //         this.groupStatus = false;
+  //       }
+  //     });
+  // }
   getEndUserGroupInformation() {
     this.dataRoomService
       .get_end_user_group_information(this.enduser_group_id)
       .subscribe((res) => {
         this.q_flag = res.is_q_and_a;
-        console.log(this.q_flag)
         this.end_user_group_information = res;
-        console.log(res, "end users info");
 
-        if (this.end_user_group_information.dataroom_groups.is_active) {
-          this.groupStatus = true
+        const accessRevoke = res.dataroom_groups.access_revoke;
+
+        this.accessRevokeDate = accessRevoke
+          ? moment(accessRevoke, 'YYYY-MM-DD')
+          : null;
+
+        if (res.dataroom_groups.is_active) {
+          this.groupStatus = true;
         } else {
-          this.groupStatus = false
+          this.groupStatus = false;
         }
-
-
       });
   }
-
   checkfirstpage: any;
   getCheckfirstpage() {
     this.dataRoomService
       .checkfirstpage(this.currentDataroomId)
       .subscribe((res) => {
         this.checkfirstpage = res;
-        console.log(res, "check users info");
+        console.log(res, 'check users info');
       });
   }
 
-
   GroupActivationFunction() {
-    this.dataRoomService.GroupDeactivateactivate(this.enduser_group_id, this.notify)
+    this.dataRoomService
+      .GroupDeactivateactivate(this.enduser_group_id, this.notify)
       .subscribe((res) => {
         console.log(res);
-        this.msg = "Group status has been updated";
+        this.msg = 'Group status has been updated';
         this.showSuccess();
         this.groupStatus = res;
-        this.getEndUserGroupInformation()
+        this.getEndUserGroupInformation();
       });
   }
 
   groupStatus;
   GroupDeactivateactivate() {
-    console.log(this.groupStatus)
+    console.log(this.groupStatus);
     if (this.groupStatus == true) {
       this.openDialog();
-    }
-    else {
-      this.notify = "No"
+    } else {
+      this.notify = 'No';
       this.GroupActivationFunction();
     }
   }
 
-  notify: any = "No";
+  notify: any = 'No';
   modal_action: boolean = false;
   openDialog(): void {
     const dialogRef = this.dialog.open(ActiveEmailConfirmationPopup, {
-      width: "300px",
+      width: '300px',
       data: { yes: true, no: false },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result != undefined) {
         if (result == true) {
-          this.notify = "Yes";
+          this.notify = 'Yes';
           this.GroupActivationFunction();
         }
       }
       if (!result && result != undefined) {
         this.modal_action = true;
-        this.notify = "No";
+        this.notify = 'No';
         this.GroupActivationFunction();
       }
     });
   }
 
-
-  enableWatermarking(event) { }
+  enableWatermarking(event) {}
 
   goBack() {
-    this.router.navigate(["/user-and-permissions"]);
+    this.router.navigate(['/user-and-permissions']);
   }
 
   // get first name and last name
   getFirstnameAndLastname(event: any) {
-    let values = "dhananjay.s@axat-tech.com";
-    if (typeof values != "undefined" || values != "") {
-      console.log("values are ", values);
+    let values = 'dhananjay.s@axat-tech.com';
+    if (typeof values != 'undefined' || values != '') {
+      console.log('values are ', values);
       this.dataRoomService
         .getFirstnameAndLastnameUsingEmail(values)
         .subscribe((res) => {
-          console.log("result data is ", res);
+          console.log('result data is ', res);
         });
     }
     {
-      console.log("Please eneter something");
+      console.log('Please eneter something');
     }
   }
 
-
   onlyTextValidator(control: AbstractControl): { [key: string]: any } | null {
     const valid = /^[a-zA-Z\s]*$/.test(control.value);
-    return valid ? null : { 'invalidText': { value: control.value } };
+    return valid ? null : { invalidText: { value: control.value } };
   }
 
   memberForm: FormGroup;
   initCreateNewMemberForm() {
     this.memberForm = this._formBuilder.group({
       email: [
-        "",
+        '',
         [
           Validators.required,
           Validators.minLength(3),
@@ -1296,21 +1330,21 @@ export class ManageGroupPermissionComponent implements OnInit {
         ],
       ],
       first_name: [
-        "",
+        '',
         [
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(20),
-          this.onlyTextValidator
+          this.onlyTextValidator,
         ],
       ],
       last_name: [
-        "",
+        '',
         [
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(20),
-          this.onlyTextValidator
+          this.onlyTextValidator,
         ],
       ],
       is_end_user: [true],
@@ -1320,24 +1354,24 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   all_new_admin: any[] = [];
   addNewAdminMember() {
-    console.log("add new member method called", this.memberForm.value);
+    console.log('add new member method called', this.memberForm.value);
     // this.memberForm.
-    this.memberForm.get("dataroom_group_id").setValue(this.enduser_group_id);
+    this.memberForm.get('dataroom_group_id').setValue(this.enduser_group_id);
     this.dataRoomService.checkLaUser(this.memberForm.value).subscribe(
       (res) => {
         this.all_new_admin.push(this.memberForm.value);
         this.initCreateNewMemberForm();
-        console.log("result data is ", res);
+        console.log('result data is ', res);
         if (!res.result) {
           this.msg = res.msg;
           this.showSuccess();
         }
       },
       (error: any) => {
-        console.log("error", error);
+        console.log('error', error);
         this.msg = error.error.msg;
         this.showError();
-      }
+      },
     );
   }
 
@@ -1349,17 +1383,17 @@ export class ManageGroupPermissionComponent implements OnInit {
       this.dataRoomService.checkLaUser(member).subscribe(
         (res) => {
           this.all_new_admin.push(member);
-          console.log("result data is ", res);
+          console.log('result data is ', res);
         },
         (error: any) => {
-          console.log("error", error);
+          console.log('error', error);
           this.msg = error.error.msg;
           this.showError();
-        }
+        },
       );
     } else {
       var index = this.all_new_admin.findIndex(
-        (res) => res.email === member.email
+        (res) => res.email === member.email,
       );
       if (index >= 0) {
         this.all_new_admin.splice(index, 1);
@@ -1378,13 +1412,13 @@ export class ManageGroupPermissionComponent implements OnInit {
           this.all_admin_list.is_q_a_submitter_user = false;
           console.log(
             this.all_admin_list.is_q_a_submitter_user,
-            "submitter_user"
+            'submitter_user',
           );
         }
-        console.log(this.all_admin_list, "end user member");
+        console.log(this.all_admin_list, 'end user member');
         // this.all_admin_list = res.filter((res)=>res.is_end_user==true)
         this.all_new_admin = this.all_admin_list.filter(
-          (res) => res.selected == true
+          (res) => res.selected == true,
         );
       });
   }
@@ -1395,19 +1429,19 @@ export class ManageGroupPermissionComponent implements OnInit {
     this.dataRoomService
       .update_endusers_and_permission_data1(end_user_group_information)
       .subscribe((res) => {
-        this.msg = "End User group permissions applied successfully";
+        this.msg = 'End User group permissions applied successfully';
         this.showSuccess();
         this.getEndUserGroupInformation();
         // this.selectedIndex = 2;
       });
   }
   managemerbers() {
-    console.log("Manage Members");
+    console.log('Manage Members');
     this.dataRoomService
       .getSingleDataroom(this.currentDataroomId)
       .subscribe((res) => {
         this.dataroom_live = res.is_dataroom_on_live;
-        console.log(this.dataroom_live, "invitation_send_successfully");
+        console.log(this.dataroom_live, 'invitation_send_successfully');
         if (this.dataroom_live) {
           this.dataRoomService
             .getALLEndUsers(this.currentDataroomId, this.enduser_group_id)
@@ -1415,7 +1449,7 @@ export class ManageGroupPermissionComponent implements OnInit {
               this.all_admin_list = res;
               // this.all_admin_list = res.filter((res)=>res.is_end_user==true)
               this.all_new_admin = this.all_admin_list.filter(
-                (res) => res.selected == true
+                (res) => res.selected == true,
               );
             });
         }
@@ -1424,35 +1458,34 @@ export class ManageGroupPermissionComponent implements OnInit {
   is_review_added = false;
 
   addReview() {
-    console.log("add review");
+    console.log('add review');
     this.is_review_added = !this.is_review_added;
   }
   dataroom_live: any;
   checkedArray: boolean;
   invitation_send_successfully() {
-
     this.selectedIndex = 1;
     this.getSingleDataroom(this.currentDataroomId);
     this.dataRoomService
       .getSingleDataroom(this.currentDataroomId)
       .subscribe((res) => {
         this.dataroom_live = res.is_dataroom_on_live;
-        console.log(this.dataroom_live, "invitation_send_successfully");
+        console.log(this.dataroom_live, 'invitation_send_successfully');
         if (this.dataroom_live) {
           this.dataRoomService
             .addEndUsers(
               this.currentDataroomId,
               this.enduser_group_id,
               this.all_new_admin,
-              "Live",
-              this.item
+              'Live',
+              this.item,
             )
             .subscribe(
               (res) => {
                 this.addValue();
                 // this.all_admin_list.splice(i, 1);
                 this.msg =
-                  "End User invited to join the data room successfully.";
+                  'End User invited to join the data room successfully.';
                 this.getAllAdmins();
                 // this.add_user_list = this.all_admin_list.filter((res)=>res.selected == true);
                 this.showSuccess();
@@ -1462,11 +1495,11 @@ export class ManageGroupPermissionComponent implements OnInit {
               (error) => {
                 this.msg = error.error.msg;
                 this.showError();
-              }
+              },
             );
         } else {
           this.msg =
-            "Dataroom is on hold stage. User invitation will be sent once dataroom is on Live stage";
+            'Dataroom is on hold stage. User invitation will be sent once dataroom is on Live stage';
           this.showInfo();
           this.getAllAdmins();
           this.selectedIndex = 3;
@@ -1476,24 +1509,24 @@ export class ManageGroupPermissionComponent implements OnInit {
               this.currentDataroomId,
               this.enduser_group_id,
               this.all_new_admin,
-              "Hold",
-              this.item
+              'Hold',
+              this.item,
             )
             .subscribe(
               (res) => {
                 this.addValue();
-                console.log(res, "Hold");
+                console.log(res, 'Hold');
               },
               (error) => {
                 // this.msg = error._body;
-                this.msg = "Memeber Not Added";
+                this.msg = 'Memeber Not Added';
                 this.showError();
-              }
+              },
             );
         }
       });
 
-    console.log("delete admin", this.enduser_group_id, this.all_new_admin);
+    console.log('delete admin', this.enduser_group_id, this.all_new_admin);
   }
 
   dataroom_detail: any;
@@ -1506,14 +1539,13 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   receiveAutoMsgHandler(p) {
     this.dataroom_detail = p.singledataroom;
-    console.log(p, "overview???????????????????????????????/");
+    console.log(p, 'overview???????????????????????????????/');
   }
-
 
   deleteNeelyAddedAdmin(i) {
     this.all_new_admin.splice(i, 1);
-    console.log(this.all_new_admin.splice(i, 1), "admin delete");
-    this.msg = "Member Deleted Successfully";
+    console.log(this.all_new_admin.splice(i, 1), 'admin delete');
+    this.msg = 'Member Deleted Successfully';
     this.showError();
     if (this.all_new_admin.length > 0) {
       this.is_review_added = false;
@@ -1521,22 +1553,22 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   is_edit_member(i) {
-    console.log("is edit numbers");
+    console.log('is edit numbers');
     this.editedIndex = i;
   }
 
   editedIndex: any;
 
   is_cancel_editable(i) {
-    console.log("is_cancel_editable");
+    console.log('is_cancel_editable');
     this.editedIndex = -1;
   }
 
   // submit edited member
 
   submitEditedMember(member) {
-    console.log("member data is:", member);
-    this.msg = "Member successfully edited";
+    console.log('member data is:', member);
+    this.msg = 'Member successfully edited';
     this.showSuccess();
     this.editedIndex = -1;
   }
@@ -1574,10 +1606,8 @@ export class ManageGroupPermissionComponent implements OnInit {
     }
   }
 
-
-
   dateSelected(event, file) {
-    console.log(event.target.value, file)
+    console.log(event.target.value, file);
     // this.IndeterminateFuntion(this.nodes);
   }
 
@@ -1619,7 +1649,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   clickView(event, file) {
-    console.log("only file view click");
+    console.log('only file view click');
     if (event.checked == true) {
       this.is_view_only_indeterminate = true;
       this.ViewPermission(file);
@@ -1677,7 +1707,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     if (file.children != undefined) {
       if (file.children.length > 0) {
         file.children.forEach((res) => {
-          console.log(res, "children Test");
+          console.log(res, 'children Test');
           this.ViewPrintDownload(res);
         });
       }
@@ -1757,10 +1787,10 @@ export class ManageGroupPermissionComponent implements OnInit {
         if (childrens != undefined) {
           if (childrens.length > 0) {
             var upload_children = childrens.filter(
-              (res) => res.perm.is_upload === true && res.is_folder == true
+              (res) => res.perm.is_upload === true && res.is_folder == true,
             );
             var upload_children_folder = childrens.filter(
-              (res) => res.is_folder == true
+              (res) => res.is_folder == true,
             );
             if (upload_children.length == upload_children_folder.length) {
               res.is_upload = true;
@@ -1795,7 +1825,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     if (childrens != undefined) {
       if (childrens.length > 0) {
         var upload_children = childrens.filter(
-          (res) => res.perm.is_upload === true
+          (res) => res.perm.is_upload === true,
         );
         if (upload_children.length == childrens.length) {
           res.is_upload = true;
@@ -1816,7 +1846,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   clickUpload(event, file) {
-    console.log(event, "---", file);
+    console.log(event, '---', file);
     if (event.checked == true) {
       this.is_upload_indeterminate = true;
       this.is_view_only_indeterminate = true;
@@ -1864,7 +1894,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   IfDRM(file) {
-    console.log("IfDRM4");
+    console.log('IfDRM4');
     file.perm.is_no_access = false;
     file.perm.is_drm = true;
     file.perm.is_access = true;
@@ -1878,7 +1908,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   ElseDRM(file) {
-    console.log(":clickDRM3");
+    console.log(':clickDRM3');
     file.perm.is_drm = false;
     if (file.children != undefined) {
       if (file.children.length > 0) {
@@ -1890,13 +1920,13 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   clickDRM(event, file) {
-    console.log("IfDRM1");
+    console.log('IfDRM1');
     if (event.checked == true) {
-      console.log(":clickDRM");
+      console.log(':clickDRM');
       this.is_drm_indeterminate = true;
       this.IfDRM(file);
     } else {
-      console.log(":clickDRM2");
+      console.log(':clickDRM2');
       this.ElseDRM(file);
     }
     this.IndeterminateFuntion(this.nodes);
@@ -1947,12 +1977,12 @@ export class ManageGroupPermissionComponent implements OnInit {
       child.perm.is_shortcut == false &&
       child.perm.is_editor == false
     ) {
-      console.log("Testify2");
+      console.log('Testify2');
 
       child.perm.is_no_access = true;
       child.perm.is_access = false;
     } else {
-      console.log("Testify3");
+      console.log('Testify3');
 
       child.perm.is_no_access = false;
       child.perm.is_access = true;
@@ -1961,11 +1991,11 @@ export class ManageGroupPermissionComponent implements OnInit {
     child.children.forEach((test) => {
       this.NoAccessAndClick(test);
 
-      console.log("Eestify3", test);
+      console.log('Eestify3', test);
 
       if (test.children !== undefined) {
         if (test.children.length > 0) {
-          console.log("Eestify3", test);
+          console.log('Eestify3', test);
 
           this.NoAccessAndClick(test);
         }
@@ -2049,17 +2079,17 @@ export class ManageGroupPermissionComponent implements OnInit {
       .createFolderSpecificPermission(
         this.nodes,
         this.currentDataroomId,
-        this.enduser_group_id
+        this.enduser_group_id,
       )
       .subscribe(
         (res) => {
-          console.log(res, "Update Permission");
+          console.log(res, 'Update Permission');
 
           // this.all_admin_list.splice(i, 1);
-          this.msg = "End User group folder permissions updated successfully.";
+          this.msg = 'End User group folder permissions updated successfully.';
           if (res === true) {
             this.getFolderHierarchyPermission();
-            console.log(res, "teststt123");
+            console.log(res, 'teststt123');
 
             // this.add_user_list = this.all_admin_list.filter((res)=>res.selected == true);
             if (!this.hidemsg) {
@@ -2072,7 +2102,7 @@ export class ManageGroupPermissionComponent implements OnInit {
         (error) => {
           this.msg = error._body;
           this.showError();
-        }
+        },
       );
   }
 
@@ -2081,11 +2111,11 @@ export class ManageGroupPermissionComponent implements OnInit {
   checkboxManageMember(event, member) {
     member.selected = event.checked;
     let all_admins_count = this.all_admin_list.filter(
-      (res) => res.state === true
+      (res) => res.state === true,
     );
     this.selectedAll1 = all_admins_count;
 
-    console.log("all admins count is", this.selectedAll1);
+    console.log('all admins count is', this.selectedAll1);
     if (all_admins_count.length > 0) {
       this.isManageActionBar = true;
     } else {
@@ -2093,75 +2123,75 @@ export class ManageGroupPermissionComponent implements OnInit {
     }
   }
 
-
   SendInvitation() {
     if (this.dataroom_detail.is_dataroom_on_live) {
       this.selectedAll1.map((p) => {
-        this.resendInvitationBulk(p)
+        this.resendInvitationBulk(p);
       });
-
-    }
-    else {
-      this.msg = "Dataroom is on hold stage. You can send reinvitations  when dataroom is on Live stage";
+    } else {
+      this.msg =
+        'Dataroom is on hold stage. You can send reinvitations  when dataroom is on Live stage';
       this.showInfo();
-      console.error("Send Invitation to all selected members", this.selectedAll1);
+      console.error(
+        'Send Invitation to all selected members',
+        this.selectedAll1,
+      );
     }
   }
 
-
-
   removeManageMember() {
-    console.log("delete all admin list", this.all_admin_list);
-    console.log("deleted all new admin", this.all_new_admin);
+    console.log('delete all admin list', this.all_admin_list);
+    console.log('deleted all new admin', this.all_new_admin);
     this.dataRoomService
       .delete_dataroom_all_admin(this.all_admin_list)
       .subscribe((res) => {
         this.all_admin_list = [];
-        this.msg = "Delete all admin successfully !";
+        this.msg = 'Delete all admin successfully !';
         this.showError();
         // this.ngAllChecked = false;
       });
   }
 
-
   deleteForm: FormGroup;
   is_disabled_delete_button: boolean = false;
   onKeyCheckDelete(event) {
-    console.log("data is ", event);
-    if (event.toLowerCase() == "delete") {
+    console.log('data is ', event);
+    if (event.toLowerCase() == 'delete') {
       this.is_disabled_delete_button = true;
     }
   }
 
-  deletes: any = "";
-  data: any = []
+  deletes: any = '';
+  data: any = [];
   deleteBulk() {
-    const ids = this.selectedAll1.map(item => item.id);
+    const ids = this.selectedAll1.map((item) => item.id);
     this.data = {
       id: ids,
-      is_deleted: "is_deleted_end"
-    }
-    console.log(this.data)
-    this.dataRoomService.DeleteUser(this.currentDataroomId, this.enduser_group_id, this.data).subscribe((res) => {
-      console.log(res);
-      this.deletes = '';
-      this.selectedAll1 = [];
-      this.msg = "Admin deleted successfully";
-      this.showError();
-      this.getAllAdmins();
-    }, (error) => {
-      console.log(error);
-    });
+      is_deleted: 'is_deleted_end',
+    };
+    console.log(this.data);
+    this.dataRoomService
+      .DeleteUser(this.currentDataroomId, this.enduser_group_id, this.data)
+      .subscribe(
+        (res) => {
+          console.log(res);
+          this.deletes = '';
+          this.selectedAll1 = [];
+          this.msg = 'Admin deleted successfully';
+          this.showError();
+          this.getAllAdmins();
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
   }
-
-
 
   toggle1: boolean = false;
   selectedAll1: any = [];
   checkboxAllAddedManageMember(key) {
     this.toggle1 = !this.toggle1;
     if (this.toggle1 === true) {
-
       if (key == 'first') {
         this.selectedAll1 = this.all_admin_list.filter(function (contact) {
           return (contact.state = true && contact.memberactivestatus == false);
@@ -2175,7 +2205,7 @@ export class ManageGroupPermissionComponent implements OnInit {
       let checkbox = this.all_admin_list;
       this.cb_man_mem_count = checkbox.length;
 
-      console.log(">>>>>>>>>>>>>", this.selectedAll1)
+      console.log('>>>>>>>>>>>>>', this.selectedAll1);
 
       if (this.selectedAll1.length >= 1) {
         this.isManageActionBar = true;
@@ -2189,7 +2219,7 @@ export class ManageGroupPermissionComponent implements OnInit {
         return (contact.state = false);
       });
       this.cb_man_mem_count = 0;
-      console.log(">>>>>>>>>>>>>", this.selectedAll1)
+      console.log('>>>>>>>>>>>>>', this.selectedAll1);
     }
   }
   checkboxAddedAdminList(i, event) {
@@ -2197,7 +2227,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     // this.bulk_checkbox = this.bulk_checkbox + 1
     let checkbox = this.all_new_admin.filter((res) => res.state == true);
     this.checkbox_count = checkbox.length;
-    console.log("bulk_checkbox:-------------" + this.checkbox_count);
+    console.log('bulk_checkbox:-------------' + this.checkbox_count);
   }
 
   toggle: boolean = false;
@@ -2221,7 +2251,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   ngAllChecked: boolean = false;
   deleteAllAddedAdmin() {
     this.all_new_admin = [];
-    this.msg = "Deleted All Member Successfully";
+    this.msg = 'Deleted All Member Successfully';
     this.showError();
     this.checkbox_count = 0;
     this.ngAllChecked = false;
@@ -2260,7 +2290,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     console.log(this.nodes);
 
     if (event.target.value) {
-      this.access_revoke = event.target.value
+      this.access_revoke = event.target.value;
       children.forEach((res) => {
         res.access_revoke = event.target.value;
         if (Array.isArray(res.children)) {
@@ -2326,7 +2356,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     if (event.target.value) {
       this.access_revoke = event.target.value;
       this.nodes.forEach((res) => {
-        console.log('res  --->  ', res)
+        console.log('res  --->  ', res);
         res.access_revoke = event.target.value;
         if (res.children != undefined) {
           if (res.children.length > 0) {
@@ -2396,7 +2426,7 @@ export class ManageGroupPermissionComponent implements OnInit {
         }
       });
     } else {
-      console.log("unclick allview child");
+      console.log('unclick allview child');
       this.is_view_only = false;
       this.is_view_and_print_and_download = false;
       this.is_view_and_print = false;
@@ -2419,7 +2449,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
   clickAllView(event) {
     if (event == true) {
-      console.log("clickAllView");
+      console.log('clickAllView');
       this.is_no_access = false;
       this.is_view_only = true;
       this.nodes.forEach((res) => {
@@ -2434,7 +2464,7 @@ export class ManageGroupPermissionComponent implements OnInit {
       });
     } else {
       this.nodes.forEach((res) => {
-        console.log("unclickAllView");
+        console.log('unclickAllView');
         res.perm.is_view_only = false;
         res.perm.is_upload = false;
         res.perm.is_shortcut = false;
@@ -2452,7 +2482,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   ClickAllViewPrintChildren(children, event) {
     console.log(children);
     if (event == true) {
-      console.log("ClickAllViewPrint");
+      console.log('ClickAllViewPrint');
       children.forEach((res) => {
         res.perm.is_view_only = true;
         res.perm.is_view_and_print = true;
@@ -2479,7 +2509,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
   clickAllViewPrint(event) {
     if (event == true) {
-      console.log("clickAllViewPrint");
+      console.log('clickAllViewPrint');
       this.is_no_access = false;
       this.is_view_only = true;
       this.nodes.forEach((res) => {
@@ -2493,7 +2523,7 @@ export class ManageGroupPermissionComponent implements OnInit {
         }
       });
     } else {
-      console.log("else clickAllViewPrint");
+      console.log('else clickAllViewPrint');
       this.is_view_only = true;
       this.is_view_and_print_and_download = false;
       this.nodes.forEach((res) => {
@@ -2511,7 +2541,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
   ClickAllViewPrintDownloadChildren(children, event) {
     if (event == true) {
-      console.log("ClickAllViewPrintDownloadChildren");
+      console.log('ClickAllViewPrintDownloadChildren');
       children.forEach((res) => {
         res.perm.is_no_access = false;
         res.perm.is_view_only = true;
@@ -2540,7 +2570,7 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
   clickAllViewPrintDownload(event) {
     if (event == true) {
-      console.log("ClickAllViewPrintDownload");
+      console.log('ClickAllViewPrintDownload');
       this.is_no_access = false;
       this.is_view_only = true;
       this.is_view_and_print = true;
@@ -2551,13 +2581,13 @@ export class ManageGroupPermissionComponent implements OnInit {
         res.perm.is_view_and_print_and_download = true;
         if (res.children != undefined) {
           if (res.children.length > 0) {
-            console.log("timo children", res.children);
+            console.log('timo children', res.children);
             this.ClickAllViewPrintDownloadChildren(res.children, event);
           }
         }
       });
     } else {
-      console.log("ClickAllViewPrintDownload");
+      console.log('ClickAllViewPrintDownload');
       // this.is_view_only = false;
       // this.is_view_and_print = false;
       this.nodes.forEach((res) => {
@@ -2657,7 +2687,7 @@ export class ManageGroupPermissionComponent implements OnInit {
     this.IndeterminateFuntion(this.nodes);
   }
   clickAllUpload(event) {
-    console.log("Test Console");
+    console.log('Test Console');
     if (event == true) {
       this.is_no_access = false;
       this.is_view_only = true;
@@ -2760,16 +2790,16 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 
   clickShortcut(event, file) {
-    console.log("clickShortcut1");
+    console.log('clickShortcut1');
     if (event.checked == true) {
       this.is_shortcut_indeterminate = true;
       this.is_view_only_indeterminate = true;
       this.ViewShortcutPermission(file);
     } else {
-      console.log("clickShortcut2");
+      console.log('clickShortcut2');
       this.ViewShortcutElsePermission(file);
     }
-    console.log("clickShortcut3");
+    console.log('clickShortcut3');
 
     this.IndeterminateFuntion(this.nodes);
     this.NoAccessAndAccess(file);
@@ -2807,7 +2837,7 @@ export class ManageGroupPermissionComponent implements OnInit {
 
   clickAllShortcutChildren(children, event) {
     if (event == true) {
-      console.log("clickAllShortcutChildren");
+      console.log('clickAllShortcutChildren');
       this.is_no_access = false;
       children.forEach((res) => {
         res.perm.is_no_access = false;
@@ -2893,12 +2923,13 @@ export class ManageGroupPermissionComponent implements OnInit {
   ChangesByEmail(email) {
     this.dataRoomService.getUserByEmail(email).subscribe(
       (res) => {
-        this.memberForm.get("first_name").setValue(res.first_name);
-        this.memberForm.get("last_name").setValue(res.last_name);
+        this.memberForm.get('first_name').setValue(res.first_name);
+        this.memberForm.get('last_name').setValue(res.last_name);
       },
       (error) => {
-        console.log("error");
-      });
+        console.log('error');
+      },
+    );
   }
 
   toggles(expanded) {
@@ -2906,16 +2937,15 @@ export class ManageGroupPermissionComponent implements OnInit {
   }
 }
 
-
 @Component({
-  selector: "upload-confirmation-popup",
-  templateUrl: "active-email-confirmation-popup.html",
+  selector: 'upload-confirmation-popup',
+  templateUrl: 'active-email-confirmation-popup.html',
 })
 export class ActiveEmailConfirmationPopup {
   constructor(
     public dialogRef: MatDialogRef<ActiveEmailConfirmationPopup>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
 
   onNoClick(): void {
     this.dialogRef.close();
