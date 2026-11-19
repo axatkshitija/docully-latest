@@ -25,7 +25,7 @@
 
                                 <div *ngIf="BulkDelete">
                                     <button mat-raised-button class="btn btn-danger" aria-hidden="true"
-                                        data-toggle="modal" data-target="#deleteModel" style="color: white;">
+                                        data-bs-toggle="modal" data-bs-target="#deleteModel" style="color: white;">
                                         <i class="fa fa-trash" style="color: white;font-size: 12px;"></i> Delete
                                     </button>
                                     <button mat-raised-button class="btn btn-primary"
@@ -42,7 +42,7 @@
                                                 <h4 class="modal-title cdr-delete-title">
                                                     Delete Folders and Files
                                                 </h4>
-                                                <button type="button" class="close" data-dismiss="modal">
+                                                <button type="button" class="close" data-bs-dismiss="modal">
                                                     &times;
                                                 </button>
                                             </div>
@@ -60,7 +60,7 @@
                                                             (keyup)="onKeyCheckDelete(delete.value)" #delete />
                                                         <button type="button"
                                                             [disabled]="is_disabled_delete_button == false"
-                                                            class="btn btn-primary" data-dismiss="modal"
+                                                            class="btn btn-primary" data-bs-dismiss="modal"
                                                             (click)="remove_favourite_all_files()">
                                                             Confirm Delete
                                                         </button>
@@ -150,8 +150,8 @@
                                                         <a (click)="openRedactor(folder.folder_id,folder.id)"
                                                             style="color: blue" target="_blank">View</a>
                                                     </button>
-                                                    <button mat-menu-item aria-hidden="true" data-toggle="modal"
-                                                        [attr.data-target]="'#deleteModelA'+i"
+                                                    <button mat-menu-item aria-hidden="true" data-bs-toggle="modal"
+                                                        [attr.data-bs-target]="'#deleteModelA'+i"
                                                         *ngIf="folder.version != 0">
                                                         Delete
                                                     </button>
@@ -180,7 +180,7 @@
                                                                     Delete Folders and Files
                                                                 </h4>
                                                                 <button type="button" class="close"
-                                                                    data-dismiss="modal">
+                                                                    data-bs-dismiss="modal">
                                                                     &times;
                                                                 </button>
                                                             </div>
@@ -201,7 +201,7 @@
                                                                             #delete />
                                                                         <button type="button"
                                                                             [disabled]="is_disabled_delete_button == false"
-                                                                            class="btn btn-primary" data-dismiss="modal"
+                                                                            class="btn btn-primary" data-bs-dismiss="modal"
                                                                             (click)="remove_favourite_single_files(folder.id)">
                                                                             Confirm Delete
                                                                         </button>

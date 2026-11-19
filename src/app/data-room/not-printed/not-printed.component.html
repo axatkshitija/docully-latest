@@ -209,8 +209,8 @@
                           printFiles(folder)" *ngIf=" folder.perm.is_view_and_print">Print</button> -->
                             <button
                               mat-menu-item
-                              data-toggle="modal"
-                              [attr.data-target]="'#deleteModel' + i"
+                              data-bs-toggle="modal"
+                              [attr.data-bs-target]="'#deleteModel' + i"
                               *ngIf="
                                 user.member.is_dataroom_admin ||
                                 user.member.is_la_user
@@ -236,7 +236,7 @@
                                   <button
                                     type="button"
                                     class="close"
-                                    data-dismiss="modal"
+                                    data-bs-dismiss="modal"
                                   >
                                     &times;
                                   </button>
@@ -261,7 +261,7 @@
                                       <button
                                         type="button"
                                         class="btn btn-primary"
-                                        data-dismiss="modal"
+                                        data-bs-dismiss="modal"
                                         [disabled]="is_disabled_delete_button == false"
                                         (click)="
                                           delete_folder_or_file(

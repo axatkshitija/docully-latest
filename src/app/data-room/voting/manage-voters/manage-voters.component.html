@@ -17,8 +17,8 @@
             <span fxFlex></span>
             <div class="cdr-buttons">
 
-              <button mat-raised-button class="cdr-btn big-btn blue-btn" *ngIf="votestatus==0" data-toggle="modal"
-                data-target="#createVoter" data-backdrop="static" data-keyboard="false">Add Voters</button>
+              <button mat-raised-button class="cdr-btn big-btn blue-btn" *ngIf="votestatus==0" data-bs-toggle="modal"
+                data-bs-target="#createVoter" data-bs-backdrop="static" data-bs-keyboard="false">Add Voters</button>
               &nbsp;&nbsp;&nbsp;
               <button mat-raised-button class="cdr-btn big-btn blue-btn" (click)="geBack()">Back</button>
             </div>
@@ -70,7 +70,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Add Voters</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -99,7 +99,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="addVoter()">Save</button>
       </div>
 

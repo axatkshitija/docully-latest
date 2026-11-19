@@ -34,13 +34,13 @@ import {
   HttpClient,
   HttpHeaders,
 } from "@angular/common/http";
-import {
-  Http,
-  Headers,
-  RequestOptions,
-  Response,
-  ResponseContentType,
-} from "@angular/http";
+// import {
+//   Http,
+//   Headers,
+//   RequestOptions,
+//   Response,
+//   ResponseContentType,
+// } from "@angular/http";
 import { BaseUrlClass, ApiListClass } from "../../common/index";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import {

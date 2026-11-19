@@ -446,13 +446,21 @@ export class DocumentComponent implements OnInit {
   all_folders: any = [];
   all_folder: any = [];
   getAllFolderList() {
-    this.dataRoomService.getAllFolders(this.dataroomId).subscribe((res) => {
-      this.all_folders = res;
-      console.log("all_folder_list:-", this.all_folders);
-      this.all_folders = this.all_folders.data.filter(
-        (res) => res.is_root_folder === true
-      );
-      this.all_folder = this.all_folders;
+    this.dataRoomService.getAllFolders(this.dataroomId).subscribe({
+      next: (res) => {
+        if (!Array.isArray(res?.data)) {
+          console.error("getAllFolders returned an invalid data list", res);
+          return;
+        }
+
+        this.all_folders = res.data.filter(
+          (folder) => folder.is_root_folder === true
+        );
+        this.all_folder = this.all_folders;
+      },
+      error: (error) => {
+        console.error("Failed to load folder list", error);
+      },
     });
   }
 
@@ -758,18 +766,29 @@ export class DocumentComponent implements OnInit {
 
 
   receiveAutoMsgHandler(p) {
-    this.getDataroomUser();
+    if (!p) {
+      console.error("Data room initialization event did not include a payload");
+      return;
+    }
+
     this.user = p.userdetail;
     this.datarooms_indexing = p.singledataroom;
-    if (p.singledataroom == null || p.singledataroom == undefined) {
+    this.user_id = p.userdetail?.id;
+    this.perm = p.memberpermission;
+
+    if (this.user_id != null) {
+      this.getDataroomUser();
+    }
+
+    console.log(this.user, "overview");
+    const dataroom = p.singledataroom;
+    if (typeof dataroom?.created_date === "string") {
+      this.dataroom_date = dataroom.created_date.slice(0, 10);
+    } else {
       this.getSingleDataroom();
     }
-    console.log(this.user, "overview");
-    const d_date = p.singledataroom;
-    this.dataroom_date = d_date.created_date.slice(0, 10);
+
     console.log(p, "overview???????????????????????????????/");
-    this.user_id = p.userdetail.id;
-    this.perm = p.memberpermission;
     this.gotoURl(this.dataroomId);
   }
 
@@ -1314,10 +1333,19 @@ export class DocumentComponent implements OnInit {
 
   datarooms_indexing;
   getSingleDataroom() {
-    this.dataRoomService.getSingleDataroom(this.dataroomId).subscribe((res) => {
-      this.datarooms_indexing = res;
-      this.dataroom_date = res.created_date.slice(0, 10);
-      console.log(this.datarooms_indexing)
+    this.dataRoomService.getSingleDataroom(this.dataroomId).subscribe({
+      next: (res) => {
+        this.datarooms_indexing = res;
+        if (typeof res?.created_date === "string") {
+          this.dataroom_date = res.created_date.slice(0, 10);
+        } else {
+          console.error("Dataroom response is missing created_date", res);
+        }
+        console.log(this.datarooms_indexing)
+      },
+      error: (error) => {
+        console.error("Failed to load dataroom details", error);
+      },
     });
   }
 
@@ -1326,6 +1354,11 @@ export class DocumentComponent implements OnInit {
     this.dataRoomService
       .dataroom_mem_list(this.dataroomId, this.user_id)
       .subscribe((res) => {
+        if (!Array.isArray(res) || !res[0]) {
+          console.error("Dataroom member response did not contain a member", res);
+          return;
+        }
+
         this.primary_users_disclaimer_status = res[0].disclaimer_status;
 
         console.log('----------Primary User Disclaimer ', this.primary_users_disclaimer_status);
@@ -1813,4 +1846,3 @@ export class bulkDownloadFail {
     this.dialogRefs.close();
   }
 }
-

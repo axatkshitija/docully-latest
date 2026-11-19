@@ -15,8 +15,8 @@
       </div>
     </div>
     <div *ngIf="my_team_data?.createdataroomaccess == 'True' || currentUser?.is_superadmin == true">
-      <button mat-raised-button color="primary" class="blue-btn is-icon" data-toggle="modal" data-target="#addDateRoom"
-        data-backdrop="static" data-keyboard="false">
+      <button mat-raised-button color="primary" class="blue-btn is-icon" data-bs-toggle="modal" data-bs-target="#addDateRoom"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <i class="material-icons">&#xE145;</i> New Data Room
       </button>
     </div>
@@ -56,12 +56,12 @@
           <td>{{ dataroom.dataroom_storage_allocated }} GB</td>
           <td>{{ dataroom.dataroom_consumed}}</td>
           <td class="text-center">
-            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
-              [attr.data-target]="'#editDataroom' + i" (click)="updateIndex = i; patchDataroomData()"></i>
+            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-bs-toggle="modal"
+              [attr.data-bs-target]="'#editDataroom' + i" (click)="updateIndex = i; patchDataroomData()"></i>
           </td>
           <td>
-            <i class="fa fa-archive" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
-              [attr.data-target]="'#manageDataroom' + i"></i>
+            <i class="fa fa-archive" style="cursor: pointer;" aria-hidden="true" data-bs-toggle="modal"
+              [attr.data-bs-target]="'#manageDataroom' + i"></i>
 
             <div class="modal fade" id="manageDataroom{{i}}" tabindex="-1" role="" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
@@ -69,7 +69,7 @@
                 <div class="modal-content">
                   <div class="modal-header cdr-modal cdr-h-c">
                     <h5 class="modal-title" id="exampleModalLabel">Manage Dataroom</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                       <i class="material-icons">&#xE5CD;</i>
                     </button>
                   </div>
@@ -106,22 +106,22 @@
                     </div>
                     <div class="row justify-content-center mt-4">
                       <button *ngIf="is_request_for_archive || dataroom.is_request_for_archive" type="button"
-                        class="btn btn-primary mr-3" data-dismiss="modal"
+                        class="btn btn-primary mr-3" data-bs-dismiss="modal"
                         (click)="archivedRequestForDataroom(dataroom)">
                         Unarchive
                       </button>
                       <button *ngIf="!(is_request_for_archive || dataroom.is_request_for_archive)" type="button"
-                        class="btn btn-primary mr-3" data-dismiss="modal"
+                        class="btn btn-primary mr-3" data-bs-dismiss="modal"
                         (click)="archivedRequestForDataroom(dataroom)">
                         Archive
                       </button>
                       <button *ngIf="is_request_for_deletion || dataroom.is_request_for_deletion" type="button"
-                        class="btn btn-primary ml-3" data-dismiss="modal" (click)="deleteDataroom(dataroom)">
+                        class="btn btn-primary ml-3" data-bs-dismiss="modal" (click)="deleteDataroom(dataroom)">
                         Cancel Delete
                       </button>
                       <button *ngIf="!(is_request_for_deletion || dataroom.is_request_for_deletion)" type="button"
-                        class="btn btn-primary ml-3" aria-hidden="true" data-toggle="modal"
-                        [attr.data-target]="'#deleteDataroom' + i">
+                        class="btn btn-primary ml-3" aria-hidden="true" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#deleteDataroom' + i">
                         Delete
                       </button>
 
@@ -132,7 +132,7 @@
                               <h5 class="modal-title cdr-copy-title">
                                 Delete Dataroom Confirmation
                               </h5>
-                              <button type="button" class="close" data-dismiss="modal1">
+                              <button type="button" class="close" data-bs-dismiss="modal1">
                                 &times;
                               </button>
                             </div>
@@ -146,7 +146,7 @@
                                 <form [formGroup]="deleteForm">
                                   Type 'delete' to Confirm
                                   <input type="text" class="cdr-delete-input" formControlName="delete" #delete />
-                                  <button type="button" data-dismiss="modal" class="btn btn-primary"
+                                  <button type="button" data-bs-dismiss="modal" class="btn btn-primary"
                                     [disabled]="!(deleteForm.valid && delete.value == 'delete')"
                                     (click)="deleteDataroom(dataroom)">
                                     Confirm Delete
@@ -179,7 +179,7 @@
         <div class="d-flex align-items-center">
           <h5 class="modal-title" id="exampleModalLabel">Create New Data Room</h5>
         </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -756,7 +756,7 @@
 
                 <div class="modal-footer">
 
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancel
                   </button>
                   <button type="submit" class="btn btn-primary">
@@ -780,7 +780,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title" id="exampleModalLabel">Edit Data Room</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -1269,7 +1269,7 @@
                 </div>
 
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancel
                   </button>
                   <button type="submit" class="btn btn-primary">
@@ -1293,14 +1293,14 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title" id="exampleModalLabel">Clone Data Room</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
       <div class="modal-body cr-n-dr">
         <ul class="nav nav-tabs cr-tab" id="myTab" role="tablist">
           <!-- <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Create a blank Data Room</a>
+            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Create a blank Data Room</a>
           </li> -->
           <div class="dr-tab-content">
             <div class="form-group">
@@ -1376,10 +1376,10 @@
               </div>
             </div>
             <div class="form-group cdr-md-footer">
-              <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+              <button type="button" class="btn btn-secondary mr-2" data-bs-dismiss="modal">
                 Cancel
               </button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cloneExistingDataroom()">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="cloneExistingDataroom()">
                 Save
               </button>
             </div>
@@ -1397,7 +1397,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title" id="exampleModalLabel">Manage Dataroom</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -1462,11 +1462,11 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
               (click)="archivedRequestForDataroom(all_datarooms[selectedIndex])">
               Archive
             </button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
               (click)="deletionRequestForDataroom(all_datarooms[selectedIndex])">
               Delete
             </button>

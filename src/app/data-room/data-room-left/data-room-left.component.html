@@ -4,9 +4,9 @@
     <span class="ds">Data Room Stage:</span> Hold
 
     <img class="img-fluid-stage" src="assets/images/off.png" *ngIf="!dataroom_detail.is_dataroom_on_live"
-      data-toggle="modal" data-target="#changeDataRoomStatus" data-backdrop="static" data-keyboard="false" />
+      data-bs-toggle="modal" data-bs-target="#changeDataRoomStatus" data-bs-backdrop="static" data-bs-keyboard="false" />
     <img class="img-fluid-stage" src="assets/images/on.png" *ngIf="dataroom_detail.is_dataroom_on_live"
-      data-toggle="modal" data-target="#changeDataRoomStatus" data-backdrop="static" data-keyboard="false" />
+      data-bs-toggle="modal" data-bs-target="#changeDataRoomStatus" data-bs-backdrop="static" data-bs-keyboard="false" />
 
     Live
   </div>
@@ -41,8 +41,8 @@
         <span class="dataroom-lp-name">{{
           dataroomname != undefined ? dataroomname : ''
           }}</span>
-        <button class="edit-btn" data-toggle="modal" data-target="#editDrLogoName" data-backdrop="static"
-          data-keyboard="false" *ngIf="user.member.is_dataroom_admin || (user.member.is_la_user && perm.is_overview)">
+        <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editDrLogoName" data-bs-backdrop="static"
+          data-bs-keyboard="false" *ngIf="user.member.is_dataroom_admin || (user.member.is_la_user && perm.is_overview)">
           <i class="material-icons cdr-bic">&#xE254;</i>
         </button>
       </mat-toolbar>
@@ -124,8 +124,8 @@
                 <div class="con-title"></div>
               </div>
             </ng-template>
-            <button title="Send Message" data-toggle="modal"
-              [attr.data-target]="'#sendMessage' + primary_user.member.id" data-target="">
+            <button title="Send Message" data-bs-toggle="modal"
+              [attr.data-bs-target]="'#sendMessage' + primary_user.member.id" data-bs-target="">
               <i class="fa fa-envelope" aria-hidden="true"></i>
             </button>
           </div>
@@ -136,7 +136,7 @@
               <div class="modal-content cdr-copy-files text-left">
                 <div class="modal-header">
                   <h5 class="modal-title cdr-copy-title">Send Message</h5>
-                  <button type="button" class="close" data-dismiss="modal">
+                  <button type="button" class="close" data-bs-dismiss="modal">
                     &times;
                   </button>
                 </div>
@@ -149,7 +149,7 @@
                 </div>
                 <div class="modal-footer cdr-copy-footer">
                   <div>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                       (click)="getUserBy(primary_user.member)">
                       Send
                     </button>
@@ -181,7 +181,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Edit Data Room Name and Logo</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -233,11 +233,11 @@
             </span>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                 Cancel
               </button>
               <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button"
-                (click)="updateDataroominformation(dataroom_detail)" data-dismiss="modal">
+                (click)="updateDataroominformation(dataroom_detail)" data-bs-dismiss="modal">
                 Save Changes
               </button>
             </div>
@@ -255,7 +255,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Edit Data Room Stage</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -267,10 +267,10 @@
           accessible to end users during the Hold Stage.</span>
         <div class="modal-footer">
           <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="button"
-            (click)="updateDataroomStage()" data-dismiss="modal">
+            (click)="updateDataroomStage()" data-bs-dismiss="modal">
             Yes
           </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             No
           </button>
         </div>
@@ -286,7 +286,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5>Call Us On:</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>

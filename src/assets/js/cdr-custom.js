@@ -12,6 +12,10 @@ $(document).ready(function () {
     $(".modal-backdrop").removeClass("md-white");
   });
 
+  $("body").on("cut copy", function (event) {
+    event.preventDefault();
+  });
+
   // page height
   //    function footerAlign() {
   //   $('footer').css('display', 'block');

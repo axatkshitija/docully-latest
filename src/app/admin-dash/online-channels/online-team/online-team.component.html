@@ -34,8 +34,8 @@
           <td (click)="gettoknowtheplan(item, i, item.plan__name)" *ngIf="item.dataroom__dataroom_storage_allocated">{{ item?.dataroom__dataroom_storage_allocated }} GB</td>
           <td (click)="gettoknowtheplan(item, i, item.plan__name)" *ngIf="!item.dataroom__dataroom_storage_allocated">{{ item?.dataroom_storage_allowed }} GB</td>
           <td (click)="gettoknowtheplan(item, i, item.plan__name)">{{ item.dataroom_consumed }} GB</td>
-          <td ><mat-icon aria-hidden="false" aria-label="Example home icon" matTooltip="Delete" data-toggle="modal"
-            [attr.data-target]="'#deleteTeam'+i"  style="color:red;font-size: 20px!important;cursor: pointer;">delete_outline</mat-icon></td>
+          <td ><mat-icon aria-hidden="false" aria-label="Example home icon" matTooltip="Delete" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#deleteTeam'+i"  style="color:red;font-size: 20px!important;cursor: pointer;">delete_outline</mat-icon></td>
           <div id="deleteTeam{{ i }}" class="modal fade" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content cdr-copy-files text-left">
@@ -43,7 +43,7 @@
                   <h5 class="modal-title cdr-copy-title text-white text-center">
                     Delete Team Confirmation
                   </h5>
-                  <button type="button" class="close" data-dismiss="modal" style="color: white!important;">
+                  <button type="button" class="close" data-bs-dismiss="modal" style="color: white!important;">
                     &times;
                   </button>
                 </div>
@@ -58,7 +58,7 @@
                       Type 'delete' to Confirm &nbsp;&nbsp;
                       <input type="text" class="cdr-delete-input" formControlName="deleteteam" #deleteteam />
                       <div class="mt-3">
-                      <button type="button" data-dismiss="modal" class="btn btn-primary"
+                      <button type="button" data-bs-dismiss="modal" class="btn btn-primary"
                         [disabled]="!(deleteTeamForm.valid && deleteteam.value == 'delete')"
                         (click)="deleteTeam(item?.dataroom__my_team_id)">
                         Confirm Delete
@@ -99,8 +99,8 @@
           <td (click)="gettoknowtheplan(item, i, item.plan__name)" *ngIf="item.dataroom__dataroom_storage_allocated">{{ item?.dataroom__dataroom_storage_allocated }} GB</td>
           <td (click)="gettoknowtheplan(item, i, item.plan__name)" *ngIf="!item.dataroom__dataroom_storage_allocated">{{ item?.dataroom_storage_allowed }} GB</td>
           <td (click)="gettoknowtheplan(item, i, item.plan__name)">{{ item.dataroom_consumed }} MB</td>
-          <td ><mat-icon aria-hidden="false" aria-label="Example home icon" matTooltip="Delete" data-toggle="modal"
-            [attr.data-target]="'#deleteTeam'"  style="color:red;font-size: 20px!important;cursor: pointer;">delete_outline</mat-icon></td>
+          <td ><mat-icon aria-hidden="false" aria-label="Example home icon" matTooltip="Delete" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#deleteTeam'"  style="color:red;font-size: 20px!important;cursor: pointer;">delete_outline</mat-icon></td>
           <div id="deleteTeam" class="modal fade" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content cdr-copy-files text-left">
@@ -108,7 +108,7 @@
                   <h5 class="modal-title cdr-copy-title">
                     Delete Team Confirmation
                   </h5>
-                  <button type="button" class="close" data-dismiss="modal">
+                  <button type="button" class="close" data-bs-dismiss="modal">
                     &times;
                   </button>
                 </div>
@@ -122,7 +122,7 @@
                     <form [formGroup]="deleteTeamForm">
                       Type 'delete' to Confirm
                       <input type="text" class="cdr-delete-input" formControlName="deleteteam" #deleteteam />
-                      <button type="button" data-dismiss="modal" class="btn btn-primary"
+                      <button type="button" data-bs-dismiss="modal" class="btn btn-primary"
                         [disabled]="!(deleteTeamForm.valid && deleteteam.value == 'delete')"
                         (click)="deleteTeam(item.id)">
                         Confirm Delete

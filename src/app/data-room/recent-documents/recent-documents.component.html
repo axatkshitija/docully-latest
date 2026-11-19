@@ -33,7 +33,7 @@
                       <h4 class="modal-title cdr-delete-title">
                         Delete Folders and Files
                       </h4>
-                      <button type="button" class="close" data-dismiss="modal">
+                      <button type="button" class="close" data-bs-dismiss="modal">
                         &times;
                       </button>
                     </div>
@@ -49,7 +49,7 @@
                           Type 'delete' to Confirm
                           <input type="text" class="cdr-delete-input" [(ngModel)]="deletes" id="3"
                             formControlName="delete" (keyup)="onKeyCheckDelete(delete.value)" #delete />
-                          <button type="button" class="btn btn-primary" data-dismiss="modal"
+                          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                             (click)="DeleteSelectedFiles()" [disabled]="
                             !(deleteForm.valid && delete.value == 'delete')
                           ">
@@ -66,7 +66,7 @@
               <div *ngIf="BulkDelete" style="float:right;height:45px;padding:10px 0px">
                 <button *ngIf="
                 user?.member?.is_dataroom_admin || user?.member?.is_la_user
-              " type="button" data-toggle="modal" data-target="#deleteModel" class="ico-bnt">
+              " type="button" data-bs-toggle="modal" data-bs-target="#deleteModel" class="ico-bnt">
                   <i class="fa fa-trash"></i>
                   Bulk Delete
                 </button>
@@ -168,7 +168,7 @@
                               *ngIf="folder.download_permission === true">
                               Download
                             </button>
-                            <button mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModel' + i" *ngIf="
+                            <button mat-menu-item data-bs-toggle="modal" [attr.data-bs-target]="'#deleteModel' + i" *ngIf="
                                 user?.member?.is_dataroom_admin ||
                                 user?.member?.is_la_user
                               ">
@@ -185,7 +185,7 @@
                                   <h4 class="modal-title cdr-delete-title">
                                     Delete Folders and Files
                                   </h4>
-                                  <button type="button" class="close" data-dismiss="modal">
+                                  <button type="button" class="close" data-bs-dismiss="modal">
                                     &times;
                                   </button>
                                 </div>
@@ -201,7 +201,7 @@
                                       Type 'delete' to Confirm
                                       <input type="text" class="cdr-delete-input" formControlName="delete"
                                         (keyup)="onKeyCheckDelete(delete.value)" #delete />
-                                      <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="
+                                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="
                                           delete_folder_or_file(
                                             folder.folder__dataroom_folder_uuid,
                                             i

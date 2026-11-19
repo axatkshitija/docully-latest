@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { DataRoomService } from "../../services/index";
 import { ToastrService } from "ngx-toastr";
-import { Http, Headers, Response } from "@angular/http";
+// import { Http, Headers, Response } from "@angular/http";
 import { BaseUrlClass, ApiListClass } from "../../common/index";
 import { map } from "rxjs/operators";
 import { Location } from "@angular/common";

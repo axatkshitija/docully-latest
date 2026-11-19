@@ -71,8 +71,8 @@
 
                           </span>
                           <a class="dr-name" style="color: blue" (click)="Expire()"
-                            *ngIf="!dataroom.is_paid && dataroom.trial_expired" data-backdrop="static"
-                            data-keyboard="false" data-toggle="modal" [attr.data-target]="'#infoModel' + i">
+                            *ngIf="!dataroom.is_paid && dataroom.trial_expired" data-bs-backdrop="static"
+                            data-bs-keyboard="false" data-bs-toggle="modal" [attr.data-bs-target]="'#infoModel' + i">
                             <img src="assets/images/data-room-ico.png" />
                             {{ dataroom.dataroom_nameFront }}
                             <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
@@ -136,7 +136,7 @@
                               <form>
                                 <div class="modal-header cdr-modal cdr-h-c">
                                   <h5 class="modal-title">Info</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                     <i class="material-icons">&#xE5CD;</i>
                                   </button>
                                 </div>
@@ -154,12 +154,12 @@
                                   </div>
                                 </div>
                                 <div class="modal-footer cdr-md-footer">
-                                  <button mat-raised-button color="primary" data-dismiss="modal"
+                                  <button mat-raised-button color="primary" data-bs-dismiss="modal"
                                     class="grey-btn bdr-rad3">
                                     Cancel
                                   </button>
                                   <button mat-raised-button color="primary" class="blue-btn bdr-rad3"
-                                    data-dismiss="modal" (click)="contactSupportTrial(dataroom)">
+                                    data-bs-dismiss="modal" (click)="contactSupportTrial(dataroom)">
                                     Contact Support
                                   </button>
                                 </div>
@@ -191,14 +191,14 @@
                             </a>
                             <a class="dr-name" style="color: blue" *ngIf="
                                 !dataroom.is_paid && dataroom.trial_expired
-                              " data-backdrop="static" data-keyboard="false" data-toggle="modal"
-                              [attr.data-target]="'#infoModel' + i">
+                              " data-bs-backdrop="static" data-bs-keyboard="false" data-bs-toggle="modal"
+                              [attr.data-bs-target]="'#infoModel' + i">
                               <img src="assets/images/data-room-ico.png" />
                               {{ dataroom.dataroom_nameFront }}
                               <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
                             </a>
-                            <a class="dr-name" data-backdrop="static" data-keyboard="false" data-toggle="modal"
-                              [attr.data-target]="'#HoldinfoModel' + i" style="color: blue" *ngIf="(!dataroom.is_dataroom_on_live||!dataroom.is_active_group) &&
+                            <a class="dr-name" data-bs-backdrop="static" data-bs-keyboard="false" data-bs-toggle="modal"
+                              [attr.data-bs-target]="'#HoldinfoModel' + i" style="color: blue" *ngIf="(!dataroom.is_dataroom_on_live||!dataroom.is_active_group) &&
                                ( dataroom.is_paid || !dataroom.trial_expired)
                               ">
                               <img src="assets/images/data-room-ico.png" />
@@ -210,8 +210,8 @@
                             </a>
                             <a class="dr-name" style="color: blue" *ngIf="
                                 !dataroom.is_paid && dataroom.trial_expired
-                              " data-backdrop="static" data-keyboard="false" data-toggle="modal"
-                              [attr.data-target]="'#infoModel' + i">
+                              " data-bs-backdrop="static" data-bs-keyboard="false" data-bs-toggle="modal"
+                              [attr.data-bs-target]="'#infoModel' + i">
                               <img src="assets/images/data-room-ico.png" />
                               {{ dataroom.dataroom_nameFront }}
                               <span style="color: red" *ngIf="!dataroom.member.is_end_user">(Expired)</span>
@@ -242,8 +242,8 @@
                                   (click)="archiveDataroom(dataroom)">
                                   <i class="fa fa-archive" aria-hidden="true"></i>
                                 </button>
-                                <button mat-button class="ico-bnt" data-backdrop="static" data-keyboard="false"
-                                  data-toggle="modal" [attr.data-target]="'#editDataRoomdir' + i" matTooltip="Edit">
+                                <button mat-button class="ico-bnt" data-bs-backdrop="static" data-bs-keyboard="false"
+                                  data-bs-toggle="modal" [attr.data-bs-target]="'#editDataRoomdir' + i" matTooltip="Edit">
                                   <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </button>
 
@@ -269,7 +269,7 @@
                                 <form>
                                   <div class="modal-header cdr-modal cdr-h-c">
                                     <h5 class="modal-title">Info</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                       <i class="material-icons">&#xE5CD;</i>
                                     </button>
                                   </div>
@@ -287,12 +287,12 @@
                                     </div>
                                   </div>
                                   <div class="modal-footer cdr-md-footer">
-                                    <button mat-raised-button color="primary" data-dismiss="modal"
+                                    <button mat-raised-button color="primary" data-bs-dismiss="modal"
                                       class="grey-btn bdr-rad3">
                                       Cancel
                                     </button>
                                     <button mat-raised-button color="primary" class="blue-btn bdr-rad3"
-                                      data-dismiss="modal" (click)="contactSupportTrial(dataroom)">
+                                      data-bs-dismiss="modal" (click)="contactSupportTrial(dataroom)">
                                       Contact Support
                                     </button>
                                   </div>
@@ -309,7 +309,7 @@
                                 <form>
                                   <div class="modal-header cdr-modal cdr-h-c">
                                     <h5 class="modal-title">Info</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                       <i class="material-icons">&#xE5CD;</i>
                                     </button>
                                   </div>
@@ -361,8 +361,8 @@
                               <button class="dr-item" mat-menu-item type="button" (click)="archiveDataroom(dataroom)">
                                 Archive
                               </button>
-                              <button class="dr-item" mat-menu-item data-backdrop="static" data-keyboard="false"
-                                data-toggle="modal" [attr.data-target]="'#editDataRoomdir' + i">
+                              <button class="dr-item" mat-menu-item data-bs-backdrop="static" data-bs-keyboard="false"
+                                data-bs-toggle="modal" [attr.data-bs-target]="'#editDataRoomdir' + i">
                                 Edit
                               </button>
                             </mat-menu>
@@ -421,18 +421,18 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title" id="exampleModalLabel">Create New Data Room</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
       <div class="modal-body cr-n-dr">
         <ul class="nav nav-tabs cr-tab" id="myTab" role="tablist">
           <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home"
               aria-selected="true">Create a blank Data Room</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile"
               aria-selected="false">Clone an existing Data Room</a>
           </li>
         </ul>
@@ -566,11 +566,11 @@
                   </div>
                 </div>
                 <div class="form-group cdr-md-footer">
-                  <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+                  <button type="button" class="btn btn-secondary mr-2" data-bs-dismiss="modal">
                     Cancel
                   </button>
                   <button type="button" [disabled]="!createNewDataroomForm.valid" class="btn btn-primary"
-                    data-dismiss="modal" (click)="submitNewDataroom(createNewDataroomForm.value)">
+                    data-bs-dismiss="modal" (click)="submitNewDataroom(createNewDataroomForm.value)">
                     Save
                   </button>
                 </div>
@@ -643,10 +643,10 @@
                 </div>
               </div>
               <div class="form-group cdr-md-footer">
-                <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">
+                <button type="button" class="btn btn-secondary mr-2" data-bs-dismiss="modal">
                   Cancel
                 </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cloneExistingDataroom()">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="cloneExistingDataroom()">
                   Save
                 </button>
               </div>
@@ -666,18 +666,18 @@
       <form>
         <div class="modal-header cdr-modal cdr-h-c">
           <h5 class="modal-title">Edit Data Room Properties</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <i class="material-icons">&#xE5CD;</i>
           </button>
         </div>
         <div class="modal-body cr-n-dr">
           <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="editd-tab" data-toggle="tab" href="#editd" role="tab" aria-controls="editd"
+              <a class="nav-link active" id="editd-tab" data-bs-toggle="tab" href="#editd" role="tab" aria-controls="editd"
                 aria-selected="true">Edit Details</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="cv-tab" data-toggle="tab" href="#cv" role="tab" aria-controls="cv"
+              <a class="nav-link" id="cv-tab" data-bs-toggle="tab" href="#cv" role="tab" aria-controls="cv"
                 aria-selected="false">Add/Change video/ppt.</a>
             </li>
           </ul>
@@ -756,7 +756,7 @@
           <button mat-raised-button color="primary" class="grey-btn bdr-rad3">
             Cancel
           </button>
-          <button mat-raised-button color="primary" class="blue-btn bdr-rad3" data-dismiss="modal">
+          <button mat-raised-button color="primary" class="blue-btn bdr-rad3" data-bs-dismiss="modal">
             Save Changes
           </button>
         </div>

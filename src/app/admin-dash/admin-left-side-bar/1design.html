@@ -61,7 +61,7 @@
     <div class="add-new-contact" class="col-md-1">
       <mat-card class="rounded mb-10 us-item p-0">
         <a routerLink="/dashboard">
-          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+          <button class="addNewCont text-center" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
             <i class="fa fa-id-card" aria-hidden="true"></i>
             <!-- <span>My Data Rooms</span> -->
           </button>
@@ -71,7 +71,7 @@
     <div class="add-new-contact" class="col-md-1">
       <mat-card class="rounded mb-10 us-item p-0">
         <a routerLink="/my-contacts">
-          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+          <button class="addNewCont text-center" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
             <i class="fa fa-address-book"></i>
             <!-- <span>My Contacts</span> -->
           </button>
@@ -82,7 +82,7 @@
       *ngIf="(user?.is_superadmin || user?.is_team || user?.is_team_member) || buttonVisibility?.Channels">
       <mat-card class="rounded mb-10 us-item p-0">
         <a routerLink="/channel">
-          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+          <button class="addNewCont text-center" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
             <i class="fa fa-users"></i>
             <!-- <span>Channels</span> -->
           </button>
@@ -92,7 +92,7 @@
     <div class="add-new-contact col-md-1" *ngIf="user?.is_superadmin">
       <mat-card class="rounded mb-10 us-item p-0">
         <a routerLink="/online-channel">
-          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+          <button class="addNewCont text-center" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
             <i class="fa fa-people-group"></i>
             <!-- <span>Online Channels</span> -->
           </button>
@@ -102,7 +102,7 @@
     <div class="add-new-contact col-md-1" *ngIf="user?.is_subscriber && buttonVisibility?.subscription">
       <mat-card class="rounded mb-10 us-item p-0">
         <a routerLink="/subscription">
-          <button class="addNewCont text-center" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+          <button class="addNewCont text-center" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
             <i class="fa fa-sign-in"></i>
             <!-- <span>Subscription</span> -->
           </button>

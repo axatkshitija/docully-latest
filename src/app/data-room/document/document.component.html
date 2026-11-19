@@ -21,11 +21,11 @@
                   <i class="material-icons ser-ico">&#xE8B6;</i>
                 </button>
                 <div class="dropdown filteroptionSearch">
-                  <button class="btn filter-btn-s" type="button" id="srFilterOption" data-toggle="dropdown"
+                  <button class="btn filter-btn-s" type="button" id="srFilterOption" data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-angle-down"></i>
                   </button>
-                  <div class="dropdown-menu filterdroppnl" data-backdrop="static" data-keyboard="false"
+                  <div class="dropdown-menu filterdroppnl" data-bs-backdrop="static" data-bs-keyboard="false"
                     aria-labelledby="srFilterOption" id="filterPopup">
                     <h2>Filter with</h2>
 
@@ -74,7 +74,7 @@
               <span fxFlex></span>
               <div class="cdr-buttons">
                 <button mat-raised-button style="margin-right:0.5rem !important" class="cdr-btn big-btn orange-btn mr-2"
-                  data-toggle="modal" data-target="#createfolder" data-backdrop="static" data-keyboard="false" *ngIf="
+                  data-bs-toggle="modal" data-bs-target="#createfolder" data-bs-backdrop="static" data-bs-keyboard="false" *ngIf="
                  (user?.member?.is_dataroom_admin || user?.member?.is_la_user) &&
                   createFolder
                 ">
@@ -130,7 +130,7 @@
                       <span class="t-text">Doculink</span>
                     </button>
                   </span>
-                  <button class="icon-btn" type="button" data-toggle="modal" data-target="#deleteModel" *ngIf="
+                  <button class="icon-btn" type="button" data-bs-toggle="modal" data-bs-target="#deleteModel" *ngIf="
                     user?.member?.is_dataroom_admin || user?.member?.is_la_user
                   ">
                     <i class="fa fa-trash"></i>
@@ -166,7 +166,7 @@
                           <h4 class="modal-title cdr-delete-title">
                             Delete Folders and Files
                           </h4>
-                          <button type="button" class="close" data-dismiss="modal">
+                          <button type="button" class="close" data-bs-dismiss="modal">
                             &times;
                           </button>
                         </div>
@@ -182,7 +182,7 @@
                               Type 'delete' to Confirm
                               <input type="text" class="cdr-delete-input" [(ngModel)]="deletes" id="3"
                                 formControlName="delete" (keyup)="onKeyCheckDelete(delete.value)" #delete />
-                              <button type="button" class="btn btn-primary" data-dismiss="modal"
+                              <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                                 (click)="delete_all_files()" [disabled]="
                                 !(deleteForm.valid && delete.value == 'delete')
                               ">
@@ -348,7 +348,7 @@
                               </button>
                             </span>
 
-                            <button mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModel' + i" *ngIf="
+                            <button mat-menu-item data-bs-toggle="modal" [attr.data-bs-target]="'#deleteModel' + i" *ngIf="
                               user?.member?.is_dataroom_admin ||
                               user?.member?.is_la_user
                             ">
@@ -387,7 +387,7 @@
                                   <h4 class="modal-title cdr-delete-title">
                                     Delete Folders and Files
                                   </h4>
-                                  <button type="button" class="close" data-dismiss="modal">
+                                  <button type="button" class="close" data-bs-dismiss="modal">
                                     &times;
                                   </button>
                                 </div>
@@ -404,7 +404,7 @@
                                   </form>
                                 </div>
                                 <div class="modal-footer cdr-delete-footer">
-                                  <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="
+                                  <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="
                                 delete_folder(
                                       folder
                                     )
@@ -462,7 +462,7 @@
                               " (click)="download_single_folder(folder)">
                                 Download
                               </button>
-                              <button mat-menu-item data-toggle="modal" [attr.data-target]="'#deleteModal' + i">
+                              <button mat-menu-item data-bs-toggle="modal" [attr.data-bs-target]="'#deleteModal' + i">
                                 Delete
                               </button>
                             </mat-menu>
@@ -476,7 +476,7 @@
                                     <h4 class="modal-title cdr-delete-title">
                                       Delete Folders and Files
                                     </h4>
-                                    <button type="button" class="close" data-dismiss="modal">
+                                    <button type="button" class="close" data-bs-dismiss="modal">
                                       &times;
                                     </button>
                                   </div>
@@ -495,7 +495,7 @@
                                         Type 'delete' to Confirm
                                         <input type="text" class="cdr-delete-input" id="2" formControlName="delete"
                                           [(ngModel)]="deletes" (keyup)="onKeyCheckDelete(delete.value)" #delete />
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="
                                       delete_folder(
                                         folder
                                       )
@@ -810,7 +810,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Create New Folder</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
@@ -823,11 +823,11 @@
             </small>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancel
             </button>
-            <!-- <button data-dismiss="modal" type="button" class="btn btn-primary" (click)="createNewFolder(newFolderForm)" [disabled]="!newFolderForm.valid" >Create</button> -->
-            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="createNewFolder()"
+            <!-- <button data-bs-dismiss="modal" type="button" class="btn btn-primary" (click)="createNewFolder(newFolderForm)" [disabled]="!newFolderForm.valid" >Create</button> -->
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="createNewFolder()"
               [disabled]="!newFolderForm.valid">
               Create
             </button>
@@ -845,7 +845,7 @@
     <div class="modal-content cdr-copy-files text-left">
       <div class="modal-header">
         <h5 class="modal-title cdr-copy-title">Copy Folders and Files</h5>
-        <button type="button" class="close" data-dismiss="modal">
+        <button type="button" class="close" data-bs-dismiss="modal">
           &times;
         </button>
       </div>
@@ -859,7 +859,7 @@
       </div>
       <div class="modal-footer cdr-copy-footer">
         <div>
-          <button type="button" class="btn btn-primary" (click)="CopySelectedFile()" data-dismiss="modal">
+          <button type="button" class="btn btn-primary" (click)="CopySelectedFile()" data-bs-dismiss="modal">
             Confirm copy
           </button>
         </div>
@@ -876,7 +876,7 @@
     <div class="modal-content cdr-move-files text-left">
       <div class="modal-header">
         <h5 class="modal-title cdr-move-title">Move Folders and Files</h5>
-        <button type="button" class="close" data-dismiss="modal">
+        <button type="button" class="close" data-bs-dismiss="modal">
           &times;
         </button>
       </div>
@@ -888,7 +888,7 @@
       </div>
       <div class="modal-footer cdr-move-footer">
         <div>
-          <button type="button" class="btn btn-primary" (click)="MoveSelectedFile()" data-dismiss="modal">
+          <button type="button" class="btn btn-primary" (click)="MoveSelectedFile()" data-bs-dismiss="modal">
             Confirm Move
           </button>
         </div>

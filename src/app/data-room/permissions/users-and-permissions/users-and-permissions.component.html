@@ -145,7 +145,7 @@
                           <i class="fa fa-cog" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="btn btn-link" matTooltip="Delete" aria-label="Delete"
-                          data-toggle="modal" [attr.data-target]="'#deleteLAUserGroupModel' + i">
+                          data-bs-toggle="modal" [attr.data-bs-target]="'#deleteLAUserGroupModel' + i">
                           <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </button>
                       </td>
@@ -159,7 +159,7 @@
                               <h4 class="modal-title cdr-move-title">
                                 Delete LA Admin Group
                               </h4>
-                              <button type="button" class="close" data-dismiss="modal">
+                              <button type="button" class="close" data-bs-dismiss="modal">
                                 &times;
                               </button>
                             </div>
@@ -172,7 +172,7 @@
                             <div class="modal-footer cdr-move-footer">
                               <div>
                                 <button type="button" class="btn btn-primary" (click)="deleteLAUserGroup(i, la_group)"
-                                  data-dismiss="modal">
+                                  data-bs-dismiss="modal">
                                   Confirm delete
                                 </button>
                               </div>
@@ -268,7 +268,7 @@
                           <i class="fa fa-check" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="btn btn-link" matTooltip="Delete" aria-label="Delete"
-                          data-toggle="modal" [attr.data-target]="'#deleteEndUserGroupModel' + i">
+                          data-bs-toggle="modal" [attr.data-bs-target]="'#deleteEndUserGroupModel' + i">
                           <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </button>
                         <!-- Click delete button (click)="deleteEndUserGroup(i, group)" -->
@@ -281,7 +281,7 @@
                                 <h4 class="modal-title cdr-move-title">
                                   Delete End User Group
                                 </h4>
-                                <button type="button" class="close" data-dismiss="modal">
+                                <button type="button" class="close" data-bs-dismiss="modal">
                                   &times;
                                 </button>
                               </div>
@@ -294,7 +294,7 @@
                               <div class="modal-footer cdr-move-footer">
                                 <div>
                                   <button type="button" class="btn btn-primary" (click)="deleteEndUserGroup(i, group)"
-                                    data-dismiss="modal">
+                                    data-bs-dismiss="modal">
                                     Confirm delete
                                   </button>
                                 </div>

@@ -11,7 +11,7 @@
         <div class="cdr-rt-sidebar nav-discussions">
           <mat-card class="rounded mb-10 p-0">
             <mat-toolbar class="cdr-toolbar">
-              <span>New Messages</span><button data-toggle="modal" data-target="#sendMessage">
+              <span>New Messages</span><button data-bs-toggle="modal" data-bs-target="#sendMessage">
                 <i class="fa fa-plus-circle"></i>
               </button>
             </mat-toolbar>
@@ -129,12 +129,12 @@
         <!--rt aside component end-->
       </div>
 
-      <div class="modal fade" id="sendMessage" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+      <div class="modal fade" id="sendMessage" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header cdr-h-c cdr-modal">
               <h5 class="modal-title">Send Message</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -163,7 +163,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendMessageToUser()">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="sendMessageToUser()">
                 Send
               </button>
             </div>

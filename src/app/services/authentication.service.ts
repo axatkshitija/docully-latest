@@ -1,10 +1,10 @@
 import { map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
-import { Http, Headers, Response } from "@angular/http";
+// import { Http, Headers, Response } from "@angular/http";
 import { Observable } from "rxjs";
 import { Router, ActivatedRoute } from "@angular/router";
 import { BaseUrlClass, ApiListClass } from "../common/index";
-import { RequestOptions, ResponseContentType } from "@angular/http";
+// import { RequestOptions, ResponseContentType } from "@angular/http";
 import {
 
   HttpClient,

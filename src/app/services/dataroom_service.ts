@@ -24,13 +24,13 @@ import { Router, ActivatedRoute } from "@angular/router";
 
 import { BaseUrlClass, ApiListClass } from "../common/index";
 import { saveAs } from 'file-saver';
-import {
-  Http,
-  Headers,
-  RequestOptions,
-  Response,
-  ResponseContentType,
-} from "@angular/http";
+// import {
+//   Http,
+//   Headers,
+//   RequestOptions,
+//   Response,
+//   ResponseContentType,
+// } from "@angular/http";
 
 
 @Injectable()
@@ -3748,23 +3748,18 @@ export class DataRoomService {
 
   // get_folders
   getAllFolders(dataroom_id: any): Observable<any> {
-    return of({});
-    // if(dataroom_id !=null || dataroom_id !=undefined){
-    // return this.http
-    //   .get(this.baseUrl + this.apiListClass.get_folders + dataroom_id + "/", {
-    //     headers: new HttpHeaders().set(
-    //       "Authorization",
-    //       "token " + localStorage.getItem("token")
-    //     ),
-    //   })
-    //   .pipe(
-    //     tap((res: any) => {
-    //       this.log(`get all file folder`);
-    //     })
-    //   );
-    // }else{
-
-    // }
+    return this.http
+      .get(this.baseUrl + this.apiListClass.get_folders + dataroom_id + "/", {
+        headers: new HttpHeaders().set(
+          "Authorization",
+          "token " + localStorage.getItem("token")
+        ),
+      })
+      .pipe(
+        tap(() => {
+          this.log("get all file folder");
+        })
+      );
   }
 
   // get all root folders

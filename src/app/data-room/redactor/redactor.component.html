@@ -40,8 +40,8 @@
 
             <div>
 
-              <button id="download-image" style="margin-top: 2px;" mat-menu-item data-toggle="modal"
-                [attr.data-target]="'#saveModel'" class="btn-default cloud-btn"
+              <button id="download-image" style="margin-top: 2px;" mat-menu-item data-bs-toggle="modal"
+                [attr.data-bs-target]="'#saveModel'" class="btn-default cloud-btn"
                 [style.display]="show && __TOTAL_PAGES==allPages.length?'block':'none'"
                 [disabled]="show && __TOTAL_PAGES!=allPages.length">Save Redacte File
               </button>
@@ -93,7 +93,7 @@
                   <h4 class="modal-title cdr-delete-title">
                     Save Redact File
                   </h4>
-                  <button type="button" class="close" data-dismiss="modal">
+                  <button type="button" class="close" data-bs-dismiss="modal">
                     &times;
                   </button>
                 </div>
@@ -104,10 +104,10 @@
                   </span>
                 </div>
                 <div class="modal-footer cdr-delete-footer">
-                  <button type="button" data-dismiss="modal" class="btn btn-primary">
+                  <button type="button" data-bs-dismiss="modal" class="btn btn-primary">
                     Continue Edit
                   </button>
-                  <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="UploadRedactFile()">
+                  <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="UploadRedactFile()">
                     Save as New
                   </button>
                 </div>

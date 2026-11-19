@@ -5,7 +5,7 @@
   </div>
   <div class="cdr-topToolbar">
     <div class="user-name">
-      <button data-toggle="modal" data-target="#userProfileCdr">
+      <button data-bs-toggle="modal" data-bs-target="#userProfileCdr">
         <span id="uName" *ngIf="user">Welcome, {{ user.first_name }}</span>
         <i class="fa fa-align-left"></i>
       </button>
@@ -36,7 +36,7 @@
         <button
           type="button"
           class="close"
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           aria-label="Close"
         >
           <i class="material-icons">&#xE5CD;</i>

@@ -4,8 +4,8 @@
   <div class="d-flex justify-content-between">
     <div></div>
     <div *ngIf="currentUser.is_superadmin == true || channelDetail?.accesstocreateteam == true">
-      <button mat-raised-button color="primary" class="blue-btn is-icon" data-toggle="modal"
-        data-target="#createnewteam" data-backdrop="static" data-keyboard="false">
+      <button mat-raised-button color="primary" class="blue-btn is-icon" data-bs-toggle="modal"
+        data-bs-target="#createnewteam" data-bs-backdrop="static" data-bs-keyboard="false">
         <i class="material-icons">&#xE145;</i> New Team
       </button>
     </div>
@@ -44,8 +44,8 @@
           <td>{{ team.dataroom_storage_allowed }} GB</td>
           <td>{{ team.team_current_storage }} GB</td>
           <td class="text-center">
-            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-toggle="modal"
-              [attr.data-target]="'#editTeam' + i" data-backdrop="static"></i>
+            <i class="fa fa-pencil" style="cursor: pointer;" aria-hidden="true" data-bs-toggle="modal"
+              [attr.data-bs-target]="'#editTeam' + i" data-bs-backdrop="static"></i>
 
             <div class="modal fade" id="editTeam{{ i }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
@@ -53,7 +53,7 @@
                 <div class="modal-content">
                   <div class="modal-header cdr-modal cdr-h-c">
                     <h5 class="modal-title">Edit Team</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                       <i class="material-icons">&#xE5CD;</i>
                     </button>
                   </div>
@@ -139,7 +139,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Create A New Team</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>

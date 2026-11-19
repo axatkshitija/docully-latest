@@ -50,11 +50,11 @@
                         </div>
                         <div style="flex: 1 1 0%; box-sizing: border-box"></div>
                         <span *ngIf="showRestore" mat-raised-button class="multi-select-button btn-default"
-                          aria-hidden="true" data-toggle="modal" data-target="#RestoreModel">
+                          aria-hidden="true" data-bs-toggle="modal" data-bs-target="#RestoreModel">
                           <i class="fa fa-window-restore" style="font-size: 11.5px;"></i> Restore
                         </span>
                         <span *ngIf="showRestore" mat-raised-button class="multi-select-button  btn-danger"
-                          aria-hidden="true" data-toggle="modal" data-target="#deleteModel" style="color: white;">
+                          aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModel" style="color: white;">
                           <i class="fa fa-trash t-icon" style="color: white;font-size: 11.5px;"></i> Delete
                         </span>
 
@@ -73,7 +73,7 @@
                     <h4 class="modal-title cdr-delete-title">
                       Delete Folders and Files
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="close" data-bs-dismiss="modal">
                       &times;
                     </button>
                   </div>
@@ -89,7 +89,7 @@
                         <input type="text" class="cdr-delete-input" formControlName="delete" [(ngModel)]="deletes"
                           id="2" (keyup)="onKeyCheckDelete(delete.value)" #delete />
                         <button type="button" [disabled]="is_disabled_delete_button == false" class="btn btn-primary"
-                          data-dismiss="modal" (click)="bulk_permanant_delete_folder()">
+                          data-bs-dismiss="modal" (click)="bulk_permanant_delete_folder()">
                           Confirm Delete
                         </button>
                       </form>
@@ -106,7 +106,7 @@
                     <h4 class="modal-title cdr-delete-title">
                       Restore Folders or Files
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <button type="button" class="close" data-bs-dismiss="modal">
                       &times;
                     </button>
                   </div>
@@ -117,10 +117,10 @@
                   </div>
                   <div class="modal-footer cdr-delete-footer">
                     <div>
-                      <button type="button" class="btn btn-primary" data-dismiss="modal"
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                         (click)="restore_selected_folders_file()">
                         Yes</button>&nbsp;
-                      <button type="button" class="btn btn-primary" data-dismiss="modal">
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                         No
                       </button>
                     </div>
@@ -179,8 +179,8 @@
                       <td>
                         <span class="icon-span"><img [src]="folder.icons" /></span>
                         <span (click)="showTrashFoldersTree(folder)" class="recent-doc-title"
-                          matTooltip="Click on it to see folder structure" style="cursor: pointer" data-toggle="modal"
-                          data-target="#folderstructure" data-backdrop="static" data-keyboard="false"
+                          matTooltip="Click on it to see folder structure" style="cursor: pointer" data-bs-toggle="modal"
+                          data-bs-target="#folderstructure" data-bs-backdrop="static" data-bs-keyboard="false"
                           *ngIf="folder.is_folder">{{ folder.folder__name?folder.folder__name:folder.name | limitTo: 20
                           }}
                         </span>
@@ -190,7 +190,7 @@
                             <div class="modal-content">
                               <div class="modal-header cdr-modal cdr-h-c">
                                 <h5>Folder Structures:</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                   <i class="material-icons">&#xE5CD;</i>
                                 </button>
                               </div>
@@ -255,12 +255,12 @@
                           <i class="material-icons">&#xE5D4;</i>
                         </button>
                         <mat-menu #menu="matMenu" class="cdr-actbtn">
-                          <button mat-menu-item aria-hidden="true" data-toggle="modal"
-                            [attr.data-target]="'#restoreModel' + i">
+                          <button mat-menu-item aria-hidden="true" data-bs-toggle="modal"
+                            [attr.data-bs-target]="'#restoreModel' + i">
                             Restore
                           </button>
-                          <button mat-menu-item aria-hidden="true" data-toggle="modal"
-                            [attr.data-target]="'#deleteModel' + i">
+                          <button mat-menu-item aria-hidden="true" data-bs-toggle="modal"
+                            [attr.data-bs-target]="'#deleteModel' + i">
                             Permanent Delete
                           </button>
                         </mat-menu>
@@ -274,7 +274,7 @@
                               <h4 class="modal-title cdr-delete-title">
                                 Restore Folders or Files
                               </h4>
-                              <button type="button" class="close" data-dismiss="modal">
+                              <button type="button" class="close" data-bs-dismiss="modal">
                                 &times;
                               </button>
                             </div>
@@ -287,9 +287,9 @@
                             <div class="modal-footer cdr-delete-footer">
                               <div>
                                 <button type="button" class="btn btn-primary" (click)="restore_folders_file(folder, i)"
-                                  data-dismiss="modal">
+                                  data-bs-dismiss="modal">
                                   Yes</button>&nbsp;
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                   No
                                 </button>
                               </div>
@@ -307,7 +307,7 @@
                               <h4 class="modal-title cdr-delete-title">
                                 Permanently Delete Folders and Files
                               </h4>
-                              <button type="button" class="close" data-dismiss="modal">
+                              <button type="button" class="close" data-bs-dismiss="modal">
                                 &times;
                               </button>
                             </div>
@@ -320,9 +320,9 @@
                             <div class="modal-footer cdr-delete-footer">
                               <div>
                                 <button type="button" class="btn btn-primary"
-                                  (click)="permanant_delete_folder(folder, i)" data-dismiss="modal">
+                                  (click)="permanant_delete_folder(folder, i)" data-bs-dismiss="modal">
                                   Yes</button>&nbsp;
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                   No
                                 </button>
                               </div>

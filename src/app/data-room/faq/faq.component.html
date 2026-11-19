@@ -19,8 +19,8 @@
               <span fxFlex></span>
 
               <button *ngIf="user.member.is_dataroom_admin || user.member.is_la_user" mat-raised-button color="primary"
-                class="blue-btn is-icon" type="button" style="float: right" data-toggle="modal"
-                data-target="#add_to_faq" (click)="tim()">
+                class="blue-btn is-icon" type="button" style="float: right" data-bs-toggle="modal"
+                data-bs-target="#add_to_faq" (click)="tim()">
                 <i class="fa fa-plus" aria-hidden="true"></i>
 
                 Add FAQ
@@ -40,7 +40,7 @@
               <mat-list role="list" class="qa-list">
                 <mat-list-item role="listitem" style="height:auto;padding:0px 10px!important;">
                   <a style="width: 100%">
-                    <h3 data-toggle="modal" [attr.data-target]="'#view' + i">
+                    <h3 data-bs-toggle="modal" [attr.data-bs-target]="'#view' + i">
                       Q:&nbsp;{{ item.question }}
                     </h3>
                     <span class="answer">AA:&nbsp;{{ item.answer }}</span>
@@ -48,13 +48,13 @@
                     <span *ngIf="
                     user.member.is_dataroom_admin || user.member.is_la_user
                   " class="action-btn" style="float: right;margin-top: -30px;">
-                      <button mat-button class="ico-bnt" type="button" matTooltip="Edit" data-toggle="modal"
-                        [attr.data-target]="'#edit' + i" (click)="send_update(i)">
+                      <button mat-button class="ico-bnt" type="button" matTooltip="Edit" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#edit' + i" (click)="send_update(i)">
                         <i aria-hidden="true" class="fa fa-pencil"></i>
                       </button>
 
-                      <button mat-button class="ico-bnt" type="button" matTooltip="Delete" data-toggle="modal"
-                        [attr.data-target]="'#delete' + i">
+                      <button mat-button class="ico-bnt" type="button" matTooltip="Delete" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#delete' + i">
                         <i aria-hidden="true" class="fa fa-trash"></i>
                       </button>
                     </span>
@@ -87,7 +87,7 @@
                       <div class="modal-content cdr-copy-files text-left">
                         <div class="modal-header">
                           <h5 class="modal-title cdr-copy-title">View FAQ</h5>
-                          <button type="button" class="close" data-dismiss="modal">
+                          <button type="button" class="close" data-bs-dismiss="modal">
                             &times;
                           </button>
                         </div>
@@ -117,7 +117,7 @@
                           <h5 class="modal-title cdr-copy-title">
                             Delete FAQ Confirmation
                           </h5>
-                          <button type="button" class="close" data-dismiss="modal">
+                          <button type="button" class="close" data-bs-dismiss="modal">
                             &times;
                           </button>
                         </div>
@@ -133,7 +133,7 @@
                               <input type="text" class="cdr-delete-input" formControlName="delete"
                                 (keyup)="onKeyCheckDelete(delete.value)" #delete />
                               <br>
-                              <button type="button" [disabled]="is_disabled_delete_button == false" data-dismiss="modal"
+                              <button type="button" [disabled]="is_disabled_delete_button == false" data-bs-dismiss="modal"
                                 class="btn btn-primary" [disabled]="!deleteForm.valid" (click)="deleteFaq(item)">
                                 Confirm Delete
                               </button>
@@ -152,7 +152,7 @@
                       <div class="modal-content cdr-copy-files text-left">
                         <div class="modal-header">
                           <h5 class="modal-title cdr-copy-title">Edit FAQ</h5>
-                          <button type="button" class="close" data-dismiss="modal">
+                          <button type="button" class="close" data-bs-dismiss="modal">
                             &times;
                           </button>
                         </div>
@@ -192,7 +192,7 @@
                             </label>
                           </div>
 
-                          <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="EditFaq(item)"
+                          <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="EditFaq(item)"
                             style="float: right">
                             Update
                           </button>
@@ -296,7 +296,7 @@
           <div class="modal-content cdr-delete-files">
             <div class="modal-header">
               <h4 class="modal-title cdr-delete-title">Add To FAQ</h4>
-              <button type="button" class="close" data-dismiss="modal">
+              <button type="button" class="close" data-bs-dismiss="modal">
                 &times;
               </button>
             </div>
@@ -332,7 +332,7 @@
                   </mat-autocomplete>
                 </div>
 
-                <button type="button" data-dismiss="modal" class="btn btn-primary" (click)="AddToFaq(question_data)"
+                <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="AddToFaq(question_data)"
                   style="float: right" [disabled]="
                     question_data.question === '' || question_data.answer === ''">
                   Create FAQ

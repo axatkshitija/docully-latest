@@ -49,7 +49,7 @@
   <div class="add-new-contact">
     <mat-card class="rounded mb-10 us-item p-0">
       <a routerLink="/dashboard">
-        <button class="addNewCont" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+        <button class="addNewCont" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
           <i class="fa fa-id-card" aria-hidden="true"></i>
           <span>My Data Rooms</span>
         </button>
@@ -59,7 +59,7 @@
   <div class="add-new-contact">
     <mat-card class="rounded mb-10 us-item p-0">
       <a routerLink="/my-contacts">
-        <button class="addNewCont" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+        <button class="addNewCont" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
           <i class="fa fa-address-book"></i> <span>My Contacts</span>
         </button>
       </a>
@@ -72,7 +72,7 @@
         *ngIf="(user.is_superadmin || user.is_team || user.is_team_member) || buttonVisibility?.Channels">
         <mat-card class="rounded mb-10 us-item p-0">
           <a routerLink="/channel">
-            <button class="addNewCont" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <button class="addNewCont" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
               <i class="fa fa-users"></i> <span>Channels</span>
             </button>
           </a>
@@ -81,7 +81,7 @@
       <div class="add-new-contact" *ngIf="user.is_superadmin">
         <mat-card class="rounded mb-10 us-item p-0">
           <a routerLink="/online-channel">
-            <button class="addNewCont" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <button class="addNewCont" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
               <i class="fa fa-users"></i> <span>Online Channels</span>
             </button>
           </a>
@@ -90,7 +90,7 @@
       <div class="add-new-contact" *ngIf="user.is_subscriber && buttonVisibility?.subscription">
         <mat-card class="rounded mb-10 us-item p-0">
           <a routerLink="/subscription">
-            <button class="addNewCont" data-toggle="" data-target="" data-backdrop="" data-keyboard="">
+            <button class="addNewCont" data-bs-toggle="" data-bs-target="" data-bs-backdrop="" data-bs-keyboard="">
               <i class="fa fa-sign-in"></i> <span>Subscription</span>
             </button>
           </a>
@@ -117,8 +117,8 @@
               </button>
             </mat-card>
             <mat-card class="rounded mb-10 us-item p-0">
-              <button mat-button class="us-btn" data-toggle="modal" data-target="#callusModal" data-backdrop="static"
-                data-keyboard="false">
+              <button mat-button class="us-btn" data-bs-toggle="modal" data-bs-target="#callusModal" data-bs-backdrop="static"
+                data-bs-keyboard="false">
                 <i class="material-icons icon-are">&#xE0B0;</i>Call Us
               </button>
             </mat-card>
@@ -139,7 +139,7 @@
         <div class="modal-content">
           <div class="modal-header cdr-modal cdr-h-c">
             <h5 class="modal-title" id="exampleModalLabel">Add New Conatct</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <i class="material-icons">&#xE5CD;</i>
             </button>
           </div>
@@ -347,7 +347,7 @@
         <div class="modal-content">
           <div class="modal-header cdr-modal cdr-h-c">
             <h5 class="modal-title">Add New Team</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <i class="material-icons">&#xE5CD;</i>
             </button>
           </div>
@@ -388,7 +388,7 @@
                 This field is required
               </small>
               <div class="modal-footer">
-                <button mat-raised-button color="primary" data-dismiss="modal" class="grey-btn bdr-rad3" type="button">
+                <button mat-raised-button color="primary" data-bs-dismiss="modal" class="grey-btn bdr-rad3" type="button">
                   Cancel
                 </button>
                 <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit"
@@ -409,7 +409,7 @@
         <div class="modal-content">
           <div class="modal-header cdr-modal cdr-h-c">
             <h5>Call Us On:</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <i class="material-icons">&#xE5CD;</i>
             </button>
           </div>

@@ -15,8 +15,8 @@
 
 
                         <div class="btnarea" fxLayout="row">
-                            <button mat-raised-button class="radius18 bdrgrey" color="lightgrey" data-toggle="modal"
-                                data-target="#addNewContact">Manually Add new Administrators</button>
+                            <button mat-raised-button class="radius18 bdrgrey" color="lightgrey" data-bs-toggle="modal"
+                                data-bs-target="#addNewContact">Manually Add new Administrators</button>
                             <span fxFlex></span>
                             <div class="btn-group">
                                 <button mat-button class="radius18 bdrgrey">Choose from Contacts</button>
@@ -81,7 +81,7 @@
         <div class="modal-content">
             <div class="modal-header cdr-modal cdr-h-c">
                 <h5 class="modal-title" id="exampleModalLabel">Add New User</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="material-icons">&#xE5CD;</i>
                 </button>
             </div>
@@ -174,7 +174,7 @@
 
 
                         <div class="modal-footer cdr-md-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                 (click)="refreshAdminForm()">Cancel</button>
                             <button type="submit" [disabled]="!userForm.valid" class="btn btn-primary">Submit</button>
                         </div>

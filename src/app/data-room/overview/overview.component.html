@@ -23,8 +23,8 @@
             <div *ngIf="overviewForm">
               <div *ngIf="overviewForm.dataroom_overview_heading?.length > 0">
                 <button mat-raised-button color="primary" class="blue-btn blue-btn1 is-icon mat-raised-buttons"
-                  data-toggle="modal" title="Settings" data-target="#editDataRoom" data-backdrop="static"
-                  data-keyboard="false" *ngIf="
+                  data-bs-toggle="modal" title="Settings" data-bs-target="#editDataRoom" data-bs-backdrop="static"
+                  data-bs-keyboard="false" *ngIf="
                     user.member.is_dataroom_admin || user.member.is_la_user
                   ">
                   <i class="fa fa-cog" style="font-size: 17px"></i>
@@ -38,8 +38,8 @@
                   fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign.xs="center stretch"
                   fxLayoutAlign.sm="center stretch">
                   <button mat-raised-button mat-raised-buttons color="primary"
-                    class="marauto blue-btn blue-btn1 is-icon mat-raised-buttons" title="Settings" data-toggle="modal"
-                    data-target="#editDataRoom" data-backdrop="static" data-keyboard="false" *ngIf="
+                    class="marauto blue-btn blue-btn1 is-icon mat-raised-buttons" title="Settings" data-bs-toggle="modal"
+                    data-bs-target="#editDataRoom" data-bs-backdrop="static" data-bs-keyboard="false" *ngIf="
                       user.member.is_dataroom_admin || user.member.is_la_user
                     ">
                     <i class="fa fa-cog" style="font-size: 17px"></i>
@@ -150,22 +150,22 @@
       <form #form="ngForm" (ngSubmit)="OverviewFormSubmit()">
         <div class="modal-header cdr-modal cdr-h-c">
           <h5 class="modal-title">Edit Overview Properties</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <i class="material-icons">&#xE5CD;</i>
           </button>
         </div>
         <div class="modal-body cr-n-dr" *ngIf="overviewForm">
           <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="editd-tab" data-toggle="tab" href="#editd" role="tab" aria-controls="editd"
+              <a class="nav-link active" id="editd-tab" data-bs-toggle="tab" href="#editd" role="tab" aria-controls="editd"
                 aria-selected="true">General Settings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="cv-tab" data-toggle="tab" href="#cv" role="tab" aria-controls="cv"
+              <a class="nav-link" id="cv-tab" data-bs-toggle="tab" href="#cv" role="tab" aria-controls="cv"
                 aria-selected="false">Video Intro Settings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/watermarking-setting" data-dismiss="modal">Watermark Settings</a>
+              <a class="nav-link" routerLink="/watermarking-setting" data-bs-dismiss="modal">Watermark Settings</a>
             </li>
           </ul>
           <div class="tab-content" id="edrTabContent">
@@ -308,10 +308,10 @@
             </div>
           </div>
           <div class="modal-footer cdr-md-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancel
             </button>
-            <button mat-raised-button color="primary" data-dismiss="modal" (click)="OverviewFormSubmit()"
+            <button mat-raised-button color="primary" data-bs-dismiss="modal" (click)="OverviewFormSubmit()"
               class="blue-btn bdr-rad3" type="submit">
               Save Changes
             </button>

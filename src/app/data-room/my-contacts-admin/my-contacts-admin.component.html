@@ -57,15 +57,15 @@
                     <span *ngIf="group_name111; else contactElse">
                       <li class="mem-item alactive d-flex justify-content-between" *ngIf="group_name111 == group.group_name; else contactIfElse" >
                         <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span>
-                        <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                        <span class="ico-bnt"><i class="fa fa-trash" data-bs-toggle="modal" data-bs-target="#deleteModel"></i></span></li>
                       <ng-template #contactIfElse>
                       <li class="mem-item d-flex justify-content-between" >
-                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-bs-toggle="modal" data-bs-target="#deleteModel"></i></span></li>
                     </ng-template>
                     </span>
                     <ng-template #contactElse>
                       <li class="mem-item d-flex justify-content-between" >
-                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-toggle="modal" data-target="#deleteModel"></i></span></li>
+                        <span (click)="getAllContactGroupMembers(group)">{{group.group_name}} </span> <span class="ico-bnt"><i class="fa fa-trash" data-bs-toggle="modal" data-bs-target="#deleteModel"></i></span></li>
                     </ng-template>
 
 <div id="deleteModel" class="modal fade" role="dialog">
@@ -74,7 +74,7 @@
     <div class="modal-content cdr-delete-files">
       <div class="modal-header">
         <h4 class="modal-title cdr-delete-title">Delete Folders and Files</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;
+        <button type="button" class="close" data-bs-dismiss="modal">&times;
         </button>
       </div>
       <div class="modal-body">
@@ -84,10 +84,10 @@
       </div>
       <div class="modal-footer cdr-delete-footer">
         <div>
-            <button type="button" class="btn btn-primary" data-dismiss="modal"
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
             (click)="deleteGroup(group.id)" 
             >Yes</button> &nbsp;
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
         </div>
       </div>
     </div>

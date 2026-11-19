@@ -16,10 +16,10 @@
                 <!-- (20) -->
               </span></span>
             <span fxFlex></span>
-            <span *ngIf="!hideNewContactForm && user_obj.is_team" data-toggle="modal" data-target="#create-new-team">
+            <span *ngIf="!hideNewContactForm && user_obj.is_team" data-bs-toggle="modal" data-bs-target="#create-new-team">
               <a style="color: #3352ea; padding-left: 10px;"><i class="fa fa-plus"></i> New Team</a>
             </span>
-            <!-- <button class="btn btn-primary" (click)="hideAddNewContactForm()" data-keyboard="false"
+            <!-- <button class="btn btn-primary" (click)="hideAddNewContactForm()" data-bs-keyboard="false"
               *ngIf="hideNewContactForm && user_obj.is_team">
               Back
             </button> -->
@@ -38,8 +38,8 @@
                       <li class="mem-item alactive d-flex justify-content-between" *ngIf="team.select">
                         <a (click)="getSingleTeam(team.id, i)" routerLinkActive="active-link"><i
                             class="fa fa-user-o"></i> {{ team.team_name }}</a>
-                        <button data-toggle="modal" [attr.data-target]="'#editTeam' + i" data-backdrop="static"
-                          data-keyboard="false">
+                        <button data-bs-toggle="modal" [attr.data-bs-target]="'#editTeam' + i" data-bs-backdrop="static"
+                          data-bs-keyboard="false">
                           <i class="fa fa-edit"></i>
                         </button>
                       </li>
@@ -47,8 +47,8 @@
                         <a (click)="getSingleTeam(team.id, i)" routerLinkActive="active-link"><i
                             class="fa fa-user-o"></i> {{ team.team_name }}
                         </a>
-                        <button data-toggle="modal" [attr.data-target]="'#editTeam' + i" data-backdrop="static"
-                          data-keyboard="false">
+                        <button data-bs-toggle="modal" [attr.data-bs-target]="'#editTeam' + i" data-bs-backdrop="static"
+                          data-bs-keyboard="false">
                           <i class="fa fa-edit"></i>
                         </button>
                       </li>
@@ -59,7 +59,7 @@
                           <div class="modal-content">
                             <div class="modal-header cdr-modal cdr-h-c">
                               <h5 class="modal-title">Edit Team</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <i class="material-icons">&#xE5CD;</i>
                               </button>
                             </div>
@@ -141,16 +141,16 @@
                 <mat-toolbar class="team-overview justify-content-between">
                   <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab"
+                      <a class="nav-link active" id="overview-tab" data-bs-toggle="tab" href="#overview" role="tab"
                         aria-controls="overview" aria-selected="true" (click)="getOverviewData()">
                         Overview</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="dataroom-tab" data-toggle="tab" href="#dataroom" role="tab"
+                      <a class="nav-link" id="dataroom-tab" data-bs-toggle="tab" href="#dataroom" role="tab"
                         aria-controls="dataroom" aria-selected="false">Data Room</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="members-tab" data-toggle="tab" href="#members" role="tab"
+                      <a class="nav-link" id="members-tab" data-bs-toggle="tab" href="#members" role="tab"
                         aria-controls="members" aria-selected="false">Members</a>
                     </li>
                   </ul>
@@ -246,18 +246,18 @@
       <form #form="ngForm" (ngSubmit)="OverviewFormSubmit()">
         <div class="modal-header cdr-modal cdr-h-c">
           <h5 class="modal-title">Edit Team</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <i class="material-icons">&#xE5CD;</i>
           </button>
         </div>
         <div class="modal-body cr-n-dr">
           <ul class="nav nav-tabs cr-tab" id="edrTab" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="editNameLogo-tab" data-toggle="tab" href="#editNameLogo" role="tab"
+              <a class="nav-link active" id="editNameLogo-tab" data-bs-toggle="tab" href="#editNameLogo" role="tab"
                 aria-controls="editNameLogo" aria-selected="true">Edit Name and Logo</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="editBranding-tab" data-toggle="tab" href="#editBranding" role="tab"
+              <a class="nav-link" id="editBranding-tab" data-bs-toggle="tab" href="#editBranding" role="tab"
                 aria-controls="editBranding" aria-selected="false">Edit Team Branding</a>
             </li>
           </ul>
@@ -309,7 +309,7 @@
                   </div>
                   <!-- put model footer here -->
                   <div class="form-group">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                       Cancel
                     </button>
                     <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit"
@@ -462,7 +462,7 @@
                     </div>
                     <!-- put save and cancel button here -->
                     <div class="form-group">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                       </button>
                       <button mat-raised-button color="primary" class="blue-btn bdr-rad3" type="submit"
@@ -492,7 +492,7 @@
     <div class="modal-content">
       <div class="modal-header cdr-modal cdr-h-c">
         <h5 class="modal-title">Create New Team</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <i class="material-icons">&#xE5CD;</i>
         </button>
       </div>
